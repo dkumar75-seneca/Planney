@@ -2,7 +2,9 @@ collections.txt show the database items intended to be designed and their attrib
 
 strucutre.json list shows how the database items (collections) connect with each other.
 
-config.js sets up the Mongo database structure.
+setup.js sets up the MongoDB database structure.
+
+config.js connects to the MongoDB database to allow the server to interface with it.
 
 CRUD.js allows the server to interact with the designed database to read and write data from and to it.
 
