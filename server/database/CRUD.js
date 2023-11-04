@@ -1,18 +1,20 @@
-function CreateRecord(collectionName) {
+async function CreateRecord(collectionName) {
   ;
 }
 
-function ReadRecord(collectionName) {
+async function ReadRecord(collectionName) {
   ;
 }
 
-function UpdateRecord(collectionName) {
+async function UpdateRecord(collectionName) {
   ;
 }
 
-function DeleteRecord(collectionName) {
+async function DeleteRecord(collectionName) {
   ;
 }
+
+/*
 
 async function insertDocument() {
   const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -58,3 +60,5 @@ async function deleteDocument() {
   console.log('Deleted document:', result);
   client.close();
 }
+
+*/
