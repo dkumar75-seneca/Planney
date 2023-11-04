@@ -1,0 +1,9 @@
+collections.txt show the database items intended to be designed and their attributes.
+
+strucutre.json list shows how the database items (collections) connect with each other.
+
+config.js sets up the Mongo database structure.
+
+CRUD.js allows the server to interact with the designed database to read and write data from and to it.
+
+CRUDTest.js tests the functions written in CRUD.js.
