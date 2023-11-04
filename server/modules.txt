@@ -1,0 +1,21 @@
+This file lists the server modules that are planned to implement the scheduling functionality together:
+
+helpers.js: Has all the functions commonly used by more one of the other modules.
+
+requestValidator.js: Handles all of the user request validation procedures.
+
+accountValidator.js: Handles all of the user identity validation procedures (including data access controls).
+
+accountManagement.js: Handles all of user account management procedures.
+
+automatedReminders.js: Handles all of the automated reminders based procedures.
+
+reviewsManagement.js: Handles all of the reviews based functionlaity of the system.
+
+appointmentManagement.js: Handles all of the customer side management of available timeslots.
+
+therapistManagement.js: Handles all of the therapist (supply) side management of available timeslots.
+
+timeslotManagement.js: Handles whether a given timeslot is available for public booking.
+
+systemLogs.js: Hnadles all of the system logs inspection based functionality of the system.
