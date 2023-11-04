@@ -1,17 +1,7 @@
-/*
-
-collections.txt show the database items intended to be designed and their attributes.
-strucutre.json list shows how the database items (collections) connect with each other.
-
-Test Database Connection String: mongodb+srv://new-user:Up43nVs3VpvO0Lnk@cluster-dhiraj.xg6us6r.mongodb.net/
-
-NOTE: normally you should NOT share credentials (or ANY environment variables) within source code
-      but since this is a test database with a restricted user account, its okay for now I guess.
-    
-*/
-
 const { MongoClient } = require('mongodb');
 
+// normally you should NOT share credentials (or ANY environment variables) within source code
+// but since this is a test database with a restricted user account, its okay for now I guess
 const uri = 'mongodb+srv://new-user:Up43nVs3VpvO0Lnk@cluster-dhiraj.xg6us6r.mongodb.net/PlanneyDB';
 
 async function connectToMongoDB() {
