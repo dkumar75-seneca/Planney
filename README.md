@@ -1,4 +1,4 @@
-# PRG800-PROJECT
+# Planney
 
 This is the main repository of our scheduling application.
 
