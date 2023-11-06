@@ -1,5 +1,22 @@
+const { MongoClient } = require('mongodb');
+
+// normally you should NOT share credentials (or ANY environment variables) within source code
+// but since this is a test database with a restricted user account, its okay for now I guess
+const uri = 'mongodb+srv://new-user:Up43nVs3VpvO0Lnk@cluster-dhiraj.xg6us6r.mongodb.net/PlanneyDB';
+const client = new MongoClient(uri);
+
 async function CreateRecord(collectionName) {
-  ;
+  try {
+    await client.connect(); console.log('Connected to MongoDB');
+    
+    const collections = await client.db().listCollections().toArray();
+    console.log('Collections:', collections);
+
+  } catch (error) {
+    console.error('Error connecting to MongoDB:', error);
+  } finally {
+    await client.close(); console.log('Disconnected from MongoDB');
+  }
 }
 
 async function ReadRecord(collectionName) {
@@ -13,6 +30,8 @@ async function UpdateRecord(collectionName) {
 async function DeleteRecord(collectionName) {
   ;
 }
+
+module.exports = { CreateRecord, ReadRecord, UpdateRecord, DeleteRecord };
 
 /*
 
