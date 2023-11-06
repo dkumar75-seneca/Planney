@@ -5,13 +5,45 @@ const { MongoClient } = require('mongodb');
 const uri = 'mongodb+srv://new-user:Up43nVs3VpvO0Lnk@cluster-dhiraj.xg6us6r.mongodb.net/PlanneyDB';
 const client = new MongoClient(uri);
 
-async function CreateRecord(collectionName) {
+const collectionNames = [
+  "SystemLogs", "Accounts", "Customers", "Employees", "Location", "Roster", "Allocations"
+];
+
+async function CreateRecord(collectionNum, newData) {
+  ;
+}
+
+async function ReadRecord(collectionNum, recordNum) {
+  ;
+}
+
+async function UpdateRecord(collectionNum, recordNum, newData) {
+  ;
+}
+
+async function DeleteRecord(collectionNum, recordNum) {
+  ;
+}
+
+async function UpdateDatabase(operationNum, queryDetails) {
   try {
     await client.connect(); console.log('Connected to MongoDB');
-    
-    const collections = await client.db().listCollections().toArray();
-    console.log('Collections:', collections);
-
+    if (queryDetails.collectionNum) {
+      const collectionNum = queryDetails.collectionNum;
+      if (operationNum === 1 && queryDetails.newData) {
+        CreateRecord(collectionNum, queryDetails.newData);
+      }
+      
+      if (queryDetails.recordNum) {
+        if (operationNum === 2) {
+          ReadRecord(collectionNum, recordNum);
+        } else if (operationNum === 3 && queryDetails.newData) {
+          UpdateRecord(collectionNum, recordNum, newData);
+        } else if (operationNum === 4) {
+          DeleteRecord(collectionNum, recordNum);
+        }
+      } else { console.error("No record number provided."); }
+    } else { console.error("No collection number provided."); }
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
   } finally {
@@ -19,19 +51,7 @@ async function CreateRecord(collectionName) {
   }
 }
 
-async function ReadRecord(collectionName) {
-  ;
-}
-
-async function UpdateRecord(collectionName) {
-  ;
-}
-
-async function DeleteRecord(collectionName) {
-  ;
-}
-
-module.exports = { CreateRecord, ReadRecord, UpdateRecord, DeleteRecord };
+module.exports = { UpdateDatabase };
 
 /*
 
