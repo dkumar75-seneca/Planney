@@ -1,81 +1,66 @@
 SystemLogs (Collection 1)
   logID
-  username
-  accessTime
+  personName
   actionType
   description
+  accessTime
   accountID
 
-Customers (Collection 2)
-  customerID
-  name
-  phone
-  email
-  whitelisted
-
-Employees (Collection 3)
-  employeeID
-  name
-  phone
-  email
-  title
-  salary
-
-Accounts (Collection 4)
+Accounts (Collection 2)
   accountID
   username
   password
   accessLevel
+  phone
+  email
   userID
 
-MassageTypes (Collection 5)
-  massageTypeID
-  score
-  price
-  duration
+Customers (Collection 3)
+  customerID
+  personName
+  whitelisted
 
-Services (Collection 6)
-  serviceID
+Employees (Collection 4)
   employeeID
-  massageTypeID
+  personName
+  employeeTitle
+  offeredMassages
+    massageNumber
+    massageName
+    price
+    duration
+    totalScore
+    reviewNumber
 
-Location (Collection 7)
+Location (Collection 5)
   branchID
-  address
-  postalCode
   state
   country
+  postalCode
+  streetAddress
 
-Roster (Collection 8)
-  rosterID
+Roster (Collection 6)
   date
-  branchID
-
-Timeslot (Collection 9)
-  timeslotID
-  startHour
-  startMinute
-  endHour
-  endMinute
-  status
   rosterID
+  branchID
+  timeSlots
+    timeSlotID
+    status
+    roomNumber
+    timeslotNumber
+    employeeID
+    personName
 
-Allocations (Collection 10)
+Allocations (Collection 7)
   allocationID
-  serviceID
+  branchID
+  rosterID
   timeslotID
-  roomNumber
   customerID
-
-Waitlist (Collection 11)
-  waitlistID
-  customerID
-  allocationID
-
-Reminders (Collection 12)
-  reminderID
-  title
-  status
-  alertTime
-  description
-  allocationID
+  waitlist
+    customerIDs
+  reminders
+    title
+    status
+    alertTime
+    description
