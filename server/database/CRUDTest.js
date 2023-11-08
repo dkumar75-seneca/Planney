@@ -1,15 +1,15 @@
-function CreateRecordTest(collectionName) {
+function UpdateDatabaseTestOne(operationNum, queryDetails) {
   ;
 }
 
-function ReadRecordTest(collectionName) {
+function UpdateDatabaseTestTwo(operationNum, queryDetails) {
   ;
 }
 
-function UpdateRecordTest(collectionName) {
+function UpdateDatabaseTestThree(operationNum, queryDetails) {
   ;
 }
 
-function DeleteRecordTest(collectionName) {
+function UpdateDatabaseTestFour(operationNum, queryDetails) {
   ;
 }

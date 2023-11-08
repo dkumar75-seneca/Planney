@@ -1,32 +1,30 @@
 Web Application
   Localhost Development
     Design REST API Server
-      Design Database Connector (CRUD.js, Sprint 1)
-      Design Logic Modules (scripts in src and test folders)
-        Sprint 1:
-          helpers.js
-          helpersTest.js
-          requestValidator.js
-          requestValidatorTest.js
-        Sprint 2:
-          timeslotManagement.js
-          therapistManagement.js
-          appointmentManagement.js
-          timeslotManagementTest.js
-          therapistManagementTest.js
-          appointmentManagementTest.js
-        Sprint 3:
-          systemLogs.js
-          accountValidator.js
-          accountManagement.js
-          systemLogsTest.js
-          accountValidatorTest.js
-          accountManagementTest.js
-        Sprint 4:
-          reviewsManagement.js
-          reviewsManagementTest.js
-          automatedReminders.js
-          automatedRemindersTest.js
+      Sprint 1:
+        CRUD.js
+        CRUDTest.js
+        requestValidator.js
+        requestValidatorTest.js
+      Sprint 2:
+        timeslotManagement.js
+        therapistManagement.js
+        appointmentManagement.js
+        timeslotManagementTest.js
+        therapistManagementTest.js
+        appointmentManagementTest.js
+      Sprint 3:
+        systemLogs.js
+        accountValidator.js
+        accountManagement.js
+        systemLogsTest.js
+        accountValidatorTest.js
+        accountManagementTest.js
+      Sprint 4:
+        reviewsManagement.js
+        reviewsManagementTest.js
+        automatedReminders.js
+        automatedRemindersTest.js
     Design User Interface
       Sprint 1:
         Setup Server-Client GET and POST requests in JSON format
