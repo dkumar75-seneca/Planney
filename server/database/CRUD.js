@@ -5,45 +5,63 @@ const { MongoClient } = require('mongodb');
 const uri = 'mongodb+srv://new-user:Up43nVs3VpvO0Lnk@cluster-dhiraj.xg6us6r.mongodb.net/PlanneyDB';
 const client = new MongoClient(uri);
 
-const collectionNames = [
+const cNames = [
   "SystemLogs", "Accounts", "Customers", "Employees", "Location", "Roster", "Allocations"
 ];
 
-async function CreateRecord(collectionNum, newData) {
+async function ValidateNewData(newData) {
   ;
 }
 
-async function ReadRecord(collectionNum, recordNum) {
-  ;
+async function CreateRecord(cName, newData) {
+  if (ValidateNewData(newData)) {
+    //await client;
+  }
 }
 
-async function UpdateRecord(collectionNum, recordNum, newData) {
-  ;
+async function ReadRecord(cName, recordNum) {
+  const collection = client.db().collection(cName);
+  const query = { _id: { $eq: recordNum } };
+  const documents = await collection.findOne(query);
+  console.log('Found documents:', documents);
 }
 
-async function DeleteRecord(collectionNum, recordNum) {
+async function UpdateRecord(cName, recordNum, newData) {
+  if (ValidateNewData(newData)) {
+    //await client;
+  }
+}
+
+async function DeleteRecord(cName, recordNum) {
   ;
 }
 
 async function UpdateDatabase(operationNum, queryDetails) {
   try {
     await client.connect(); console.log('Connected to MongoDB');
-    if (queryDetails.collectionNum) {
-      const collectionNum = queryDetails.collectionNum;
-      if (operationNum === 1 && queryDetails.newData) {
-        CreateRecord(collectionNum, queryDetails.newData);
-      }
-      
-      if (queryDetails.recordNum) {
-        if (operationNum === 2) {
-          ReadRecord(collectionNum, recordNum);
-        } else if (operationNum === 3 && queryDetails.newData) {
-          UpdateRecord(collectionNum, recordNum, newData);
-        } else if (operationNum === 4) {
-          DeleteRecord(collectionNum, recordNum);
+
+    let invalidReq = false;
+    if (queryDetails.cNum) {
+      const cNum = queryDetails.cNum;
+      let numChecks = !isNaN(cNum) && cNum >= 0;
+      numChecks = numChecks && cNum < cNames.length;
+
+      if (numChecks) {
+        if (operationNum === 1 && queryDetails.newData) {
+          CreateRecord(cNames[cNum], queryDetails.newData);
+        } else if (queryDetails.recordNum) {
+          if (operationNum === 2) {
+            ReadRecord(cNames[cNum], recordNum);
+          } else if (operationNum === 3 && queryDetails.newData) {
+            UpdateRecord(cNames[cNum], recordNum, newData);
+          } else if (operationNum === 4) {
+            DeleteRecord(cNames[cNum], recordNum);
+          }
         }
-      } else { console.error("No record number provided."); }
-    } else { console.error("No collection number provided."); }
+      }
+    }
+
+    if (invalidReq) { console.error("Incomplete data request."); }
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
   } finally {
@@ -63,17 +81,6 @@ async function insertDocument() {
   const documentToInsert = { name: 'John', age: 30, email: 'john@example.com' };
   const result = await collection.insertOne(documentToInsert);
   console.log('Inserted document:');
-  client.close();
-}
-
-async function findDocuments() {
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-  await client.connect();
-  const collection = client.db().collection('your_collection_name');
-
-  const query = { age: { $gte: 25 } }; // Find documents where age is greater than or equal to 25
-  const documents = await collection.find(query).toArray();
-  console.log('Found documents:', documents);
   client.close();
 }
 
