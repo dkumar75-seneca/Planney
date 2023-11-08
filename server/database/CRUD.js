@@ -9,31 +9,71 @@ const cNames = [
   "SystemLogs", "Accounts", "Customers", "Employees", "Location", "Roster", "Allocations"
 ];
 
-async function ValidateNewData(newData) {
-  ;
+const reminderTemplate = {
+  title: null, status: null, alertTime: null, description: null
 }
 
-async function CreateRecord(cName, newData) {
-  if (ValidateNewData(newData)) {
-    //await client;
+const timeslotTemplate = {
+  employeeNum: 0, personName: null,
+  status: null, roomNumber: 0, slotNumber: 0
+}
+
+const massageTemplate = {
+  massageNumber: 0, massageName: null, price: 0,
+  duration: 0, totalScore: 0, reviewsNumber: 0
+}
+
+const cTemplates = [
+  { personName: null, actionType: null, description: null, accessTime: null, accountID: null },
+  { username: null, password: null, accessLevel: 0, phone: null, email: null, userID: 0 },
+  { personName: null, whitelisted: null },
+  { personName: null, employeeTitle: null, offeredMassages: [] },
+  { state: null, country: null, postalCode: null, streetAddress: null },
+  { date: null, branchNum: 0, timeslots: [] },
+  { branchNum: 0, rosterNum: 0, slotNumber: 0, customerNum: 0, waitlist: [], reminders: [] }
+]
+
+function copyJSON(input) { return JSON.parse(JSON.stringify(input)); }
+
+async function ValidateNewData(newData, cNum) {
+  let newDataTemplate = copyJSON(cTemplates[cNum]);
+  Object.keys(newDataTemplate).forEach(function(key) {
+    if (!newData[key]) { return false; }
+    if (isNaN(newDataTemplate[key]) !== isNaN(newData[key])) { return false; }
+  });
+  return true;
+}
+
+async function CreateRecord(collection, newData, cNum) {
+  if (ValidateNewData(newData, cNum)) {
+    const result = await collection.insertOne(newData);
+    console.log(result);
   }
 }
 
-async function ReadRecord(cName, recordNum) {
-  const collection = client.db().collection(cName);
+async function ReadRecord(collection, recordNum) {
   const query = { _id: { $eq: recordNum } };
   const documents = await collection.findOne(query);
   console.log('Found documents:', documents);
 }
 
-async function UpdateRecord(cName, recordNum, newData) {
-  if (ValidateNewData(newData)) {
-    //await client;
+async function UpdateRecord(collection, recordNum, newData, cNum) {
+  if (ValidateNewData(newData, cNum)) {
+    const filter = { _id: { $eq: recordNum } };
+    const update = { $set: newData };
+    const result = await collection.updateOne(filter, update);
+    console.log(result);
   }
 }
 
-async function DeleteRecord(cName, recordNum) {
-  ;
+async function DeleteRecord(collection, recordNum) {
+  const query = { _id: { $eq: recordNum } };
+  const result = await collection.deleteOne(query);
+  if (result.deletedCount === 1) {
+    console.log("Successfully deleted one document.");
+  } else {
+    console.log("No documents matched the query. Deleted 0 documents.");
+  }
 }
 
 async function UpdateDatabase(operationNum, queryDetails) {
@@ -47,15 +87,16 @@ async function UpdateDatabase(operationNum, queryDetails) {
       numChecks = numChecks && cNum < cNames.length;
 
       if (numChecks) {
+        const collection = client.db().collection(cNames[cNum]);
         if (operationNum === 1 && queryDetails.newData) {
-          CreateRecord(cNames[cNum], queryDetails.newData);
+          CreateRecord(collection, queryDetails.newData, cNum);
         } else if (queryDetails.recordNum) {
           if (operationNum === 2) {
-            ReadRecord(cNames[cNum], recordNum);
-          } else if (operationNum === 3 && queryDetails.newData) {
-            UpdateRecord(cNames[cNum], recordNum, newData);
+            ReadRecord(collection, recordNum);
+          } else if (operationNum === 3 && queryDetails.newData, cNum) {
+            UpdateRecord(collection, recordNum, newData);
           } else if (operationNum === 4) {
-            DeleteRecord(cNames[cNum], recordNum);
+            DeleteRecord(collection, recordNum);
           }
         }
       }
@@ -70,41 +111,3 @@ async function UpdateDatabase(operationNum, queryDetails) {
 }
 
 module.exports = { UpdateDatabase };
-
-/*
-
-async function insertDocument() {
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-  await client.connect();
-  const collection = client.db().collection('THIS-IS-JUST-A-TEST');
-
-  const documentToInsert = { name: 'John', age: 30, email: 'john@example.com' };
-  const result = await collection.insertOne(documentToInsert);
-  console.log('Inserted document:');
-  client.close();
-}
-
-async function updateDocument() {
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-  await client.connect();
-  const collection = client.db().collection('your_collection_name');
-
-  const filter = { name: 'John' };
-  const update = { $set: { age: 31 } }; // Update John's age to 31
-  const result = await collection.updateOne(filter, update);
-  console.log('Updated document:', result);
-  client.close();
-}
-
-async function deleteDocument() {
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-  await client.connect();
-  const collection = client.db().collection('THIS-IS-JUST-A-TEST');
-
-  const filter = { name: 'John' };
-  const result = await collection.deleteOne(filter);
-  console.log('Deleted document:', result);
-  client.close();
-}
-
-*/

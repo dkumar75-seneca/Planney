@@ -1,0 +1,53 @@
+Web Application
+  Localhost Development
+    Design REST API Server
+      Design Database Connector (CRUD.js, Sprint 1)
+      Design Logic Modules (scripts in src and test folders)
+        Sprint 1:
+          helpers.js
+          helpersTest.js
+          requestValidator.js
+          requestValidatorTest.js
+        Sprint 2:
+          timeslotManagement.js
+          therapistManagement.js
+          appointmentManagement.js
+          timeslotManagementTest.js
+          therapistManagementTest.js
+          appointmentManagementTest.js
+        Sprint 3:
+          systemLogs.js
+          accountValidator.js
+          accountManagement.js
+          systemLogsTest.js
+          accountValidatorTest.js
+          accountManagementTest.js
+        Sprint 4:
+          reviewsManagement.js
+          reviewsManagementTest.js
+          automatedReminders.js
+          automatedRemindersTest.js
+    Design User Interface
+      Sprint 1:
+        Setup Server-Client GET and POST requests in JSON format
+        Develop Basic Input and Output Functionality
+          Inputs Fields: ReferenceID, Location, Datetime, Therapist, Massage
+          Output Labels: Like input fields but with extra field for queueID
+      Sprint 2:
+        Client and Server Validation
+          Ensure data is one of available options
+          Otherwise return or render suitable message
+      Sprint 3:
+        Mobile Centric Interface
+          Ensure interface is functional and aesthetic on a mobile device
+      Sprint 4:
+        Desktop Centric Interface
+          Ensure interface changes to accomodate PC users in a more friendly manner
+  Microsoft Azure Deployment
+    Sprint 4:
+      Setup Static Web Apps Front-End
+      Setup Web App + Database Back-End
+      Setup Azure Front Door as web application domain
+      Configure and test network access across each architecture component
+      Load Test the deployed web application
+      Perform a mock demo with deployed web application

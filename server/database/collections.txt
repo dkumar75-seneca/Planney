@@ -44,7 +44,6 @@ Roster (Collection 6)
   rosterID
   branchID
   timeSlots
-    timeSlotID
     status
     roomNumber
     timeslotNumber
