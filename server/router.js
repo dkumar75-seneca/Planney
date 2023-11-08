@@ -17,8 +17,6 @@ router.post('/api/*', function(req, res, next) {
   console.log(req.body);
 });
 
-planneyModules.helpers.testFunction();
-
-//planneyModules.databaseConnector.CreateRecord(1);
+planneyModules.databaseConnectorTest.RunAllDBTests();
 
 module.exports = router;

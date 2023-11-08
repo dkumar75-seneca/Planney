@@ -1,2 +1,3 @@
+console.log("Helper functions module imported");
 
-exports.testFunction = function() { console.log("Module testFunction Import Works"); };
+exports.copyJSON = function(input) { return JSON.parse(JSON.stringify(input)); };

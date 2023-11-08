@@ -1,56 +1,53 @@
-SystemLogs (Collection 1)
-  logID
-  personName
-  actionType
-  description
-  accessTime
-  accountID
-
-Accounts (Collection 2)
-  accountID
-  username
-  password
-  accessLevel
-  phone
-  email
-  userID
-
-Customers (Collection 3)
-  customerID
-  personName
-  whitelisted
-
-Employees (Collection 4)
-  employeeID
-  personName
-  employeeTitle
-  offeredMassages
-    massageNumber
-    massageName
-    price
-    duration
-    totalScore
-    reviewNumber
-
-Location (Collection 5)
+Location (Collection 1)
   branchID
   state
   country
   postalCode
   streetAddress
 
-Roster (Collection 6)
-  date
-  rosterID
-  branchID
-  timeSlots
-    status
-    roomNumber
-    timeslotNumber
-    employeeID
-    personName
+Massages (Collection 2)
+  massageID
+  massageName
+  price
+  duration
+  totalScore
+  reviewNumber
 
-Allocations (Collection 7)
+Employees (Collection 3)
+  employeeID
+  personName
+  employeeTitle
+  offeredMassages
+    massageIDs
+
+Customers (Collection 4)
+  customerID
+  personName
+  whitelisted
+
+Timeslots (Collection 5)
+  timeslotID
+  status
+  roomNumber
+  timeslotNumber
+  employeeID
+  personName
+
+Rosters (Collection 6)
+  rosterID
+  date
+  branchID
+  timeslots
+    timeslotIDs
+
+Reminders (Collection 7)
+  reminderID
+  title
+  status
+  alertTime
+  description
+
+Allocations (Collection 8)
   allocationID
   branchID
   rosterID
@@ -59,7 +56,21 @@ Allocations (Collection 7)
   waitlist
     customerIDs
   reminders
-    title
-    status
-    alertTime
-    description
+    reminderIDs
+
+Accounts (Collection 9)
+  accountID
+  username
+  password
+  accessLevel
+  phone
+  email
+  userID
+
+SystemLogs (Collection 10)
+  logID
+  personName
+  actionType
+  description
+  accessTime
+  accountID
