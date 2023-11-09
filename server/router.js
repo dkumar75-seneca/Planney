@@ -13,8 +13,8 @@ router.get('/api/*', function(req, res, next) {
 });
 
 router.post('/api/*', function(req, res, next) {
-  res.send(req.body);
-  console.log(req.body);
+  const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" });
+  res.send(postResponse); console.log(postResponse);
 });
 
 //planneyModules.databaseConnectorTest.RunAllDBTests();

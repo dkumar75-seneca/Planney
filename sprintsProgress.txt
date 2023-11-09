@@ -2,10 +2,10 @@ Web Application
   Localhost Development
     Design REST API Server
       Sprint 1:
-        CRUD.js
-        CRUDTest.js
-        requestValidator.js
-        requestValidatorTest.js
+        CRUD.js (done)
+        CRUDTest.js (done)
+        requestValidator.js (doing)
+        requestValidatorTest.js (doing)
       Sprint 2:
         timeslotManagement.js
         therapistManagement.js
@@ -27,8 +27,8 @@ Web Application
         automatedRemindersTest.js
     Design User Interface
       Sprint 1:
-        Setup Server-Client GET and POST requests in JSON format
-        Develop Basic Input and Output Functionality
+        Setup Server-Client GET and POST requests in JSON format (done)
+        Develop Basic Input and Output Functionality (doing)
           Inputs Fields: ReferenceID, Location, Datetime, Therapist, Massage
           Output Labels: Like input fields but with extra field for queueID
       Sprint 2:

@@ -3,6 +3,6 @@
 
 exports.helpers = require("./src/helpers.js");
 
-//exports.databaseConnector = require("./database/CRUD.js");
+exports.databaseConnector = require("./database/CRUD.js");
 
 exports.databaseConnectorTest = require("./database/CRUDTest.js");

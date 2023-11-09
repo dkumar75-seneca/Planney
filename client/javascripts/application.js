@@ -1,5 +1,7 @@
 const exampleJSON = { "name": "John", "age": 25 }
 
+const serverUri = "http://localhost:3000/api/"
+
 async function SendGetRequest(uri) {
   const response = await fetch(uri, {
     method: 'GET',
@@ -19,6 +21,6 @@ async function SendPostRequest(uri, input) {
   console.log(output);
 }
 
-SendGetRequest("https://httpbin.org/get")
-SendPostRequest("https://httpbin.org/post", exampleJSON)
+SendGetRequest(serverUri)
+SendPostRequest(serverUri, exampleJSON)
 console.log("Client side script is integrated and running.");

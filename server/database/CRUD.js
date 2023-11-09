@@ -132,4 +132,6 @@ async function SetupDatabase() {
   }
 }
 
+console.log("Database module Imported");
+
 module.exports = { UpdateDatabase };
