@@ -1,15 +1,23 @@
 Web Application
+  Mock Microsoft Azure Deployment
+    Sprint 1: (done)
+      Setup Static Web Apps Front-End
+      Setup Web App + Database Back-End
+      Load Test the deployed web application
+      Setup Azure Front Door as web application domain
+      Perform a mock demo with deployed web application
+      Configure network access across each architecture component
   Localhost Development
     Design REST API Server
       Sprint 1:
         CRUD.js (done)
         CRUDTest.js (done)
-        requestValidator.js (doing)
-        requestValidatorTest.js (doing)
       Sprint 2:
+        requestValidator.js
         timeslotManagement.js
         therapistManagement.js
         appointmentManagement.js
+        requestValidatorTest.js
         timeslotManagementTest.js
         therapistManagementTest.js
         appointmentManagementTest.js
@@ -28,20 +36,13 @@ Web Application
     Design User Interface
       Sprint 1:
         Setup Server-Client GET and POST requests in JSON format (done)
-        Develop Basic Input and Output Functionality (doing)
-          Inputs Fields: ReferenceID, Location, Datetime, Therapist, Massage
-          Output Labels: Like input fields but with extra field for queueID
       Sprint 2:
-        Client and Server Validation
-          Ensure data is one of available options
-          Otherwise return or render suitable message
+        Develop Basic Input and Output Functionality (doing)
       Sprint 3:
-        Mobile Centric Interface
-          Ensure interface is functional and aesthetic on a mobile device
+        Ensure interface is functional and aesthetic on a personal computing device
       Sprint 4:
-        Desktop Centric Interface
-          Ensure interface changes to accomodate PC users in a more friendly manner
-  Microsoft Azure Deployment
+        Ensure interface is functional and aesthetic on a mobile device
+  Actual Microsoft Azure Deployment
     Sprint 4:
       Setup Static Web Apps Front-End
       Setup Web App + Database Back-End
