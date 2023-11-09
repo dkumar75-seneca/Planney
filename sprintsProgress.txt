@@ -13,11 +13,11 @@ Web Application
         CRUD.js (done)
         CRUDTest.js (done)
       Sprint 2:
-        requestValidator.js
+        requestValidator.js (doing)
         timeslotManagement.js
         therapistManagement.js
         appointmentManagement.js
-        requestValidatorTest.js
+        requestValidatorTest.js (doing)
         timeslotManagementTest.js
         therapistManagementTest.js
         appointmentManagementTest.js
@@ -37,7 +37,7 @@ Web Application
       Sprint 1:
         Setup Server-Client GET and POST requests in JSON format (done)
       Sprint 2:
-        Develop Basic Input and Output Functionality (doing)
+        Develop Basic Input and Output Functionality with validation (doing)
       Sprint 3:
         Ensure interface is functional and aesthetic on a personal computing device
       Sprint 4:
