@@ -2,7 +2,7 @@ console.log("Application script module imported");
 
 // Needs to be same order drop down menu
 const tableChoices = [
-  "Location", "Massages", "Employees", "Customers", "Timeslots",
+  "Locations", "Massages", "Employees", "Customers", "Timeslots",
   "Rosters", "Reminders", "Allocations", "Accounts", "SystemLogs"
 ];
 
@@ -13,9 +13,32 @@ var tableRows = [
   ["Centro comercial Moctezuma", "Francisco Chang", "Mexico"],
 ];
 
-function sortTable(colNum) {
-  console.log(colHeadings[colNum] + " was sorted.");
+function showModal() {
+  ;
 }
+
+function showForm(recordNum) {
+  if (recordNum >= 0 && recordNum < tableRows.length) {
+    console.log("Update record button is pressed.");
+  } else {
+    console.log("Add record button is pressed.");
+  }
+}
+
+function sortTable(colNum) {
+  console.log("Table was sorted based on " + tableHeadings[colNum] + ".");
+}
+
+function updateTable(optionNum) {
+  const elem = document.getElementById("myButton");
+  elem.innerHTML = tableChoices[optionNum].toString();
+  console.log(tableChoices[optionNum] + " was called.");
+  renderTable();
+}
+
+function updateRecord(recordNum) { showForm(recordNum); }
+
+function removeRecord(recordNum) { console.log(recordNum); }
 
 function renderTable() {
   const elem = document.getElementById("viewTable");
@@ -25,25 +48,29 @@ function renderTable() {
   if (tableHeadings.length > 0) {
     tableContent += "<tr>";
     for (let i = 0; i < tableHeadings.length; i++) {
-      tableContent += "<td><b>" + tableHeadings[i] + "</b></td>";
+      tableContent += '<th onclick="sortTable(' + i;
+      tableContent += ')">' + tableHeadings[i] + '</th>';
     }
-    tableContent += "</tr>";
-    
+
+    tableContent += "<th></th></tr>";
     for (let i = 0; i < tableRows.length; i++) {
-      tableContent += "<tr>";
-      for (let j = 0; j < tableRows[i].length; j++) {
+      const temp = Math.min(tableRows[i].length, tableHeadings.length);
+      tableContent += '<tr>';
+      for (let j = 0; j < temp; j++) {
         tableContent += "<td>" + tableRows[i][j] + "</td>";
       }
-      tableContent += "</tr>";
+      
+      tableContent += '<td style="text-align: center; width: 200px; ">';
+      tableContent += '&nbsp &nbsp';
+      tableContent += '<button class="btn btn-secondary" ';
+      tableContent += 'onclick="updateRecord(' + i + ')">Edit</button>';
+      tableContent += '&nbsp &nbsp';
+      tableContent += '<button class="btn btn-danger" ';
+      tableContent += 'onclick="removeRecord(' + i + ')">Delete</button>';
+      tableContent += '&nbsp &nbsp';
+      tableContent += '</td></tr>';
     }
   }
 
   elem.innerHTML = tableContent;
-}
-
-function updateTable(optionNum) {
-  const elem = document.getElementById("myButton");
-  elem.innerHTML = tableChoices[optionNum].toString();
-  console.log(tableChoices[optionNum] + " was called.");
-  renderTable();
 }
