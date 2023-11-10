@@ -13,10 +13,6 @@ var tableRows = [
   ["Centro comercial Moctezuma", "Francisco Chang", "Mexico"],
 ];
 
-function showModal() {
-  ;
-}
-
 function showForm(recordNum) {
   if (recordNum >= 0 && recordNum < tableRows.length) {
     console.log("Update record button is pressed.");
