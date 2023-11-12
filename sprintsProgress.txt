@@ -12,12 +12,12 @@ Web Application
       Sprint 1:
         CRUD.js (done)
         CRUDTest.js (done)
-      Sprint 2:
-        requestValidator.js (doing)
+      Sprint 2: (doing)
+        requestValidator.js
         timeslotManagement.js
         therapistManagement.js
         appointmentManagement.js
-        requestValidatorTest.js (doing)
+        requestValidatorTest.js
         timeslotManagementTest.js
         therapistManagementTest.js
         appointmentManagementTest.js

@@ -25,6 +25,4 @@ function copyJSON(input) {
   return JSON.parse(JSON.stringify(input));
 };
 
-SendGetRequest(serverUri)
-SendPostRequest(serverUri, exampleJSON)
 console.log("Client side helper script is integrated and running.");

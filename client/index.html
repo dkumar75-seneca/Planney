@@ -33,7 +33,7 @@
           Choose category to view records. 
         </div>
         <div style="text-align: right;"  class="col">
-          <button class="btn btn-success" onclick="showForm(-1)" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Record</button>
+          <button id="MyAddButton" class="btn btn-success" onclick="updateRecordNum(-1)" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Record</button>
         </div>
       </div>
       <br>
@@ -42,15 +42,13 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <h5 id="MyModalTitle" class="modal-title" id="exampleModalLabel"></h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-              ...
-            </div>
+            <div id="MyModalBody" class="modal-body"></div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-success">Save changes</button>
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+              <button id="MyModalButton" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">Submit</button>
             </div>
           </div>
         </div>
