@@ -32,6 +32,8 @@ function updateTable(optionNum) {
   renderTable();
 }
 
+updateTable(0);
+
 function updateRecord(recordNum) { showForm(recordNum); }
 
 function removeRecord(recordNum) { console.log(recordNum); }
@@ -57,14 +59,11 @@ function renderTable() {
       }
       
       tableContent += '<td style="text-align: center; width: 200px; ">';
-      tableContent += '&nbsp &nbsp';
-      tableContent += '<button class="btn btn-secondary" ';
-      tableContent += 'onclick="updateRecord(' + i + ')">Edit</button>';
-      tableContent += '&nbsp &nbsp';
-      tableContent += '<button class="btn btn-danger" ';
-      tableContent += 'onclick="removeRecord(' + i + ')">Delete</button>';
-      tableContent += '&nbsp &nbsp';
-      tableContent += '</td></tr>';
+      tableContent += '&nbsp &nbsp <button class="btn btn-secondary" ';
+      tableContent += 'data-bs-toggle="modal" data-bs-target="#exampleModal" ';
+      tableContent += 'onclick="updateRecord(' + i + ')">Edit</button> &nbsp &nbsp';
+      tableContent += '<button class="btn btn-danger" onclick="removeRecord(' + i;
+      tableContent += ')">Delete</button> &nbsp &nbsp </td></tr>';
     }
   }
 
