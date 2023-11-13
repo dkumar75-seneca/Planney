@@ -13,19 +13,19 @@ Web Application
         CRUD.js (done)
         CRUDTest.js (done)
       Sprint 2: (doing)
+        systemLogs.js
         requestValidator.js
         timeslotManagement.js
         therapistManagement.js
         appointmentManagement.js
+        systemLogsTest.js
         requestValidatorTest.js
         timeslotManagementTest.js
         therapistManagementTest.js
         appointmentManagementTest.js
       Sprint 3:
-        systemLogs.js
         accountValidator.js
         accountManagement.js
-        systemLogsTest.js
         accountValidatorTest.js
         accountManagementTest.js
       Sprint 4:
@@ -39,9 +39,9 @@ Web Application
       Sprint 2:
         Develop Basic Input and Output Functionality with validation (done)
       Sprint 3:
-        Ensure interface is functional and aesthetic on a personal computing device
+        Ensure interface is functional and aesthetic on a desktop device
       Sprint 4:
-        Ensure interface is functional and aesthetic on a mobile device
+        Ensure interface is functional and aesthetic on a smartphone device
   Actual Microsoft Azure Deployment
     Sprint 4:
       Setup Static Web Apps Front-End

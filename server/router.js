@@ -4,6 +4,8 @@ var path = require('path');
 
 planneyModules = require("./index.js");
 
+// Client side project code below
+
 const webpages = [
   "/locations", "/massages", "/employees", "/customers", "/timeslots",
   "/rosters", "/reminders", "/allocations", "/accounts", "/systemlogs"
@@ -17,25 +19,39 @@ const webLocations = [
   "webpages/accounts.html", "webpages/systemlogs.html"
 ]
 
-/* GET home page. */
-router.get("/", function(req, res, next) {
+router.get("/", function(req, res) {
   res.render("index.html");
 });
 
 for (let i = 0; i < webpages.length; i++) {
-  router.get(webpages[i], function(req, res, next) {
+  router.get(webpages[i], function(req, res) {
     res.sendFile(path.join(__dirname, webLocations[i]));
   });
 }
 
-router.get("/api/*", function(req, res, next) {
-  res.send(JSON.stringify({ "message": "GET Request Received" }));
-});
+// Client side project code above
+// Server side project code below
 
-router.post("/api/*", function(req, res, next) {
+const apiEndpoints = [
+  "/locations", "/massages", "/employees", "/customers", "/timeslots",
+  "/rosters", "/reminders", "/allocations", "/accounts", "/systemlogs"
+]
+
+for (let i = 0; i < apiEndpoints.length; i++) {
+  let currentURI = "/api" + apiEndpoints[i];
+  router.get(currentURI, function(req, res) {
+    const operationNum = 5, queryDetails = { cNum: i };
+    const returnMessage = "GET Request For " + apiEndpoints[i] + " Received";
+    planneyModules.databaseConnector.UpdateDatabase(operationNum, queryDetails, returnMessage, res);
+  });
+}
+
+router.post("/api/*", function(req, res) {
   const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" });
   res.send(postResponse); console.log(postResponse);
 });
+
+// Server side project code above
 
 //planneyModules.databaseConnectorTest.RunAllDBTests();
 

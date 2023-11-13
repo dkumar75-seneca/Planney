@@ -45,6 +45,16 @@ async function CreateRecord(collection, newData, cNum) {
   }
 }
 
+async function ReadAllRecords(collection) {
+  try {
+    let testArray = [];
+    const cursor = await collection.find({}, { _id: 0 });
+    for await (const doc of cursor) { testArray.push(doc); }
+    return testArray;
+  } catch (e) { console.log(e); return []; }
+}
+
+
 async function ReadRecord(collection, recordID) {
   const query = { _id: recordID };
   const result = await collection.findOne(query);
@@ -70,10 +80,8 @@ async function DeleteRecord(collection, recordID) {
   }
 }
 
-async function UpdateDatabase(operationNum, queryDetails) {
+async function UpdateDatabase(operationNum, queryDetails, returnMessage, res) {
   try {
-    await client.connect(); console.log('Connected to MongoDB');
-
     if (queryDetails.cNum) {
       const cNum = queryDetails.cNum;
       let numChecks = !isNaN(cNum) && cNum >= 0;
@@ -95,13 +103,16 @@ async function UpdateDatabase(operationNum, queryDetails) {
           } else {
             console.error("Invalid database operation has been given.");
           }
-        } else { console.error("Incomplete database query has been given."); }
+        } else if (operationNum === 5) {
+          let returnData = await ReadAllRecords(collection);
+          res.send(JSON.stringify({ "message": returnData }));
+        }
+        else { console.error("Incomplete database query has been given."); }
       } else { console.error("Invalid collection number has been given."); }
     } else { console.error("No collection number has been given."); }
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
-  } finally {
-    await client.close(); console.log('Disconnected from MongoDB');
+    res.send(JSON.stringify({ "message": [] }));
   }
 }
 
@@ -132,6 +143,11 @@ async function SetupDatabase() {
   }
 }
 
-console.log("Database module Imported");
+StartDatabase(); console.log("Database module Imported");
+async function StartDatabase() { await client.connect(); console.log('Connected to MongoDB'); }
+async function StopDatabase() { await client.close(); console.log('Disconnected from MongoDB'); }
+async function ExitProgram() { await StopDatabase(); console.log("Server Exiting."); process.exit(); }
+
+process.on('SIGINT', function() { ExitProgram(); });
 
 module.exports = { UpdateDatabase };
