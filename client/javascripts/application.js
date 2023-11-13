@@ -12,12 +12,12 @@ var tableRows = [
 ];
 
 function updateRecordNum(recordNum) {
-  const recordsPerRow = 2;
+  let titleText = "", bodyText = "";
   let modalBody = document.getElementById("MyModalBody");
   let modalTitle = document.getElementById("MyModalTitle");
   let modalButton = document.getElementById("MyModalButton");
-  let titleText = "", bodyText = ""; selectedRecordNum = recordNum;
 
+  const recordsPerRow = 2; selectedRecordNum = recordNum;
   for (let i = 0; i < tableHeadings.length; i += recordsPerRow) {
     for (let j = i; j < Math.min(i + recordsPerRow, tableHeadings.length); j++) {
       bodyText += '<label for="' + tableHeadings[j].toLowerCase() + '">';
@@ -36,26 +36,51 @@ function updateRecordNum(recordNum) {
   }
 
   if (recordNum >= 0 && recordNum < tableRows.length) {
-    titleText = "Update Record"; modalButton.onclick = updateRecord(recordNum);
-  } else { titleText = "Add Record"; modalButton.onclick = addRecord(recordNum); }
+    titleText = "Update Record"; modalButton.onclick = function() { updateRecord(recordNum); } // .onclick = updateRecord(recordNum);
+  } else { titleText = "Add Record"; modalButton.onclick = function() { addRecord(recordNum); } } // .onclick = addRecord(recordNum); }
   modalTitle.innerHTML = titleText; modalBody.innerHTML = bodyText;
 }
 
-function sortTable(colNum) {
-  console.log("Table was sorted based on " + tableHeadings[colNum] + ".");
-}
-
-function updateTable(optionNum) {
-  const elem = document.getElementById("myButton");
+async function updateTable(optionNum) {
+  let elem = document.getElementById("myButton");
   elem.innerHTML = tableChoices[optionNum].toString();
-  renderTable();
+  elem = document.getElementById("NotificationLabel"); 
+  elem.innerHTML = tableChoices[optionNum].toString() + " records loaded.";
+  elem.style.color = "green"; await SendPostRequest(serverUri, exampleJSON);
+  await SendGetRequest(serverUri); renderTable();
 }
 
+function checkForCompleteness() {
+  for (let i = 0; i < tableHeadings.length; i++) {
+    const elemID = "My" + tableHeadings[i];
+    const elem = document.getElementById(elemID);
+    if (elem.value.toString() === "") { return false; }
+  }
+  return true;
+}
+
+// await SendPostRequest(serverUri, exampleJSON);
 updateTable(0); console.log("Application script module imported");
-// SendGetRequest(serverUri); SendPostRequest(serverUri, exampleJSON);
-function removeRecord(recordNum) { console.log("Delete Button has been pressed. Record Number: " + recordNum); }
-function updateRecord(recordNum) { console.log("Update Button has been pressed. Record Number: " + recordNum); }
-function addRecord(recordNum) { console.log("Add Button has been pressed. Record Number: " + recordNum); }
+function sortTable(colNum) { console.log("Table was sorted based on " + tableHeadings[colNum] + "."); }
+async function removeRecord(recordNum) { console.log("Delete Button has been pressed. Record Number: " + recordNum); await SendPostRequest(serverUri, exampleJSON); }
+
+async function addRecord(recordNum) {
+  console.log("Add Button has been pressed. Record Number: " + recordNum);
+  let elem = document.getElementById("NotificationLabel");
+  if (checkForCompleteness()) {
+    elem.innerHTML = "Request Sent. Kindly wait for server response.";
+    elem.style.color = "green"; await SendPostRequest(serverUri, exampleJSON);
+  } else { elem.innerHTML = "Kindly fill all input fields before sending request."; elem.style.color = "red"; }
+}
+
+async function updateRecord(recordNum) {
+  console.log("Add Button has been pressed. Record Number: " + recordNum);
+  let elem = document.getElementById("NotificationLabel");
+  if (checkForCompleteness()) {
+    elem.innerHTML = "Request Sent. Kindly wait for server response.";
+    elem.style.color = "green"; await SendPostRequest(serverUri, exampleJSON);
+  } else { elem.innerHTML = "Kindly fill all input fields before sending request."; elem.style.color = "red"; }
+}
 
 function renderTable() {
   const elem = document.getElementById("viewTable");
