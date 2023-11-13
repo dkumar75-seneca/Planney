@@ -37,7 +37,7 @@ Web Application
       Sprint 1:
         Setup Server-Client GET and POST requests in JSON format (done)
       Sprint 2:
-        Develop Basic Input and Output Functionality with validation (doing)
+        Develop Basic Input and Output Functionality with validation (done)
       Sprint 3:
         Ensure interface is functional and aesthetic on a personal computing device
       Sprint 4:
