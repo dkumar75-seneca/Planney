@@ -80,9 +80,9 @@ async function DeleteRecord(collection, recordID) {
   }
 }
 
-async function UpdateDatabase(operationNum, queryDetails, returnMessage, res) {
+async function UpdateDatabase(operationNum, queryDetails) {
   try {
-    if (queryDetails.cNum) {
+    if (queryDetails.cNum || queryDetails.cNum === 0) {
       const cNum = queryDetails.cNum;
       let numChecks = !isNaN(cNum) && cNum >= 0;
       numChecks = numChecks && cNum < cNames.length;
@@ -104,15 +104,13 @@ async function UpdateDatabase(operationNum, queryDetails, returnMessage, res) {
             console.error("Invalid database operation has been given.");
           }
         } else if (operationNum === 5) {
-          let returnData = await ReadAllRecords(collection);
-          res.send(JSON.stringify({ "message": returnData }));
+          return await ReadAllRecords(collection);
         }
         else { console.error("Incomplete database query has been given."); }
       } else { console.error("Invalid collection number has been given."); }
     } else { console.error("No collection number has been given."); }
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
-    res.send(JSON.stringify({ "message": [] }));
+    console.error('Error connecting to MongoDB:', error); return [];
   }
 }
 

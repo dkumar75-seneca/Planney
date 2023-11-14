@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 
-planneyModules = require("./index.js");
+const planneyModules = require("./index.js");
 
 // Client side project code below
 
@@ -30,29 +30,40 @@ for (let i = 0; i < webpages.length; i++) {
 }
 
 // Client side project code above
+// ------------------------------
 // Server side project code below
 
 const apiEndpoints = [
   "/locations", "/massages", "/employees", "/customers", "/timeslots",
   "/rosters", "/reminders", "/allocations", "/accounts", "/systemlogs"
-]
+];
 
-for (let i = 0; i < apiEndpoints.length; i++) {
-  let currentURI = "/api" + apiEndpoints[i];
-  router.get(currentURI, function(req, res) {
-    const operationNum = 5, queryDetails = { cNum: i };
-    const returnMessage = "GET Request For " + apiEndpoints[i] + " Received";
-    planneyModules.databaseConnector.UpdateDatabase(operationNum, queryDetails, returnMessage, res);
-  });
+async function GetRequestHandler(collectionNum, res) {
+  const operationNum = 5, queryDetails = { cNum: collectionNum };
+  const returnMessage = "GET Request For " + apiEndpoints[collectionNum] + " Received";
+  const returnData = await planneyModules.databaseConnector.UpdateDatabase(operationNum, queryDetails);
+  res.send(JSON.stringify({ "testing": returnMessage, "message": returnData }));
 }
 
-router.post("/api/*", function(req, res) {
+async function PostRequestHandler(collectionNum, req, res) {
   const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" });
-  res.send(postResponse); console.log(postResponse);
-});
+  const reqValidity = planneyModules.requestValidator.CheckRequest(collectionNum, req.body);
+  res.send(postResponse);
+}
+
+for (let i = 0; i < apiEndpoints.length; i++) {
+  const currentURI = "/api" + apiEndpoints[i];
+  router.get(currentURI, function(_, res) { GetRequestHandler(i, res); });
+  router.post(currentURI, function(req, res) { PostRequestHandler(i, req, res); });
+}
 
 // Server side project code above
+// ------------------------------
+// Server side testing code below
 
 //planneyModules.databaseConnectorTest.RunAllDBTests();
+planneyModules.requestValidatorTest.RunAllValidatorTests();
+
+// Server side testing code above
 
 module.exports = router;
