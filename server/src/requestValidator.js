@@ -1,3 +1,8 @@
 console.log("Request validator functions module imported");
 
-exports.CheckRequest = function(collectionNum, request) { console.log(collectionNum, request); return true; };
+const { collectionNames } = require('../database/collectionNames.js');
+
+exports.CheckRequest = function(collectionNum, request) {
+  console.log(collectionNames);
+  console.log(collectionNum, request); return true;
+}

@@ -1,3 +1,3 @@
-console.log("Helper functions module imported");
+console.log("Helper functions module imported.");
 
-exports.copyJSON = function(input) { return JSON.parse(JSON.stringify(input)); };
+exports.copyObject = function(input) { return JSON.parse(JSON.stringify(input)); };

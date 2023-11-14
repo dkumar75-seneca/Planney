@@ -10,8 +10,6 @@ Massages (Collection 2)
   massageName
   price
   duration
-  totalScore
-  reviewNumber
 
 Employees (Collection 3)
   employeeID
@@ -74,3 +72,9 @@ SystemLogs (Collection 10)
   description
   accessTime
   accountID
+
+Reviews (Collection 11)
+  employeeID
+  massageID
+  totalScore
+  numReviews

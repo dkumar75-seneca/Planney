@@ -1,5 +1,5 @@
 const { ObjectId } = require("mongodb");
-const { copyJSON } = require("../src/helpers.js");
+const { copyObject } = require("../src/helpers.js");
 const { UpdateDatabase } = require("./CRUD.js");
 
 const NEW_RECORD = 1, GET_RECORD = 2, CHANGE_RECORD = 3, DELETE_RECORD = 4;
@@ -26,10 +26,10 @@ const newEmployeeExample = {
 
 async function UpdateDatabaseTestOne() {
   console.log("Running First Database Test (0/2)");
-  const testA = { cNum: 1, newData: copyJSON(massageExample) }
+  const testA = { cNum: 1, newData: copyObject(massageExample) }
   await UpdateDatabase(NEW_RECORD, testA);
   console.log("Running First Database Test (1/2)");
-  const testB = { cNum: 2, newData: copyJSON(employeeExample) }
+  const testB = { cNum: 2, newData: copyObject(employeeExample) }
   await UpdateDatabase(NEW_RECORD, testB);
   console.log("Completed First Database Test (2/2)");
 }
@@ -46,10 +46,10 @@ async function UpdateDatabaseTestTwo() {
 
 async function UpdateDatabaseTestThree() {
   console.log("Running Third Database Test (0/2)");
-  const testA = { cNum: 1, recordNum: new ObjectId('654bd3184dede324d020c131'), newData: copyJSON(newMassageExample) }
+  const testA = { cNum: 1, recordNum: new ObjectId('654bd3184dede324d020c131'), newData: copyObject(newMassageExample) }
   await UpdateDatabase(CHANGE_RECORD, testA);
   console.log("Running Third Database Test (1/2)");
-  const testB = { cNum: 2, recordNum: new ObjectId('654bd34aa30c037d439f27be'), newData: copyJSON(newEmployeeExample) }
+  const testB = { cNum: 2, recordNum: new ObjectId('654bd34aa30c037d439f27be'), newData: copyObject(newEmployeeExample) }
   await UpdateDatabase(CHANGE_RECORD, testB);
   console.log("Completed Third Database Test (2/2)");
 }

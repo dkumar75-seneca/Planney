@@ -1,9 +1,9 @@
-const { copyJSON } = require("../src/helpers.js");
+const { copyObject } = require("../src/helpers.js");
 const { CheckRequest } = require("../src/requestValidator.js");
 
 async function RunAllValidatorTests() {
-  const operationNum = 1, queryDetails = 1;
-  const returnResult = CheckRequest(operationNum, queryDetails);
+  const collectionNum = 1, queryDetails = { cNum: 1 };
+  const returnResult = CheckRequest(collectionNum, queryDetails);
   if (returnResult) { console.log(1); } else { console.log(0); }
 }
 

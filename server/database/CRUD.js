@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb');
 
-const { copyJSON } = require("../src/helpers.js");
+const { copyObject } = require("../src/helpers.js");
 
 // normally you should NOT share credentials (or ANY environment variables) within source code
 // but since this is a test database with a restricted user account, its okay for now I guess
@@ -30,7 +30,7 @@ const cTemplates = [
 // Note: cNames and cTemplates list order affect system functionality, think twice before changing order.
 
 async function ValidateNewData(newData, cNum) {
-  let newDataTemplate = copyJSON(cTemplates[cNum]);
+  let newDataTemplate = copyObject(cTemplates[cNum]);
   Object.keys(newDataTemplate).forEach(function(key) {
     if (!newData[key]) { return false; }
     if (isNaN(newDataTemplate[key]) !== isNaN(newData[key])) { return false; }

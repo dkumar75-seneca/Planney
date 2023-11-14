@@ -3,14 +3,9 @@ var router = express.Router();
 var path = require('path');
 
 const planneyModules = require("./index.js");
+const { collectionNames } = require('./database/collectionNames.js');
 
 // Client side project code below
-
-const webpages = [
-  "/locations", "/massages", "/employees", "/customers", "/timeslots",
-  "/rosters", "/reminders", "/allocations", "/accounts", "/systemlogs"
-]
-
 const webLocations = [
   "webpages/locations.html", "webpages/massages.html",
   "webpages/employees.html", "webpages/customers.html",
@@ -19,12 +14,12 @@ const webLocations = [
   "webpages/accounts.html", "webpages/systemlogs.html"
 ]
 
-router.get("/", function(req, res) {
-  res.render("index.html");
-});
+router.get("/", function(req, res) { res.render("index.html"); });
 
+const webpages = planneyModules.helpers.copyObject(collectionNames);
 for (let i = 0; i < webpages.length; i++) {
-  router.get(webpages[i], function(req, res) {
+  const serviceURI = "/" + webpages[i];
+  router.get(serviceURI, function(req, res) {
     res.sendFile(path.join(__dirname, webLocations[i]));
   });
 }
@@ -33,14 +28,10 @@ for (let i = 0; i < webpages.length; i++) {
 // ------------------------------
 // Server side project code below
 
-const apiEndpoints = [
-  "/locations", "/massages", "/employees", "/customers", "/timeslots",
-  "/rosters", "/reminders", "/allocations", "/accounts", "/systemlogs"
-];
-
+const apiEndpoints = planneyModules.helpers.copyObject(collectionNames);
 async function GetRequestHandler(collectionNum, res) {
   const operationNum = 5, queryDetails = { cNum: collectionNum };
-  const returnMessage = "GET Request For " + apiEndpoints[collectionNum] + " Received";
+  const returnMessage = "GET Request For /" + apiEndpoints[collectionNum] + " Received";
   const returnData = await planneyModules.databaseConnector.UpdateDatabase(operationNum, queryDetails);
   res.send(JSON.stringify({ "testing": returnMessage, "message": returnData }));
 }
@@ -52,7 +43,7 @@ async function PostRequestHandler(collectionNum, req, res) {
 }
 
 for (let i = 0; i < apiEndpoints.length; i++) {
-  const currentURI = "/api" + apiEndpoints[i];
+  const currentURI = "/api/" + apiEndpoints[i];
   router.get(currentURI, function(_, res) { GetRequestHandler(i, res); });
   router.post(currentURI, function(req, res) { PostRequestHandler(i, req, res); });
 }
