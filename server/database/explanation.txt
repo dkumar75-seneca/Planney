@@ -1,6 +1,6 @@
 collections.txt show the database items intended to be designed and their attributes.
 
-strucutre.json list shows how the database items (collections) connect with each other.
+structure.json list shows how the database items (collections) connect with each other.
 
 setup.js sets up the MongoDB database structure.
 
