@@ -2,26 +2,14 @@ console.log("Request validator functions module imported");
 
 const { collectionNames, collectionFields } = require('../database/collectionNames.js');
 
-function ValidateString(input) { ; }
-function ValidateNumber(input) { ; }
-function ValidateBoolean(input) { ; }
-function ValidateDatetime(input) { ; }
-
-/*
-
-Employees Example Request Format:
-request = {
-  personName
-  employeeTitle
-  offeredMassages
-    massageIDs
-}
-
-*/
+function ValidateString(input) { return true; }
+function ValidateNumber(input) { return true; }
+function ValidateBoolean(input) { return true; }
+function ValidateDatetime(input) { return true; }
 
 exports.CheckRequest = function(collectionNum, inputData) {
   if (collectionNum < 0 || collectionNum >= collectionNames.length) { return false; }
-  const keyFields = collectionFields[collectionNum], chosenCollection = collectionNames[collectionNum];
+  const keyFields = collectionFields[collectionNum];
 
   for (let i = 0; i < keyFields.length; i++) {
     const fieldName = keyFields[i][0], fieldType = keyFields[i][1];
@@ -35,11 +23,17 @@ exports.CheckRequest = function(collectionNum, inputData) {
       else if (fieldType === "boolean") { check = ValidateBoolean(inputData[fieldName]); }
       if (!check) { return false; }
     } else {
-      // if (inputData)
-      // baseJSON[keyFields[i][0]] = ;
+      if (Array.isArray(inputData[fieldName])) {
+        if (fieldType === "datetime") {
+          if (!ValidateDatetime(inputData[fieldName])) { return false; }
+        } else {
+          for (let i = 0; i < inputData[fieldName].length; i++) {
+            if (!ValidateString(inputData[fieldName][i])) { return false; }
+          }
+        }
+      } else { return false; }
     }
   }
 
-  console.log(chosenCollection); console.log(keyFields);
-  console.log(collectionNum, request); return true;
+  return true; // console.log(chosenCollection); console.log(keyFields); console.log(collectionNum, request);
 }
