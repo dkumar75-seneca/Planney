@@ -1,18 +1,21 @@
 console.log("Account validation functions module imported");
 
 const { UpdateDatabase } = require("../database/CRUD.js");
-const { collectionNames, collectionFields } = require('../database/collectionNames.js');
 
-var accountDetails = null;
+// NOTE: passwords are intended to be stored as hashes (NOT plaintext),
+// it's just I haven't implemented that part in account management module.
+// So, that's why current testing is happening in plaintext. Will update this
+// to use bcrypt of built in crypto module once that functionality is implemented.
 
 async function GetAccountDetails(username) {
 	const readRecord = 2, collectionNum = 8;
   const returnData = await UpdateDatabase(readRecord, {cNum: collectionNum, recordID: username });
-	console.log(returnData); return 1;
+	return returnData;
 }
 
 exports.ValidateCredentials = async function(userCredentials) {
 	const accountData = await GetAccountDetails(userCredentials.username);
-	console.log(accountData);
-	return 1;
+	if (!accountData) { return -1; } else {
+		if (userCredentials.password === accountData.password) { return accountData.accessLevel; } else { return -1; }
+	}
 }

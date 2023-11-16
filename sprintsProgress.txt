@@ -16,13 +16,13 @@ Web Application
         collectionNames.js
         requestValidator.js
         requestValidatorTest.js
-      Sprint 3: (doing)
+      Sprint 3:
         requestFormatter.js
-        accountValidator.js
-        accountManagement.js
+        accountValidator.js (done)
+        accountManagement.js (doing)
         requestFormatterTest.js
-        accountValidatorTest.js
-        accountManagementTest.js
+        accountValidatorTest.js (done)
+        accountManagementTest.js (doing)
       Sprint 4:
         systemLogs.js
         systemLogsTest.js
