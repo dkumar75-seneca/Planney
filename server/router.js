@@ -13,7 +13,7 @@ const webLocations = [
   "webpages/timeslots.html", "webpages/rosters.html",
   "webpages/reminders.html", "webpages/allocations.html",
   "webpages/accounts.html", "webpages/systemlogs.html"
-]
+];
 
 router.get("/", function(req, res) { res.render("index.html"); });
 
@@ -31,7 +31,7 @@ for (let i = 0; i < webpages.length; i++) {
 
 const apiEndpoints = planneyModules.helpers.copyObject(collectionNames);
 
-function ValidateAccess(accessRights) { return true }
+function ValidateAccess(accessRights) { return true; }
 
 function ExtractCredentials(userRequest) { return { "username": "first", "password": "last" }; }
 
@@ -75,7 +75,10 @@ for (let i = 0; i < apiEndpoints.length; i++) {
 // Server side testing code below
 
 // planneyModules.databaseConnectorTest.RunAllDBTests();
-// planneyModules.requestValidatorTest.RunAllValidatorTests();
+// planneyModules.accountValidatorTest.RunAllAccountValidationTests();
+// planneyModules.accountManagementTest.RunAllAccountManagementTests();
+// planneyModules.requestValidatorTest.RunAllRequestValidationTests();
+// planneyModules.requestFormatterTest.RunAllRequestFormattingTests();
 
 // Server side testing code above
 

@@ -35,7 +35,7 @@ function RunValidatorTestFive() {
   console.log("Expected Value: false | Actual Value: " + returnResult);
 }
 
-function RunAllValidatorTests() {
+function RunAllRequestValidationTests() {
   console.log("Running validatior tests (1/5)"); RunValidatorTestOne();
   console.log("Running validatior tests (2/5)"); RunValidatorTestTwo();
   console.log("Running validatior tests (3/5)"); RunValidatorTestThree();
@@ -45,4 +45,4 @@ function RunAllValidatorTests() {
 
 console.log("Request validation testing module imported.");
 
-module.exports = { RunAllValidatorTests };
+module.exports = { RunAllRequestValidationTests };
