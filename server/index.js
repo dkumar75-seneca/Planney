@@ -5,6 +5,10 @@ exports.databaseConnector = require("./database/CRUD.js");
 exports.databaseConnectorTest = require("./database/CRUDTest.js");
 
 exports.helpers = require("./src/helpers.js");
+
+// exports.requestFormatter = require("./src/requestFormatter.js");
+// exports.requestFormatterTest = require("./tests/requestFormatterTest.js");
+
 exports.requestValidator = require("./src/requestValidator.js");
 exports.requestValidatorTest = require("./tests/requestValidatorTest.js");
 
