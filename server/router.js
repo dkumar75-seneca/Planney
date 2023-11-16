@@ -38,7 +38,7 @@ async function GetRequestHandler(collectionNum, res) {
 
 async function PostRequestHandler(collectionNum, req, res) {
   const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" });
-  const reqValidity = planneyModules.requestValidator.CheckRequest(collectionNum, req.body);
+  //const reqValidity = planneyModules.requestValidator.CheckRequest(collectionNum, req.body);
   res.send(postResponse);
 }
 

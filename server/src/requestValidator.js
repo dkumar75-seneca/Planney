@@ -2,32 +2,36 @@ console.log("Request validator functions module imported");
 
 const { collectionNames, collectionFields } = require('../database/collectionNames.js');
 
-function ValidateString(input) { return true; }
-function ValidateNumber(input) { return true; }
+function ValidateString(input, collectionName, collectionField) { return true; }
+function ValidateNumber(input, collectionName, collectionField) { return true; }
 
-exports.CheckRequest = function(collectionNum, inputData) {
+exports.CheckRequest = function(collectionNum, inputData, ignoreID, ignoreFields) {
   if (collectionNum < 0 || collectionNum >= collectionNames.length) { return false; }
   const keyFields = collectionFields[collectionNum];
 
-  for (let i = 0; i < keyFields.length; i++) {
+  // which columns are validated depends on type of data operation 
+  let startNum = 0; if (ignoreID === true) { startNum = 1; }
+  let endNum = keyFields.length; if (ignoreFields === true) { endNum = 1; }
+
+  for (let i = startNum; i < endNum; i++) {
     const fieldName = keyFields[i][0], fieldType = keyFields[i][1];
     if (!inputData[fieldName]) { return false; }
     
     if (fieldType === "string" || fieldType === "number") {
       let check = false;
       if (!typeof inputData[fieldName] === fieldType) { return false; }
-      if (fieldType === "string") { check = ValidateString(inputData[fieldName]); }
-      else if (fieldType === "number") { check = ValidateNumber(inputData[fieldName]); }
+      if (fieldType === "string") { check = ValidateString(inputData[fieldName], null, null); }
+      else if (fieldType === "number") { check = ValidateNumber(inputData[fieldName], null, null); }
       if (!check) { return false; }
     } else {
       if (Array.isArray(inputData[fieldName])) {
         if (fieldType === "datetime") {
           for (let i = 0; i < inputData[fieldName].length; i++) {
-            if (!ValidateNumber(inputData[fieldName][i])) { return false; }
+            if (!ValidateNumber(inputData[fieldName][i], null, null)) { return false; }
           }
         } else {
           for (let i = 0; i < inputData[fieldName].length; i++) {
-            if (!ValidateString(inputData[fieldName][i])) { return false; }
+            if (!ValidateString(inputData[fieldName][i], null, null)) { return false; }
           }
         }
       } else { return false; }

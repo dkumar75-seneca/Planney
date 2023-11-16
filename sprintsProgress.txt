@@ -9,37 +9,29 @@ Web Application
       Configure network access across each architecture component
   Localhost Development
     Design REST API Server
-      Sprint 1:
-        CRUD.js (done)
-        CRUDTest.js (done)
-      Sprint 2: (doing)
+      Sprint 1: (done)
+        CRUD.js
+        CRUDTest.js
+      Sprint 2: (done)
+        collectionNames.js
         requestValidator.js
-        timeslotManagement.js
-        therapistManagement.js
-        appointmentManagement.js
-
         requestValidatorTest.js
-        timeslotManagementTest.js
-        therapistManagementTest.js
-        appointmentManagementTest.js
-      Sprint 3:
-        systemLogs.js
-        systemLogsTest.js
+      Sprint 3: (doing)
         accountValidator.js
         accountManagement.js
         accountValidatorTest.js
         accountManagementTest.js
       Sprint 4:
-        reviewsManagement.js
-        reviewsManagementTest.js
+        systemLogs.js
+        systemLogsTest.js
         automatedReminders.js
         automatedRemindersTest.js
     Design User Interface
-      Sprint 1:
-        Setup Server-Client GET and POST requests in JSON format (done)
-      Sprint 2:
-        Develop Basic Input and Output Functionality with validation (done)
-      Sprint 3:
+      Sprint 1: (done)
+        Setup Server-Client GET and POST requests in JSON format
+      Sprint 2: (done)
+        Develop Basic Input and Output Functionality with validation
+      Sprint 3: (doing)
         Ensure interface is functional and aesthetic on a desktop device
       Sprint 4:
         Ensure interface is functional and aesthetic on a smartphone device
