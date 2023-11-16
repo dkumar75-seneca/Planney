@@ -17,8 +17,10 @@ Web Application
         requestValidator.js
         requestValidatorTest.js
       Sprint 3: (doing)
+        requestFormatter.js
         accountValidator.js
         accountManagement.js
+        requestFormatterTest.js
         accountValidatorTest.js
         accountManagementTest.js
       Sprint 4:
