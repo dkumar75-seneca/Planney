@@ -36,11 +36,11 @@ function RunValidatorTestFive() {
 }
 
 function RunAllRequestValidationTests() {
-  console.log("Running validatior tests (1/5)"); RunValidatorTestOne();
-  console.log("Running validatior tests (2/5)"); RunValidatorTestTwo();
-  console.log("Running validatior tests (3/5)"); RunValidatorTestThree();
-  console.log("Running validatior tests (4/5)"); RunValidatorTestFour();
-  console.log("Running validatior tests (5/5)"); RunValidatorTestFive();
+  console.log("Running request validation tests (1/5)"); RunValidatorTestOne();
+  console.log("Running request validation tests (2/5)"); RunValidatorTestTwo();
+  console.log("Running request validation tests (3/5)"); RunValidatorTestThree();
+  console.log("Running request validation tests (4/5)"); RunValidatorTestFour();
+  console.log("Running request validation tests (5/5)"); RunValidatorTestFive();
 }
 
 console.log("Request validation testing module imported.");
