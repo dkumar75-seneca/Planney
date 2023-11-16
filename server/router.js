@@ -39,7 +39,7 @@ async function GetRequestHandler(collectionNum, res) {
   const operationNum = 5, queryDetails = { cNum: collectionNum };
   const returnMessage = "GET Request For /" + apiEndpoints[collectionNum] + " Received";
   const returnData = await planneyModules.databaseConnector.UpdateDatabase(operationNum, queryDetails);
-  res.send(JSON.stringify({ "testing": returnMessage, "message": returnData }));
+  res.send(JSON.stringify({ "message": returnMessage, "data": returnData }));
 }
 
 async function PostRequestHandler(collectionNum, req, res) {

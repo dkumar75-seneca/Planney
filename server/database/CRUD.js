@@ -35,8 +35,8 @@ async function CreateRecord(collection, newData, cNum) {
 async function ReadAllRecords(collection) {
   try {
     let testArray = [];
-    const cursor = await collection.find({}, { _id: 0 });
-    for await (const doc of cursor) { testArray.push(doc); }
+    const cursor = await collection.find({}, { projection: {_id:0} });
+    for await (const doc of cursor) { console.log(doc); testArray.push(doc); }
     return testArray;
   } catch (e) { console.log(e); return []; }
 }

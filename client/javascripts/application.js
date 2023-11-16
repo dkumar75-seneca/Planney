@@ -46,8 +46,17 @@ async function updateTable(optionNum) {
   elem.innerHTML = tableChoices[optionNum].toString();
   elem = document.getElementById("NotificationLabel"); 
   elem.innerHTML = tableChoices[optionNum].toString() + " records loaded.";
-  elem.style.color = "green"; await SendPostRequest(serverUri, exampleJSON);
-  await SendGetRequest(serverUri); renderTable();
+  elem.style.color = "green"; // await SendPostRequest(serverUri, exampleJSON);
+  const serverData = await SendGetRequest(serverUri + "/" + tableChoices[optionNum]);
+  if (serverData.data) {
+    for (let i = 0; i < serverData.data.length; i++) {
+      console.log(serverData.data[i]);
+      for (var key of Object.keys(serverData.data[i])) {
+        console.log(key + " -> " + serverData.data[i][key]);
+      }
+    }
+  } // tableRows = serverData.data;
+  renderTable();
 }
 
 function checkForCompleteness() {
@@ -62,14 +71,14 @@ function checkForCompleteness() {
 // await SendPostRequest(serverUri, exampleJSON);
 updateTable(0); console.log("Application script module imported");
 function sortTable(colNum) { console.log("Table was sorted based on " + tableHeadings[colNum] + "."); }
-async function removeRecord(recordNum) { console.log("Delete Button has been pressed. Record Number: " + recordNum); await SendPostRequest(serverUri, exampleJSON); }
+async function removeRecord(recordNum) { console.log("Delete Button has been pressed. Record Number: " + recordNum); } // await SendPostRequest(serverUri, exampleJSON); }
 
 async function addRecord(recordNum) {
   console.log("Add Button has been pressed. Record Number: " + recordNum);
   let elem = document.getElementById("NotificationLabel");
   if (checkForCompleteness()) {
     elem.innerHTML = "Request Sent. Kindly wait for server response.";
-    elem.style.color = "green"; await SendPostRequest(serverUri, exampleJSON);
+    elem.style.color = "green"; // await SendPostRequest(serverUri, exampleJSON);
   } else { elem.innerHTML = "Kindly fill all input fields before sending request."; elem.style.color = "red"; }
 }
 
@@ -78,7 +87,7 @@ async function updateRecord(recordNum) {
   let elem = document.getElementById("NotificationLabel");
   if (checkForCompleteness()) {
     elem.innerHTML = "Request Sent. Kindly wait for server response.";
-    elem.style.color = "green"; await SendPostRequest(serverUri, exampleJSON);
+    elem.style.color = "green"; // await SendPostRequest(serverUri, exampleJSON);
   } else { elem.innerHTML = "Kindly fill all input fields before sending request."; elem.style.color = "red"; }
 }
 
