@@ -1,33 +1,19 @@
 const { MongoClient } = require('mongodb');
 
 const { copyObject } = require("../src/helpers.js");
+const { collectionNames, collectionTemplates } = require('./collectionNames.js');
 
 // normally you should NOT share credentials (or ANY environment variables) within source code
 // but since this is a test database with a restricted user account, its okay for now I guess
 const uri = 'mongodb+srv://new-user:Up43nVs3VpvO0Lnk@cluster-dhiraj.xg6us6r.mongodb.net/PlanneyDB';
 const client = new MongoClient(uri);
 
-// Note: cNames and cTemplates list order affect system functionality, think twice before changing order.
+// Note: cNames and cTemplates list order synchronisation affect system functionality.
 // ------------------------------------------------------------------------
-const cNames = [
-  "Locations", "Massages", "Employees", "Customers", "Timeslots",
-  "Rosters", "Reminders", "Allocations", "Accounts", "SystemLogs"
-];
-
-const cTemplates = [
-  { state: null, country: null, postalCode: null, streetAddress: null },
-  { massageName: null, price: 0, duration: 0, massageNumber: 0, totalScore: 0, reviewsNumber: 0 },
-  { personName: null, employeeTitle: null, offeredMassages: [] },
-  { personName: null, whitelisted: null },
-  { status: null, personName: null, employeeNum: 0, roomNumber: 0, slotNumber: 0 },
-  { date: null, branchNum: 0, timeslots: [] },
-  { title: null, status: null, alertTime: null, description: null },
-  { branchNum: 0, rosterNum: 0, slotNumber: 0, customerNum: 0, waitlist: [], reminders: [] },
-  { accessLevel: 0, userID: 0, password: null, username: null, phone: null, email: null },
-  { personName: null, actionType: null, description: null, accessTime: null, accountID: null }
-]
+const cNames = copyObject(collectionNames);
+const cTemplates = copyObject(collectionTemplates);
 // ------------------------------------------------------------------------
-// Note: cNames and cTemplates list order affect system functionality, think twice before changing order.
+// Note: cNames and cTemplates list order synchronisation affect system functionality.
 
 async function ValidateNewData(newData, cNum) {
   let newDataTemplate = copyObject(cTemplates[cNum]);
@@ -42,7 +28,8 @@ async function CreateRecord(collection, newData, cNum) {
   if (ValidateNewData(newData, cNum)) {
     const result = await collection.insertOne(newData);
     console.log("Insert Record Result: ", result);
-  }
+    return true;
+  } else { return false; }
 }
 
 async function ReadAllRecords(collection) {
@@ -54,11 +41,11 @@ async function ReadAllRecords(collection) {
   } catch (e) { console.log(e); return []; }
 }
 
-
-async function ReadRecord(collection, recordID) {
-  const query = { _id: recordID };
+async function ReadRecord(collection, uName) {
+  const query = { username: uName };
   const result = await collection.findOne(query);
   console.log("Read Record Result: ", result);
+  return result;
 }
 
 async function UpdateRecord(collection, recordID, newData, cNum) {
@@ -67,7 +54,8 @@ async function UpdateRecord(collection, recordID, newData, cNum) {
     const update = { $set: newData };
     const result = await collection.updateOne(filter, update);
     console.log("Update Record Result: ", result);
-  }
+    return true;
+  } else { return false; }
 }
 
 async function DeleteRecord(collection, recordID) {
@@ -90,16 +78,16 @@ async function UpdateDatabase(operationNum, queryDetails) {
       if (numChecks) {
         const collection = client.db().collection(cNames[cNum]);
         if (operationNum === 1 && queryDetails.newData) {
-          await CreateRecord(collection, queryDetails.newData, cNum);
+          return await CreateRecord(collection, queryDetails.newData, cNum);
         } else if (queryDetails.recordID) {
           const recordID = queryDetails.recordID;
           if (operationNum === 2) {
-            await ReadRecord(collection, recordID);
+            return await ReadRecord(collection, recordID);
           } else if (operationNum === 3 && queryDetails.newData) {
             const newData = queryDetails.newData;
-            await UpdateRecord(collection, recordID, newData, cNum);
+            return await UpdateRecord(collection, recordID, newData, cNum);
           } else if (operationNum === 4) {
-            await DeleteRecord(collection, recordID);
+            return await DeleteRecord(collection, recordID);
           } else {
             console.error("Invalid database operation has been given.");
           }

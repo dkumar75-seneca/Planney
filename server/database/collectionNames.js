@@ -1,8 +1,8 @@
 // Order of the below variables should be in sync. Hence, they are kept in the same js file.
 
 exports.collectionNames = [
-  "locations", "massages", "employees", "customers", "timeslots",
-  "rosters", "reminders", "allocations", "accounts", "systemlogs"
+  "Locations", "Massages", "Employees", "Customers", "Timeslots",
+  "Rosters", "Reminders", "Allocations", "Accounts", "SystemLogs"
 ];
 
 exports.collectionFields = [
@@ -20,4 +20,17 @@ exports.collectionFields = [
    ["accessLevel", "number"], ["phone", "string"], ["email", "string"], ["userID", "string"]],
    [["logID", "string"], ["personName", "string"], ["actionType", "number"],
    ["description", "string"], ["accessTime", "datetime"], ["accountID", "string"]]
+];
+
+exports.collectionTemplates = [
+  { state: null, country: null, postalCode: null, streetAddress: null },
+  { massageName: null, price: 0, duration: 0, massageNumber: 0, totalScore: 0, reviewsNumber: 0 },
+  { personName: null, employeeTitle: null, offeredMassages: [] },
+  { personName: null, whitelisted: null },
+  { status: null, personName: null, employeeNum: 0, roomNumber: 0, slotNumber: 0 },
+  { date: null, branchNum: 0, timeslots: [] },
+  { title: null, status: null, alertTime: null, description: null },
+  { branchNum: 0, rosterNum: 0, slotNumber: 0, customerNum: 0, waitlist: [], reminders: [] },
+  { accessLevel: 0, userID: 0, password: null, username: null, phone: null, email: null },
+  { personName: null, actionType: null, description: null, accessTime: null, accountID: null }
 ];

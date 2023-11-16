@@ -75,7 +75,7 @@ for (let i = 0; i < apiEndpoints.length; i++) {
 // Server side testing code below
 
 // planneyModules.databaseConnectorTest.RunAllDBTests();
-// planneyModules.accountValidatorTest.RunAllAccountValidationTests();
+planneyModules.accountValidatorTest.RunAllAccountValidationTests();
 // planneyModules.accountManagementTest.RunAllAccountManagementTests();
 // planneyModules.requestValidatorTest.RunAllRequestValidationTests();
 // planneyModules.requestFormatterTest.RunAllRequestFormattingTests();
