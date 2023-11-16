@@ -1,4 +1,4 @@
-//const { CheckRequest } = require("../src/accountManagement.js");
+//const { ValidateAccessRights } = require("../src/accountManagement.js");
 
 function RunAllAccountManagementTests() {
   console.log("Running account management tests (1/1)"); // RunFormattingTestOne();

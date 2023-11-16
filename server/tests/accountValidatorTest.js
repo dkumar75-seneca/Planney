@@ -1,4 +1,4 @@
-//const { CheckRequest } = require("../src/accountValidator.js");
+//const { ValidateCredentials } = require("../src/accountValidator.js");
 
 function RunAllAccountValidationTests() {
   console.log("Running account validation tests (1/1)"); // RunFormattingTestOne();

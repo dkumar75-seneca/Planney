@@ -5,7 +5,7 @@ const { collectionNames, collectionFields } = require('../database/collectionNam
 // function ValidateString(input, collectionName, collectionField) { return true; }
 // function ValidateNumber(input, collectionName, collectionField) { return true; }
 
-exports.CheckRequest = function(collectionNum, inputData, ignoreID, ignoreFields) {
+exports.ValidateRequest = function(collectionNum, inputData, ignoreID, ignoreFields) {
   if (collectionNum < 0 || collectionNum >= collectionNames.length) { return false; }
   const keyFields = collectionFields[collectionNum];
 

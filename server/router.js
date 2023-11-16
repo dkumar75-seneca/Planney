@@ -48,12 +48,12 @@ async function PostRequestHandler(collectionNum, req, res) {
   const userCredentials = ExtractCredentials(req.body.access);
   const accessLevel = planneyModules.accountValidator.ValidateCredentials(userCredentials);
   if (accessLevel > 0) {
-    const accessRights = planneyModules.accountManagement.GetAccessRights(accessLevel);
+    const accessRights = planneyModules.accountManagement.ValidateAccessRights(accessLevel);
     if (ValidateAccess(req.body.operation, accessRights)) {
-      const validRequest = planneyModules.requestValidator.CheckRequest(collectionNum, req.body.input);
+      const validRequest = planneyModules.requestValidator.ValidateRequest(collectionNum, req.body.input);
       if (validRequest) {
         const insertRequest = 1, updateRecord = 3, deleteRecord = 4;
-        const sanitisedData = planneyModules.requestValidator.FormatRequest(collectionNum, req.body.input);
+        const sanitisedData = planneyModules.requestFormatter.FormatRequest(collectionNum, req.body.input);
         if (req.body.operation.type === 0) { planneyModules.databaseConnector.UpdateDatabase(insertRequest, sanitisedData); }
         else if (req.body.operation.type === 1) { planneyModules.databaseConnector.UpdateDatabase(updateRecord, sanitisedData); }
         else if (req.body.operation.type === 2) { planneyModules.databaseConnector.UpdateDatabase(deleteRecord, sanitisedData); }

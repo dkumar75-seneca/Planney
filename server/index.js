@@ -6,14 +6,14 @@ exports.databaseConnectorTest = require("./database/CRUDTest.js");
 
 exports.helpers = require("./src/helpers.js");
 
-// exports.accountValidator = require("./src/accountValidator.js");
-// exports.accountValidatorTest = require("./tests/accountValidatorTest.js");
+exports.accountValidator = require("./src/accountValidator.js");
+exports.accountValidatorTest = require("./tests/accountValidatorTest.js");
 
-// exports.accountManagement = require("./src/accountManagement.js");
-// exports.accountManagementTest = require("./tests/accountManagementTest.js");
+exports.accountManagement = require("./src/accountManagement.js");
+exports.accountManagementTest = require("./tests/accountManagementTest.js");
 
 exports.requestValidator = require("./src/requestValidator.js");
 exports.requestValidatorTest = require("./tests/requestValidatorTest.js");
 
-// exports.requestFormatter = require("./src/requestFormatter.js");
-// exports.requestFormatterTest = require("./tests/requestFormatterTest.js");
+exports.requestFormatter = require("./src/requestFormatter.js");
+exports.requestFormatterTest = require("./tests/requestFormatterTest.js");
