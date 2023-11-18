@@ -35,6 +35,7 @@ function ValidateAccess(accessRights) { return true; }
 const accountsIndex = 8;
 async function PostRequestHandler(collectionNum, req, res) {
   const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" });
+  const requestType = req.body.requestType, signup = 1, login = 2, resetPassword = 3; res.send(postResponse);
   if (collectionNum === accountsIndex && requestType === signup) {
     console.log("Signup functionality still to be implemented.");
   } else if (collectionNum === accountsIndex && requestType === resetPassword) {
@@ -42,8 +43,7 @@ async function PostRequestHandler(collectionNum, req, res) {
   } else {
     const userCredentials = ExtractCredentials(req.body.access);
     const accessLevel = planneyModules.accountValidator.ValidateCredentials(userCredentials);
-    const skipForNow = true;
-    if (accessLevel > 0 || skipForNow) {
+    if (accessLevel > 0) { return;
       if (requestType === login) { res.send(JSON.stringify({ "login": 1 })); }
       const accessRights = planneyModules.accountManagement.ValidateAccessRights(accessLevel);
       if (ValidateAccess(req.body.operation, accessRights)) {
@@ -58,8 +58,6 @@ async function PostRequestHandler(collectionNum, req, res) {
       } else { res.send(JSON.stringify({ "error": "Failed Input. Not Enough Authorisation." })); }
     } else { res.send(JSON.stringify({ "error": "Failed Login. Recheck Credentials." })); }
   }
-  const requestType = req.body.requestType, signup = 1, login = 2, resetPassword = 3;
-  res.send(postResponse);
 }
 
 // Server side project code above
