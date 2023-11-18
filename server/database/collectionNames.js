@@ -18,7 +18,7 @@ exports.collectionFields = [
    ["customerID", "string"], ["waitlist", "Array<string>"], ["reminders", "Array<string>"]],
   [["accountID", "string"], ["username", "string"], ["password", "string"],
    ["accessLevel", "number"], ["phone", "string"], ["email", "string"], ["userID", "string"]],
-   [["logID", "string"], ["personName", "string"], ["actionType", "number"],
+  [["logID", "string"], ["personName", "string"], ["actionType", "number"],
    ["description", "string"], ["accessTime", "datetime"], ["accountID", "string"]]
 ];
 

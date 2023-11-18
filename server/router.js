@@ -1,39 +1,17 @@
 var express = require('express');
 var router = express.Router();
-var path = require('path');
 
 const planneyModules = require("./index.js");
 const { collectionNames } = require('./database/collectionNames.js');
 
-// Client side project code below
-
-const webLocations = [
-  "webpages/locations.html", "webpages/massages.html",
-  "webpages/employees.html", "webpages/customers.html",
-  "webpages/timeslots.html", "webpages/rosters.html",
-  "webpages/reminders.html", "webpages/allocations.html",
-  "webpages/accounts.html", "webpages/systemlogs.html"
-];
-
 router.get("/", function(req, res) { res.render("index.html"); });
 
-const webpages = planneyModules.helpers.copyObject(collectionNames);
-for (let i = 0; i < webpages.length; i++) {
-  const serviceURI = "/" + webpages[i];
-  router.get(serviceURI, function(req, res) {
-    res.sendFile(path.join(__dirname, webLocations[i]));
-  });
-}
-
-// Client side project code above
-// ------------------------------
-// Server side project code below
-
 const apiEndpoints = planneyModules.helpers.copyObject(collectionNames);
-
-function ValidateAccess(accessRights) { return true; }
-
-function ExtractCredentials(userRequest) { return { "username": "first", "password": "last" }; }
+for (let i = 0; i < apiEndpoints.length; i++) {
+  const currentURI = "/api/" + apiEndpoints[i];
+  router.get(currentURI, function(_, res) { GetRequestHandler(i, res); });
+  router.post(currentURI, function(req, res) { PostRequestHandler(i, req, res); });
+}
 
 async function GetRequestHandler(collectionNum, res) {
   const operationNum = 5, queryDetails = { cNum: collectionNum };
@@ -42,32 +20,38 @@ async function GetRequestHandler(collectionNum, res) {
   res.send(JSON.stringify({ "message": returnMessage, "data": returnData }));
 }
 
-async function PostRequestHandler(collectionNum, req, res) {
-  const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" });
-/*
-  const userCredentials = ExtractCredentials(req.body.access);
-  const accessLevel = planneyModules.accountValidator.ValidateCredentials(userCredentials);
-  if (accessLevel > 0) {
-    const accessRights = planneyModules.accountManagement.ValidateAccessRights(accessLevel);
-    if (ValidateAccess(req.body.operation, accessRights)) {
-      const validRequest = planneyModules.requestValidator.ValidateRequest(collectionNum, req.body.input);
-      if (validRequest) {
-        const insertRequest = 1, updateRecord = 3, deleteRecord = 4;
-        const sanitisedData = planneyModules.requestFormatter.FormatRequest(collectionNum, req.body.input);
-        if (req.body.operation.type === 0) { planneyModules.databaseConnector.UpdateDatabase(insertRequest, sanitisedData); }
-        else if (req.body.operation.type === 1) { planneyModules.databaseConnector.UpdateDatabase(updateRecord, sanitisedData); }
-        else if (req.body.operation.type === 2) { planneyModules.databaseConnector.UpdateDatabase(deleteRecord, sanitisedData); }
-      } else { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
-    } else { res.send(JSON.stringify({ "error": "Failed Input. Not Enough Authorisation." })); }
-  } else { res.send(JSON.stringify({ "error": "Failed Login. Recheck Credentials." })); }
-*/
-  res.send(postResponse);
-}
+function ValidateAccess(accessRights) { return true; }
 
-for (let i = 0; i < apiEndpoints.length; i++) {
-  const currentURI = "/api/" + apiEndpoints[i];
-  router.get(currentURI, function(_, res) { GetRequestHandler(i, res); });
-  router.post(currentURI, function(req, res) { PostRequestHandler(i, req, res); });
+function ExtractCredentials(userRequest) { return { "username": "first", "password": "last" }; }
+
+const accountsIndex = 8;
+async function PostRequestHandler(collectionNum, req, res) {
+  const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" }); res.send(postResponse);
+  const requestType = req.body.requestType, signup = 1, login = 2, resetPassword = 3;
+/*
+  if (collectionNum === accountsIndex && requestType === signup) {
+    ;
+  } else if (collectionNum === accountsIndex && requestType === resetPassword) {
+    ;
+  } else {
+    const userCredentials = ExtractCredentials(req.body.access);
+    const accessLevel = planneyModules.accountValidator.ValidateCredentials(userCredentials);
+    if (accessLevel > 0) {
+      if (requestType === login) { res.send(JSON.stringify({ "login": 1 })); }
+      const accessRights = planneyModules.accountManagement.ValidateAccessRights(accessLevel);
+      if (ValidateAccess(req.body.operation, accessRights)) {
+        const validRequest = planneyModules.requestValidator.ValidateRequest(collectionNum, req.body.input);
+        if (validRequest) {
+          const insertRequest = 1, updateRecord = 3, deleteRecord = 4;
+          const sanitisedData = planneyModules.requestFormatter.FormatRequest(collectionNum, req.body.input);
+          if (req.body.operation.type === 0) { planneyModules.databaseConnector.UpdateDatabase(insertRequest, sanitisedData); }
+          else if (req.body.operation.type === 1) { planneyModules.databaseConnector.UpdateDatabase(updateRecord, sanitisedData); }
+          else if (req.body.operation.type === 2) { planneyModules.databaseConnector.UpdateDatabase(deleteRecord, sanitisedData); }
+        } else { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
+      } else { res.send(JSON.stringify({ "error": "Failed Input. Not Enough Authorisation." })); }
+    } else { res.send(JSON.stringify({ "error": "Failed Login. Recheck Credentials." })); }
+  }
+*/
 }
 
 // Server side project code above
@@ -79,7 +63,5 @@ for (let i = 0; i < apiEndpoints.length; i++) {
 // planneyModules.accountManagementTest.RunAllAccountManagementTests();
 // planneyModules.requestValidatorTest.RunAllRequestValidationTests();
 // planneyModules.requestFormatterTest.RunAllRequestFormattingTests();
-
-// Server side testing code above
 
 module.exports = router;
