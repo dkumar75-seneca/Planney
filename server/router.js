@@ -28,6 +28,8 @@ const accountsIndex = 8;
 async function PostRequestHandler(collectionNum, req, res) {
   const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" }); res.send(postResponse);
   const requestType = req.body.requestType, signup = 1, login = 2, resetPassword = 3;
+}
+
 /*
   if (collectionNum === accountsIndex && requestType === signup) {
     ;
@@ -52,7 +54,6 @@ async function PostRequestHandler(collectionNum, req, res) {
     } else { res.send(JSON.stringify({ "error": "Failed Login. Recheck Credentials." })); }
   }
 */
-}
 
 // Server side project code above
 // ------------------------------
