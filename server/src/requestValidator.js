@@ -2,8 +2,13 @@ console.log("Request validator functions module imported");
 
 const { collectionNames, collectionFields } = require('../database/collectionNames.js');
 
-// function ValidateString(input, collectionName, collectionField) { return true; }
 // function ValidateNumber(input, collectionName, collectionField) { return true; }
+
+exports.ValidateString = function(input) {
+  const maxLength = 50, allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@+.";
+  for (let i = 0; i < input.length; i++) { if (!allowedCharacters.includes(input[i])) { return false; } }
+  if (input.length > maxLength) { return false; }; return true;
+}
 
 exports.ValidateRequest = function(collectionNum, inputData, ignoreID, ignoreFields) {
   if (collectionNum < 0 || collectionNum >= collectionNames.length) { return false; }
@@ -19,20 +24,20 @@ exports.ValidateRequest = function(collectionNum, inputData, ignoreID, ignoreFie
     if (fieldType === "string" || fieldType === "number") {
       let check = true;
       if (!(typeof inputData[fieldName] === fieldType)) { return false; }
-      // if (fieldType === "string") { check = ValidateString(inputData[fieldName], null, null); }
-      // else if (fieldType === "number") { check = ValidateNumber(inputData[fieldName], null, null); }
+      if (fieldType === "string") { check = ValidateString(inputData[fieldName]); }
+      // else if (fieldType === "number") { check = ValidateNumber(inputData[fieldName]); }
       if (!check) { return false; }
     } else {
       if (Array.isArray(inputData[fieldName])) {
         if (fieldType === "datetime") {
           for (let i = 0; i < inputData[fieldName].length; i++) {
             if (!(typeof inputData[fieldName][i] === "number")) { return false; }
-            // if (!ValidateNumber(inputData[fieldName][i], null, null)) { return false; }
+            // if (!ValidateNumber(inputData[fieldName][i])) { return false; }
           }
         } else {
           for (let i = 0; i < inputData[fieldName].length; i++) {
             if (!(typeof inputData[fieldName][i] === "string")) { return false; }
-            // if (!ValidateString(inputData[fieldName][i], null, null)) { return false; }
+            if (!ValidateString(inputData[fieldName][i])) { return false; }
           }
         }
       } else { return false; }

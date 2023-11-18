@@ -20,25 +20,30 @@ async function GetRequestHandler(collectionNum, res) {
   res.send(JSON.stringify({ "message": returnMessage, "data": returnData }));
 }
 
-function ValidateAccess(accessRights) { return true; }
+function ExtractCredentials(userRequest) {
+  let credentials = { "username": null, "password": null };
+  if (!userRequest.username || !userRequest.password) { return credentials; }
+  if (!(typeof userRequest.username === "string")) { return credentials; }
+  if (!(typeof userRequest.password === "string")) { return credentials; }
+  if (!planneyModules.requestValidator.ValidateString(userRequest.username)) { return credentials; }
+  if (!planneyModules.requestValidator.ValidateString(userRequest.password)) { return credentials; }
+  return { "username": userRequest.username, "password": userRequest.password }
+}
 
-function ExtractCredentials(userRequest) { return { "username": "first", "password": "last" }; }
+function ValidateAccess(accessRights) { return true; }
 
 const accountsIndex = 8;
 async function PostRequestHandler(collectionNum, req, res) {
-  const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" }); res.send(postResponse);
-  const requestType = req.body.requestType, signup = 1, login = 2, resetPassword = 3;
-}
-
-/*
+  const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" });
   if (collectionNum === accountsIndex && requestType === signup) {
-    ;
+    console.log("Signup functionality still to be implemented.");
   } else if (collectionNum === accountsIndex && requestType === resetPassword) {
-    ;
+    console.log("Reset password functionality still to be implemented.");
   } else {
     const userCredentials = ExtractCredentials(req.body.access);
     const accessLevel = planneyModules.accountValidator.ValidateCredentials(userCredentials);
-    if (accessLevel > 0) {
+    const skipForNow = true;
+    if (accessLevel > 0 || skipForNow) {
       if (requestType === login) { res.send(JSON.stringify({ "login": 1 })); }
       const accessRights = planneyModules.accountManagement.ValidateAccessRights(accessLevel);
       if (ValidateAccess(req.body.operation, accessRights)) {
@@ -53,7 +58,9 @@ async function PostRequestHandler(collectionNum, req, res) {
       } else { res.send(JSON.stringify({ "error": "Failed Input. Not Enough Authorisation." })); }
     } else { res.send(JSON.stringify({ "error": "Failed Login. Recheck Credentials." })); }
   }
-*/
+  const requestType = req.body.requestType, signup = 1, login = 2, resetPassword = 3;
+  res.send(postResponse);
+}
 
 // Server side project code above
 // ------------------------------
