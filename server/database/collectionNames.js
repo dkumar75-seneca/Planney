@@ -34,3 +34,11 @@ exports.collectionTemplates = [
   { accessLevel: 0, userID: 0, password: null, username: null, phone: null, email: null },
   { personName: null, actionType: null, description: null, accessTime: null, accountID: null }
 ];
+
+exports.collectionAccessRequirements = [
+  { insert: 1, read: 1, update: 1, delete: 1 }, { insert: 1, read: 1, update: 1, delete: 1 },
+  { insert: 1, read: 1, update: 1, delete: 1 }, { insert: 1, read: 1, update: 1, delete: 1 },
+  { insert: 1, read: 1, update: 1, delete: 1 }, { insert: 1, read: 1, update: 1, delete: 1 },
+  { insert: 1, read: 1, update: 1, delete: 1 }, { insert: 1, read: 1, update: 1, delete: 1 },
+  { insert: 1, read: 1, update: 1, delete: 1 }, { insert: 1, read: 1, update: 1, delete: 1 }
+];
