@@ -27,7 +27,6 @@ async function ValidateNewData(newData, cNum) {
 async function CreateRecord(collection, newData, cNum) {
   if (ValidateNewData(newData, cNum)) {
     const result = await collection.insertOne(newData);
-    console.log("Insert Record Result: ", result);
     return true;
   } else { return false; }
 }
@@ -44,7 +43,6 @@ async function ReadAllRecords(collection) {
 async function ReadRecord(collection, uName) {
   const query = { username: uName };
   const result = await collection.findOne(query);
-  console.log("Read Record Result: ", result);
   return result;
 }
 
@@ -53,7 +51,6 @@ async function UpdateRecord(collection, recordID, newData, cNum) {
     const filter = { _id: recordID };
     const update = { $set: newData };
     const result = await collection.updateOne(filter, update);
-    console.log("Update Record Result: ", result);
     return true;
   } else { return false; }
 }
@@ -76,15 +73,15 @@ async function UpdateDatabase(operationNum, queryDetails) {
       numChecks = numChecks && cNum < cNames.length;
       
       if (numChecks) {
+        const newData = queryDetails.newData;
         const collection = client.db().collection(cNames[cNum]);
-        if (operationNum === 1 && queryDetails.newData) {
-          return await CreateRecord(collection, queryDetails.newData, cNum);
+        if (operationNum === 1 && newData) {
+          return await CreateRecord(collection, newData, cNum);
         } else if (queryDetails.recordID) {
           const recordID = queryDetails.recordID;
           if (operationNum === 2) {
             return await ReadRecord(collection, recordID);
-          } else if (operationNum === 3 && queryDetails.newData) {
-            const newData = queryDetails.newData;
+          } else if (operationNum === 3 && newData) {
             return await UpdateRecord(collection, recordID, newData, cNum);
           } else if (operationNum === 4) {
             return await DeleteRecord(collection, recordID);

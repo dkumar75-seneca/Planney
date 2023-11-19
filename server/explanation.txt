@@ -8,4 +8,4 @@ accountManagement.js: Handles all of user account management procedures (signup,
 
 requestValidator.js: Handles all of the user input data validation procedures.
 
-requestFormatter.js: Formats the user request into a database connector compatible query.
+requestManagement.js: Formats the user request into a database connector compatible query.

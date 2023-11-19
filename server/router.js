@@ -20,6 +20,14 @@ async function GetRequestHandler(collectionNum, res) {
   res.send(JSON.stringify({ "message": returnMessage, "data": returnData }));
 }
 
+function GetAccessRights(operation, accessRights) {
+  let accessChecks = operation === 1 && accessRights.insert;
+  accessChecks = accessChecks || operation === 2 && accessRights.read;
+  accessChecks = accessChecks || operation === 3 && accessRights.update;
+  accessChecks = accessChecks || operation === 4 && accessRights.delete;
+  return accessChecks;
+}
+
 function ExtractCredentials(userRequest) {
   let credentials = { "username": null, "password": null };
   if (!userRequest) { return credentials; }
@@ -45,19 +53,17 @@ async function PostRequestHandler(collectionNum, req, res) {
     const userCredentials = ExtractCredentials(req.body.access);
     const accessLevel = await planneyModules.accountValidator.ValidateCredentials(userCredentials);
     if (accessLevel > 0) {
-      if (requestType === login) { res.send(JSON.stringify({ "login": 1 })); return; }
+      if (requestType === login) { res.send(JSON.stringify({ "data": 1 })); return; }
       const accessRights = planneyModules.accountManagement.ValidateAccessRights(accessLevel, collectionNum);
       if (!(req.body.operation || req.body.operation === 0)) { return; }
       // { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
-      let accessChecks = req.body.operation === 1 && accessRights.insert;
-      accessChecks = accessChecks || req.body.operation === 3 && accessRights.update;
-      accessChecks = accessChecks || req.body.operation === 4 && accessRights.delete;
-      if (accessChecks) {
+      if (ValidateAccessRights(req.body.operation, accessRights)) {
         const x = req.body.operation === 3, y = req.body.operation === 4;
         if (planneyModules.requestValidator.ValidateRequest(collectionNum, req.body.input, x, y)) {
-          const sanitisedData = planneyModules.requestFormatter.FormatRequest(collectionNum, req.body.input);
-          console.log(sanitisedData); console.log(1); return;
-          // await planneyModules.databaseConnector.UpdateDatabase(req.body.operation.type, sanitisedData);
+          const checkedData = planneyModules.requestFormatter.FormatRequest(collectionNum, req.body.input);
+          console.log(checkedData); console.log(1); return;
+          // const serverRes = await planneyModules.databaseConnector.UpdateDatabase(req.body.operation, checkedData);
+          // { res.send(JSON.stringify({ "data": serverRes })); }
         } else { console.log(2); } // { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
       } else { console.log(3); } // { res.send(JSON.stringify({ "error": "Failed Input. Not Enough Authorisation." })); }
     } else { console.log(4); } // { res.send(JSON.stringify({ "error": "Failed Login. Recheck Credentials." })); }
@@ -80,6 +86,6 @@ PostRequestHandler(2, dummyRequest, null);
 // planneyModules.accountValidatorTest.RunAllAccountValidationTests();
 // planneyModules.accountManagementTest.RunAllAccountManagementTests();
 // planneyModules.requestValidatorTest.RunAllRequestValidationTests();
-// planneyModules.requestFormatterTest.RunAllRequestFormattingTests();
+planneyModules.requestManagementTest.RunAllRequestFormattingTests();
 
 module.exports = router;

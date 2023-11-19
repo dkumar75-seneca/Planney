@@ -12,8 +12,8 @@ exports.accountManagementTest = require("./tests/accountManagementTest.js");
 exports.requestValidator = require("./src/requestValidator.js");
 exports.requestValidatorTest = require("./tests/requestValidatorTest.js");
 
-exports.requestFormatter = require("./src/requestFormatter.js");
-exports.requestFormatterTest = require("./tests/requestFormatterTest.js");
+exports.requestManagement = require("./src/requestManagement.js");
+exports.requestManagementTest = require("./tests/requestManagementTest.js");
 
 exports.databaseConnector = require("./database/CRUD.js");
 exports.databaseConnectorTest = require("./database/CRUDTest.js");
