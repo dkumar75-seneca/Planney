@@ -1,4 +1,4 @@
-const { ValidateAccessRights } = require("../src/accountManagement.js");
+const { GetAccessRights } = require("../src/accountManagement.js");
 
 /*
 exports.collectionAccessRequirements = [
@@ -10,7 +10,7 @@ exports.collectionAccessRequirements = [
 ];
 */
 
-function RunAllAccessValidationTests() {
+function RunAllGetAccessTests() {
   // Note: this array's accuracy depends upon collectionNames.js values.
   // Thus, attached above is a copy of the collectionNames.js array upon
   // which the expectedResults array values are based upon.
@@ -27,13 +27,13 @@ function RunAllAccessValidationTests() {
   for (let i = 0; i <= numAccessLevels; i++) {
     const temp = (i + 1) + "/" + (numAccessLevels + 1);
     console.log("Running access validation tests (" + temp + ")");
-    const actualResult = ValidateAccessRights(i, collectionNum);
+    const actualResult = GetAccessRights(i, collectionNum);
     let tempNew = "Expected Result: " + JSON.stringify(expectedResults[i]);
     tempNew += " | Actual Result: " + JSON.stringify(actualResult); console.log(tempNew);
   }
 }
 
-function RunAllAccountManagementTests() { RunAllAccessValidationTests(); }
+function RunAllAccountManagementTests() { RunAllGetAccessTests(); }
 
 console.log("Account management testing module imported.");
 

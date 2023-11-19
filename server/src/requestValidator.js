@@ -12,6 +12,14 @@ function ValidateString(input) {
 
 exports.ValidateString = ValidateString;
 
+exports.ValidateAccessRights = function(operation, accessRights) {
+  let accessChecks = operation === 1 && accessRights.insert;
+  accessChecks = accessChecks || operation === 2 && accessRights.read;
+  accessChecks = accessChecks || operation === 3 && accessRights.update;
+  accessChecks = accessChecks || operation === 4 && accessRights.delete;
+  return accessChecks;
+}
+
 exports.ValidateRequest = function(collectionNum, inputData, ignoreID, ignoreFields) {
   if (collectionNum < 0 || collectionNum >= collectionNames.length) { return false; }
   const keyFields = collectionFields[collectionNum];
