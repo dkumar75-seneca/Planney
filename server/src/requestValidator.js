@@ -4,11 +4,13 @@ const { collectionNames, collectionFields } = require('../database/collectionNam
 
 // function ValidateNumber(input, collectionName, collectionField) { return true; }
 
-exports.ValidateString = function(input) {
+function ValidateString(input) {
   const maxLength = 50, allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@+.";
   for (let i = 0; i < input.length; i++) { if (!allowedCharacters.includes(input[i])) { return false; } }
   if (input.length > maxLength) { return false; }; return true;
 }
+
+exports.ValidateString = ValidateString;
 
 exports.ValidateRequest = function(collectionNum, inputData, ignoreID, ignoreFields) {
   if (collectionNum < 0 || collectionNum >= collectionNames.length) { return false; }
@@ -20,7 +22,7 @@ exports.ValidateRequest = function(collectionNum, inputData, ignoreID, ignoreFie
 
   for (let i = startNum; i < endNum; i++) {
     const fieldName = keyFields[i][0], fieldType = keyFields[i][1];
-    if (!inputData[fieldName]) { return false; }
+    if (!inputData || !inputData[fieldName]) { return false; };
     if (fieldType === "string" || fieldType === "number") {
       let check = true;
       if (!(typeof inputData[fieldName] === fieldType)) { return false; }

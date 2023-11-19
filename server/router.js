@@ -52,24 +52,24 @@ async function PostRequestHandler(collectionNum, req, res) {
       let accessChecks = req.body.operation === 1 && accessRights.insert;
       accessChecks = accessChecks || req.body.operation === 3 && accessRights.update;
       accessChecks = accessChecks || req.body.operation === 4 && accessRights.delete;
-      if (accessChecks) { console.log(accessChecks); console.log(1); return; }
-      else { console.log(2); } // { res.send(JSON.stringify({ "error": "Failed Input. Not Enough Authorisation." })); }
-    } else { console.log(3); } // { res.send(JSON.stringify({ "error": "Failed Login. Recheck Credentials." })); }
+      if (accessChecks) {
+        const x = req.body.operation === 3, y = req.body.operation === 4;
+        if (planneyModules.requestValidator.ValidateRequest(collectionNum, req.body.input, x, y)) {
+          const sanitisedData = planneyModules.requestFormatter.FormatRequest(collectionNum, req.body.input);
+          console.log(sanitisedData); console.log(1); return;
+          // await planneyModules.databaseConnector.UpdateDatabase(req.body.operation.type, sanitisedData);
+        } else { console.log(2); } // { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
+      } else { console.log(3); } // { res.send(JSON.stringify({ "error": "Failed Input. Not Enough Authorisation." })); }
+    } else { console.log(4); } // { res.send(JSON.stringify({ "error": "Failed Login. Recheck Credentials." })); }
   }
 }
 
 /*
+const inputData = {"personName" : "John", "employeeTitle": "Therapist", "offeredMassages": [ "Swiss", "Swedish" ] };
 const dummyAccountOne = { accessLevel: 1, userID: "abc", password: "password123", username: "bob", phone: "abc", email: "a@b.com" };
 const dummyAccountTwo = { accessLevel: 3, userID: "abcd", password: "password1234", username: "james", phone: "abcd", email: "c@b.com" };
-const dummyRequest = { body: { operation: 1, access: dummyAccountOne, data: dummyAccountTwo } };
-PostRequestHandler(1, dummyRequest, null);
-*/
-
-/*
-        if (planneyModules.requestValidator.ValidateRequest(collectionNum, req.body.input)) {
-          const sanitisedData = planneyModules.requestFormatter.FormatRequest(collectionNum, req.body.input);
-          await planneyModules.databaseConnector.UpdateDatabase(req.body.operation.type, sanitisedData);
-        } else { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
+const dummyRequest = { body: { operation: 3, access: dummyAccountOne, input: inputData } };
+PostRequestHandler(2, dummyRequest, null);
 */
 
 // Server side project code above
