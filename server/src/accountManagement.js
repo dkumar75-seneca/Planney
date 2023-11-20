@@ -1,8 +1,8 @@
 console.log("Account management functions module imported");
 
-var crypto = require('crypto');
 var nodemailer = require('nodemailer');
 
+const { randomInt } = require('crypto');
 const { ValidateString } = require("./requestValidator.js");
 const { collectionNames, collectionFields, collectionAccessRequirements } = require('../database/collectionNames.js');
 
@@ -37,16 +37,27 @@ exports.SetupOTP = async function(username) {
   return "OTP cannot be generated. Please try again later.";
 }
 
-/*
 function GenerateRandomPassword(length) {
-  let buffer = new Uint8Array(length);
-  crypto.getRandomValues(buffer);
-  return btoa(String.fromCharCode.apply(null, buffer));
+  let randomPassword = '';
+  for (let i = 0; i < length; i++) { const number = randomInt(0, 9); oneTimePassword += number }
+  return randomPassword;
 }
-*/
+
+async function GetAccountDetails(username) {
+	const readRecord = 2, collectionNum = 8;
+  const returnData = await UpdateDatabase(readRecord, {cNum: collectionNum, recordID: username });
+	return returnData;
+}
+
 async function GenerateOTP(username) {
-  //const oneTimePassword = GenerateRandomPassword(6);
-  return null;
+  const oneTimePassword = GenerateRandomPassword(6);
+	const accountData = await GetAccountDetails(userCredentials.username);
+	if (!accountData) { return "OTP could not be setup and / or emailed."; } else {
+    let emailMessage = "Here is your Planney one time password: " + oneTimePassword;
+    emailMessage += ". If you didn't make such an otp request, kindly disregard this email.";
+    const emailDetails = { "Receiver": accountData.email, "Message": emailMessage };
+    return await EmailOTP(emailDetails);
+	}
 }
 
 async function EmailOTP(emailDetails) {
