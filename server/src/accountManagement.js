@@ -1,8 +1,10 @@
 console.log("Account management functions module imported");
 
+var crypto = require('crypto');
+var nodemailer = require('nodemailer');
+
 const { ValidateString } = require("./requestValidator.js");
 const { collectionNames, collectionFields, collectionAccessRequirements } = require('../database/collectionNames.js');
-
 
 function GenerateStringHash(input) { return 1; }
 
@@ -35,6 +37,37 @@ exports.SetupOTP = async function(username) {
   return "OTP cannot be generated. Please try again later.";
 }
 
-async function GenerateOTP(username) { return null; }
+/*
+function GenerateRandomPassword(length) {
+  let buffer = new Uint8Array(length);
+  crypto.getRandomValues(buffer);
+  return btoa(String.fromCharCode.apply(null, buffer));
+}
+*/
+async function GenerateOTP(username) {
+  //const oneTimePassword = GenerateRandomPassword(6);
+  return null;
+}
 
-async function EmailOTP(username, otpDetails) { return null; }
+async function EmailOTP(emailDetails) {
+  return new Promise((resolve) => {
+    // Again, this is NOT good practise but since this a dummy account
+    // and we are in localhost so far, should update code for Azure deployment.
+    const dummyEmail = { address: "@gmail.com", password: "" };
+    let transporter = nodemailer.createTransport({
+      service: 'gmail', auth: { user: dummyEmail.address, pass: dummyEmail.password }
+    });
+
+    let mailOptions = {
+      to: emailDetails.Receiver, text: emailDetails.Message,
+      from: dummyEmail.address, subject: 'Planney OTP code for password reset'
+    };
+
+    transporter.sendMail(mailOptions, function(error, info) {
+      try {
+        if (error) { console.error(error); resolve("OTP could not be setup and / or emailed."); }
+        else { console.log('Email sent: ' + info.response); resolve("OTP is setup and emailed."); }
+      } catch (e) { console.error(e); resolve("OTP could not be setup and / or emailed."); }
+    });
+  })
+}
