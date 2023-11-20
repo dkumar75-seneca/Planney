@@ -25,3 +25,11 @@ exports.FormatUserInfo = function(userDetails) {
     signUpTemplate["password"] = GenerateStringHash(userDetails.password);
   } else { return null; }; return signUpTemplate;
 }
+
+exports.UpdatePassword = async function(username, requestedPass) { return 1; }
+
+exports.SetupOTP = async function(username) { return 1; }
+
+async function GenerateOTP(username) { return 1; }
+
+async function EmailOTP(username) { return 1; }

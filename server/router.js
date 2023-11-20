@@ -34,9 +34,17 @@ async function PostRequestHandler(collectionNum, req, res) {
       const serverRes = await planneyModules.databaseConnector.UpdateDatabase(newRecord, reqQuery);
     } else { return; } // { RaiseDataError(res); }
   } else if (collectionNum === accountsIndex && requestType === resetPassword) {
-    // Generate temporary One-Time Password (OTP) and save to database with 5 minute expiry time.
-    // Verify whether correct OTP is provided and update password to provided one if OTPs match within 5 attempts. 
-    console.log("Reset password functionality still to be implemented.");
+    // Verify whether correct OTP is provided and update password to provided one if OTPs match within 5 attempts.
+    if (typeof req.body.oneTimePass === "string") {
+      const otpStatus = await planneyModules.accountValidator.VerifyOTP(username);
+      if (otpStatus && typeof req.body.requestedPass === "string") {
+        const passStatus = await planneyModules.accountManagement.UpdatePassword(username, req.body.requestedPass);
+        return; // res.send(JSON.stringify({ "data": passStatus }));
+      } else { return; } // res.send(JSON.stringify({ "error": "Password Not Provided." }));
+    } else {
+      const otpStatus = await planneyModules.accountManagement.SetupOTP(username);
+      return; // res.send(JSON.stringify({ "data": otpStatus }));
+    } // Generate temporary One-Time Password (OTP) and save to database with 5 minute expiry time.
   } else {
     const userCredentials = planneyModules.requestManagement.ExtractCredentials(req.body.access);
     const accessLevel = await planneyModules.accountValidator.ValidateCredentials(userCredentials);

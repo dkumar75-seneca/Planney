@@ -19,3 +19,5 @@ exports.ValidateCredentials = async function(userCredentials) {
 		if (userCredentials.password === accountData.password) { return accountData.accessLevel; } else { return -1; }
 	}
 }
+
+exports.VerifyOTP = async function(username) { return 1; }
