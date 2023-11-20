@@ -20,4 +20,11 @@ exports.ValidateCredentials = async function(userCredentials) {
 	}
 }
 
-exports.VerifyOTP = async function(username) { return 1; }
+exports.ValidateOTP = async function(userCredentials) {
+	const accountData = await GetAccountDetails(userCredentials.username);
+	if (!accountData) { return false; } else {
+    let otpChecks = userCredentials.otp === accountData.otp;
+    otpChecks = otpChecks && Date.now() < Date.parse(accountData.otpExpiry);
+    otpChecks = otpChecks && accountData.remainingAttempts > 0; return otpChecks;
+	}
+}

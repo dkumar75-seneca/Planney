@@ -21,15 +21,20 @@ exports.FormatUserInfo = function(userDetails) {
     else { signUpTemplate[key] = userDetails[key]; }
   });
 
-  if (typeof userDetails.password === "string") {
+  const minPassLength = 6;
+  if (typeof userDetails.password === "string" && userDetails.password.length >= minPassLength) {
     signUpTemplate["password"] = GenerateStringHash(userDetails.password);
   } else { return null; }; return signUpTemplate;
 }
 
 exports.UpdatePassword = async function(username, requestedPass) { return 1; }
 
-exports.SetupOTP = async function(username) { return 1; }
+exports.SetupOTP = async function(username) {
+  const otpDetails = await GenerateOTP(username);
+  if (otpDetails) { return await EmailOTP(username, otpDetails); }
+  return "OTP cannot be generated. Please try again later.";
+}
 
-async function GenerateOTP(username) { return 1; }
+async function GenerateOTP(username) { return null; }
 
-async function EmailOTP(username) { return 1; }
+async function EmailOTP(username, otpDetails) { return null; }

@@ -36,7 +36,7 @@ async function PostRequestHandler(collectionNum, req, res) {
   } else if (collectionNum === accountsIndex && requestType === resetPassword) {
     // Verify whether correct OTP is provided and update password to provided one if OTPs match within 5 attempts.
     if (typeof req.body.oneTimePass === "string") {
-      const otpStatus = await planneyModules.accountValidator.VerifyOTP(username);
+      const otpStatus = await planneyModules.accountValidator.ValidateOTP(username);
       if (otpStatus && typeof req.body.requestedPass === "string") {
         const passStatus = await planneyModules.accountManagement.UpdatePassword(username, req.body.requestedPass);
         return; // res.send(JSON.stringify({ "data": passStatus }));
