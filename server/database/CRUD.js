@@ -27,8 +27,8 @@ async function ValidateNewData(newData, cNum) {
 async function CreateRecord(collection, newData, cNum) {
   if (ValidateNewData(newData, cNum)) {
     const result = await collection.insertOne(newData);
-    return true;
-  } else { return false; }
+    return "Insert request successfully processed.";
+  } else { return "Invalid data type provided, insert request rejected."; }
 }
 
 async function ReadAllRecords(collection) {
@@ -51,18 +51,16 @@ async function UpdateRecord(collection, recordID, newData, cNum) {
     const filter = { _id: recordID };
     const update = { $set: newData };
     const result = await collection.updateOne(filter, update);
-    return true;
-  } else { return false; }
+    return "Update request successfully processed.";
+  } else { return "Invalid data type provided, update request rejected."; }
 }
 
 async function DeleteRecord(collection, recordID) {
   const query = { _id: recordID };
   const result = await collection.deleteOne(query);
-  if (result.deletedCount === 1) {
-    console.log("Successfully deleted one document.");
-  } else {
-    console.log("No documents matched the query. Deleted 0 documents.");
-  }
+  if (result.deletedCount === 1) { console.log("Successfully deleted one document."); }
+  else { console.log("No documents matched the query. Deleted 0 documents."); };
+  return "Delete request successfully processed.";
 }
 
 async function UpdateDatabase(operationNum, queryDetails) {
@@ -85,12 +83,8 @@ async function UpdateDatabase(operationNum, queryDetails) {
             return await UpdateRecord(collection, recordID, newData, cNum);
           } else if (operationNum === 4) {
             return await DeleteRecord(collection, recordID);
-          } else {
-            console.error("Invalid database operation has been given.");
-          }
-        } else if (operationNum === 5) {
-          return await ReadAllRecords(collection);
-        }
+          } else { console.error("Invalid database operation has been given."); }
+        } else if (operationNum === 5) { return await ReadAllRecords(collection); }
         else { console.error("Incomplete database query has been given."); }
       } else { console.error("Invalid collection number has been given."); }
     } else { console.error("No collection number has been given."); }

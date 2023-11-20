@@ -2,8 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 const planneyModules = require("./index.js");
-const { collectionNames } = require('./database/collectionNames.js');
 const { ValidateString } = require('./src/requestValidator.js');
+const { collectionNames } = require('./database/collectionNames.js');
 
 router.get("/", function(req, res) { res.render("index.html"); });
 
@@ -22,16 +22,15 @@ async function GetRequestHandler(collectionNum, res) {
 }
 
 function RaiseDataError(res) { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
-
-const accountsIndex = 8;
 async function PostRequestHandler(collectionNum, req, res) {
-  const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" });
-  if (!(req || req === 0) || !(req.body || req.body === 0)) { return; }
-  // { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
-  const requestType = req.body.requestType, signup = 1, login = 2, resetPassword = 3; // res.send(postResponse);
+  const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" }); // res.send(postResponse);
+  if (!(req || req === 0) || !(req.body || req.body === 0)) { return; } // { RaiseDataError(res); }
+  const requestType = req.body.requestType, signup = 1, login = 2, resetPassword = 3, accountsIndex = 8;
   if (collectionNum === accountsIndex && requestType === signup) {
+    // const accessRights = planneyModules.accountManagement.GetAccessRights(accessLevel, collectionNum);
     console.log("Signup functionality still to be implemented.");
   } else if (collectionNum === accountsIndex && requestType === resetPassword) {
+    // const accessRights = planneyModules.accountManagement.GetAccessRights(accessLevel, collectionNum);
     console.log("Reset password functionality still to be implemented.");
   } else {
     const userCredentials = planneyModules.requestManagement.ExtractCredentials(req.body.access);
@@ -47,9 +46,8 @@ async function PostRequestHandler(collectionNum, req, res) {
           if (!planneyModules.requestValidator.ValidateString(req.body.reference)) { return; } // { RaiseDataError(res); }
           const checkedData = planneyModules.requestManagement.FormatRequestData(collectionNum, req.body.input, x, y);
           const reqData = { cNum: collectionNum, newData: checkedData, recordID: req.body.reference };
-          console.log(reqData); console.log(1); return;
-          // const serverRes = await planneyModules.databaseConnector.UpdateDatabase(req.body.operation, reqData);
-          // { res.send(JSON.stringify({ "data": serverRes })); }
+          const serverRes = await planneyModules.databaseConnector.UpdateDatabase(req.body.operation, reqData);
+          // res.send(JSON.stringify({ "data": serverRes }));
         } else { console.log(2); } // { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
       } else { console.log(3); } // { res.send(JSON.stringify({ "error": "Failed Input. Not Enough Authorisation." })); }
     } else { console.log(4); } // { res.send(JSON.stringify({ "error": "Failed Login. Recheck Credentials." })); }
@@ -60,13 +58,11 @@ async function PostRequestHandler(collectionNum, req, res) {
 // ------------------------------
 // Server side testing code below
 
-/*
 const inputData = {"personName" : "John", "employeeTitle": "Therapist", "offeredMassages": [ "Swiss", "Swedish" ] };
 const dummyAccountOne = { accessLevel: 1, userID: "abc", password: "password123", username: "bob", phone: "abc", email: "a@b.com" };
 const dummyAccountTwo = { accessLevel: 3, userID: "abcd", password: "password1234", username: "james", phone: "abcd", email: "c@b.com" };
 const dummyRequest = { body: { operation: 3, access: dummyAccountOne, input: inputData, reference: "abc" } };
 PostRequestHandler(2, dummyRequest, null);
-*/
 
 // planneyModules.databaseConnectorTest.RunAllDBTests();
 // planneyModules.accountValidatorTest.RunAllAccountValidationTests();
