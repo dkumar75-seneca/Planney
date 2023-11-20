@@ -27,10 +27,15 @@ async function PostRequestHandler(collectionNum, req, res) {
   if (!(req || req === 0) || !(req.body || req.body === 0)) { return; } // { RaiseDataError(res); }
   const requestType = req.body.requestType, signup = 1, login = 2, resetPassword = 3, accountsIndex = 8;
   if (collectionNum === accountsIndex && requestType === signup) {
-    // const accessRights = planneyModules.accountManagement.GetAccessRights(accessLevel, collectionNum);
-    console.log("Signup functionality still to be implemented.");
+    if (!req.body.userDetails) { return; } // { RaiseDataError(res); }
+    const userInformation = planneyModules.accountManagement.FormatUserInfo(req.body.userDetails);
+    if (userInformation) {
+      const newRecord = 1, reqQuery = { cNum: collectionNum, newData: userInformation };
+      const serverRes = await planneyModules.databaseConnector.UpdateDatabase(newRecord, reqQuery);
+    } else { return; } // { RaiseDataError(res); }
   } else if (collectionNum === accountsIndex && requestType === resetPassword) {
-    // const accessRights = planneyModules.accountManagement.GetAccessRights(accessLevel, collectionNum);
+    // Generate temporary One-Time Password (OTP) and save to database with 5 minute expiry time.
+    // Verify whether correct OTP is provided and update password to provided one if OTPs match within 5 attempts. 
     console.log("Reset password functionality still to be implemented.");
   } else {
     const userCredentials = planneyModules.requestManagement.ExtractCredentials(req.body.access);
@@ -58,11 +63,13 @@ async function PostRequestHandler(collectionNum, req, res) {
 // ------------------------------
 // Server side testing code below
 
+/*
 const inputData = {"personName" : "John", "employeeTitle": "Therapist", "offeredMassages": [ "Swiss", "Swedish" ] };
 const dummyAccountOne = { accessLevel: 1, userID: "abc", password: "password123", username: "bob", phone: "abc", email: "a@b.com" };
 const dummyAccountTwo = { accessLevel: 3, userID: "abcd", password: "password1234", username: "james", phone: "abcd", email: "c@b.com" };
 const dummyRequest = { body: { operation: 3, access: dummyAccountOne, input: inputData, reference: "abc" } };
 PostRequestHandler(2, dummyRequest, null);
+*/
 
 // planneyModules.databaseConnectorTest.RunAllDBTests();
 // planneyModules.accountValidatorTest.RunAllAccountValidationTests();

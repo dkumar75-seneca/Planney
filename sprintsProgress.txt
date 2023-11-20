@@ -14,19 +14,19 @@ Web Application
         collectionNames.js
         requestValidator.js
         requestValidatorTest.js
-      Sprint 3:
+      Sprint 3: (doing)
         requestFormatter.js
-        accountValidator.js (done)
-        accountManagement.js (doing)
+        accountValidator.js
+        accountManagement.js
         requestFormatterTest.js
-        accountValidatorTest.js (done)
-        accountManagementTest.js (doing)
+        accountValidatorTest.js
+        accountManagementTest.js
     Design User Interface
       Sprint 1: (done)
         Setup Server-Client GET and POST requests in JSON format
       Sprint 2: (done)
         Develop Basic Input and Output Functionality with validation
-      Sprint 3: (doing)
+      Sprint 4:
         Ensure interface is functional and easy to use in a web browser
   Actual Microsoft Azure Deployment
     Sprint 4:

@@ -14,6 +14,7 @@ Massages (Collection 2)
 Employees (Collection 3)
   employeeID
   personName
+  personPhone
   employeeTitle
   offeredMassages
     massageIDs
@@ -21,6 +22,7 @@ Employees (Collection 3)
 Customers (Collection 4)
   customerID
   personName
+  personPhone
   whitelisted
 
 Timeslots (Collection 5)
@@ -61,7 +63,6 @@ Accounts (Collection 9)
   username
   password
   accessLevel
-  phone
   email
   userID
 
