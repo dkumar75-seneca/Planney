@@ -2,7 +2,7 @@
 
 This is the main repository of our scheduling application.
 
-# Application Usage (after cloning repository): 
+# Application Usage: 
 
 If node_modules folder is no longer in this repository, enter "npm install" followed by "npm audit fix --force" to fix vulnerabilities.
 
