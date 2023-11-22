@@ -12,11 +12,11 @@ function ValidateString(input) {
 
 exports.ValidateString = ValidateString;
 
-exports.ValidateAccessRights = function(operation, accessRights) {
+exports.ValidateAccessRights = function(operation, accessRights, reference, username) {
   let accessChecks = operation === 1 && accessRights.insert;
-  accessChecks = accessChecks || operation === 2 && accessRights.read;
-  accessChecks = accessChecks || operation === 3 && accessRights.update;
-  accessChecks = accessChecks || operation === 4 && accessRights.delete;
+  accessChecks = accessChecks || (operation === 2 && (accessRights.read || username === reference));
+  accessChecks = accessChecks || (operation === 3 && (accessRights.update || username === reference));
+  accessChecks = accessChecks || (operation === 4 && accessRights.delete);
   return accessChecks;
 }
 

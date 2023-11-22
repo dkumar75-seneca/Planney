@@ -14,6 +14,8 @@ async function GetAccountDetails(username) {
 	return returnData;
 }
 
+exports.GetAccountDetails = GetAccountDetails;
+
 exports.GetAccessRights = function(accessLevel, collectionNum) {
   const temp = collectionAccessRequirements[collectionNum];
   let returnValue = { insert: false, read: false, update: false, delete: false };

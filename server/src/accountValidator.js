@@ -1,6 +1,5 @@
 console.log("Account validation functions module imported");
 
-const { UpdateDatabase } = require("../database/CRUD.js");
 const { GetAccountDetails } = require("./accountManagement.js");
 
 // NOTE: passwords are intended to be stored as hashes (NOT plaintext),

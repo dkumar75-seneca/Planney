@@ -61,11 +61,11 @@ async function PerformDatabaseUpdate(res, collectionNum, input, operation, refer
 async function HandleUserRequest(res, access, collectionNum, input, operation, reference, loginRequest) {
   const userCredentials = planneyModules.requestManagement.ExtractCredentials(access);
   const accessLevel = await planneyModules.accountValidator.ValidateCredentials(userCredentials);
-  if (accessLevel > 0) {
+  if (accessLevel > 0) { const username = userCredentials.username;
     if (loginRequest) { res.send(JSON.stringify({ "data": 1 })); return; }
     const accessRights = planneyModules.accountManagement.GetAccessRights(accessLevel, collectionNum);
     if (!(operation || operation === 0)) { return; }; // { RaiseDataError(res); }
-    if (planneyModules.requestValidator.ValidateAccessRights(operation, accessRights)) {
+    if (planneyModules.requestValidator.ValidateAccessRights(operation, accessRights, reference, username)) {
       PerformDatabaseUpdate(res, collectionNum, input, operation, reference);
     } else { console.log(3); } // { res.send(JSON.stringify({ "error": "Failed Input. Not Enough Authorisation." })); }
   } else { console.log(4); } // { res.send(JSON.stringify({ "error": "Failed Login. Recheck Credentials." })); }  
