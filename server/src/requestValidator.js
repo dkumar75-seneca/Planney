@@ -32,13 +32,11 @@ exports.ValidateRequest = function(collectionNum, inputData, ignoreID, ignoreFie
     const fieldName = keyFields[i][0], fieldType = keyFields[i][1];
     if (!inputData || !inputData[fieldName]) { return false; };
     if (fieldType === "string" || fieldType === "number") {
-      let check = true;
       if (!(typeof inputData[fieldName] === fieldType)) { return false; }
-      if (fieldType === "string") { check = ValidateString(inputData[fieldName]); }
-      // else if (fieldType === "number") { check = ValidateNumber(inputData[fieldName]); }
-      if (!check) { return false; }
+      if (!(fieldType === "string" && ValidateString(inputData[fieldName]))) { return false; }
+      // if (!(fieldType === "number" && ValidateNumber(inputData[fieldName]))) { return false; }
     } else {
-      if (Array.isArray(inputData[fieldName])) {
+      if (!Array.isArray(inputData[fieldName])) { return false; } else {
         if (fieldType === "datetime") {
           for (let i = 0; i < inputData[fieldName].length; i++) {
             if (!(typeof inputData[fieldName][i] === "number")) { return false; }
@@ -50,7 +48,7 @@ exports.ValidateRequest = function(collectionNum, inputData, ignoreID, ignoreFie
             if (!ValidateString(inputData[fieldName][i])) { return false; }
           }
         }
-      } else { return false; }
+      }
     }
   }
 

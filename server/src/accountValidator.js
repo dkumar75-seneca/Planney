@@ -17,6 +17,13 @@ exports.ValidateOTP = async function(userCredentials) {
 	if (!accountData) { return false; } else {
     let otpChecks = userCredentials.otp === accountData.otp;
     otpChecks = otpChecks && Date.now() < Date.parse(accountData.otpExpiry);
-    otpChecks = otpChecks && accountData.remainingAttempts > 0; return otpChecks;
+    otpChecks = otpChecks && accountData.remainingAttempts > 0;
+    if (accountData.remainingAttempts > 0) {
+      const operation = 3, accountsIndex = 8;
+      let newAccountData = copyObject(accountData); newAccountData.remainingAttempts -= 1;
+      const reqData = { cNum: accountsIndex, newData: newAccountData, recordID: username };
+      const otpSetup = await planneyModules.databaseConnector.UpdateDatabase(operation, reqData);
+      if (otpSetup) { return messageOne; } else { return messageTwo; }
+    }; return otpChecks;
 	}
 }

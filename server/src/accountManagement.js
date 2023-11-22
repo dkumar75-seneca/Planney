@@ -29,17 +29,6 @@ async function GetAccountDetails(username) {
 	return returnData;
 }
 
-async function GenerateOTP(username) {
-  const accountData = await GetAccountDetails(username);
-	if (!accountData) { return "OTP could not be setup and / or emailed."; } else {
-    const otpLength = 6, oneTimePassword = GenerateRandomOTP(otpLength);
-    let emailMessage = "Here is your Planney one time password: " + oneTimePassword;
-    emailMessage += ". If you didn't make such an otp request, kindly disregard this email.";
-    const emailDetails = { "Receiver": accountData.email, "Message": emailMessage };
-    return await EmailOTP(emailDetails);
-	}
-}
-
 async function EmailOTP(emailDetails) {
   return new Promise((resolve) => {
     // Again, this is NOT good practise but since this a dummy account
@@ -86,8 +75,8 @@ exports.FormatUserInfo = function(userDetails) {
   } else { return null; }; return signUpTemplate;
 }
 
+const operation = 3, accountsIndex = 8;
 exports.UpdatePassword = async function(username, requestedPass) {
-	const operation = 3, accountsIndex = 8;
   const accountData = await GetAccountDetails(username);
 	if (!accountData) { return "Password Not Updated."; } else {
     let newAccountData = copyObject(accountData);
@@ -101,7 +90,23 @@ exports.UpdatePassword = async function(username, requestedPass) {
 }
 
 exports.SetupOTP = async function(username) {
-  const otpDetails = await GenerateOTP(username);
-  if (otpDetails) { return await EmailOTP(username, otpDetails); }
-  return "OTP cannot be generated. Please try again later.";
+  const messageOne = "OTP generated. Please check email to proceed.";
+  const messageTwo = "OTP could not be setup. Please try again later.";
+  const accountData = await GetAccountDetails(username);
+	if (!accountData) { return messageTwo; } else {
+    const otpLength = 6, oneTimePassword = GenerateRandomOTP(otpLength);
+    let emailMessage = "Here is your Planney one time password: " + oneTimePassword;
+    emailMessage += ". If you didn't make such an otp request, kindly disregard this email.";
+    const emailDetails = { "Receiver": accountData.email, "Message": emailMessage };
+    const otpEmailed = await EmailOTP(emailDetails);
+    if (!otpEmailed) { return messageTwo; } else {
+      const allocatedMinutes = 5, secondsInMin = 60, msInSecond = 1000;
+      let newAccountData = copyObject(accountData);
+      newAccountData.otp = oneTimePassword; newAccountData.remainingAttempts = 3;
+      newAccountData.otpExpiry = new Date(Date.now() + (allocatedMinutes * secondsInMin * msInSecond));
+      const reqData = { cNum: accountsIndex, newData: newAccountData, recordID: username };
+      const otpSetup = await planneyModules.databaseConnector.UpdateDatabase(operation, reqData);
+      if (otpSetup) { return messageOne; } else { return messageTwo; }
+    } 
+	}
 }
