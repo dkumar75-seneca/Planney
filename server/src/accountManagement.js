@@ -4,9 +4,15 @@ var nodemailer = require('nodemailer');
 
 const { randomInt } = require('crypto');
 const { ValidateString } = require("./requestValidator.js");
-const { collectionNames, collectionFields, collectionAccessRequirements } = require('../database/collectionNames.js');
+const { collectionAccessRequirements } = require('../database/collectionNames.js');
 
 function GenerateStringHash(input) { return 1; }
+
+async function GetAccountDetails(username) {
+	const readRecord = 2, collectionNum = 8;
+  const returnData = await UpdateDatabase(readRecord, {cNum: collectionNum, recordID: username });
+	return returnData;
+}
 
 exports.GetAccessRights = function(accessLevel, collectionNum) {
   const temp = collectionAccessRequirements[collectionNum];
