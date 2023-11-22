@@ -1,54 +1,26 @@
 console.log("Account management functions module imported");
 
+var bcrypt = require('bcrypt');
 var nodemailer = require('nodemailer');
 
 const { randomInt } = require('crypto');
 const { ValidateString } = require("./requestValidator.js");
 const { collectionAccessRequirements } = require('../database/collectionNames.js');
 
-function GenerateStringHash(input) { return 1; }
+function copyObject(input) { return JSON.parse(JSON.stringify(input)); };
 
-async function GetAccountDetails(username) {
-	const readRecord = 2, collectionNum = 8;
-  const returnData = await UpdateDatabase(readRecord, {cNum: collectionNum, recordID: username });
-	return returnData;
-}
-
-exports.GetAccountDetails = GetAccountDetails;
-
-exports.GetAccessRights = function(accessLevel, collectionNum) {
-  const temp = collectionAccessRequirements[collectionNum];
-  let returnValue = { insert: false, read: false, update: false, delete: false };
-  Object.keys(temp).forEach(function(key) { if (accessLevel >= temp[key]) { returnValue[key] = true; } });
-  return returnValue;
-}
-
-exports.FormatUserInfo = function(userDetails) {
-  let signUpTemplate = { "first": null, "last": null, "phone": null, "email": null, "username": null };
-
-  Object.keys(signUpTemplate).forEach(function(key) {
-    if (!(userDetails[key] && ValidateString(userDetails[key]))) { return null; }
-    else { signUpTemplate[key] = userDetails[key]; }
-  });
-
-  const minPassLength = 6;
-  if (typeof userDetails.password === "string" && userDetails.password.length >= minPassLength) {
-    signUpTemplate["password"] = GenerateStringHash(userDetails.password);
-  } else { return null; }; return signUpTemplate;
-}
-
-exports.UpdatePassword = async function(username, requestedPass) { return 1; }
-
-exports.SetupOTP = async function(username) {
-  const otpDetails = await GenerateOTP(username);
-  if (otpDetails) { return await EmailOTP(username, otpDetails); }
-  return "OTP cannot be generated. Please try again later.";
-}
-
-function GenerateRandomPassword(length) {
+function GenerateRandomOTP(length) {
   let randomPassword = '';
   for (let i = 0; i < length; i++) { const number = randomInt(0, 9); oneTimePassword += number }
   return randomPassword;
+}
+
+async function GenerateStringHash(input) {
+  try {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(input, saltRounds);
+    return hashedPassword;
+  } catch (error) { return null; }
 }
 
 async function GetAccountDetails(username) {
@@ -58,9 +30,9 @@ async function GetAccountDetails(username) {
 }
 
 async function GenerateOTP(username) {
-  const oneTimePassword = GenerateRandomPassword(6);
-	const accountData = await GetAccountDetails(userCredentials.username);
+  const accountData = await GetAccountDetails(username);
 	if (!accountData) { return "OTP could not be setup and / or emailed."; } else {
+    const otpLength = 6, oneTimePassword = GenerateRandomOTP(otpLength);
     let emailMessage = "Here is your Planney one time password: " + oneTimePassword;
     emailMessage += ". If you didn't make such an otp request, kindly disregard this email.";
     const emailDetails = { "Receiver": accountData.email, "Message": emailMessage };
@@ -89,4 +61,47 @@ async function EmailOTP(emailDetails) {
       } catch (e) { console.error(e); resolve("OTP could not be setup and / or emailed."); }
     });
   })
+}
+
+exports.GetAccountDetails = GetAccountDetails;
+
+exports.GetAccessRights = function(accessLevel, collectionNum) {
+  const temp = collectionAccessRequirements[collectionNum];
+  let returnValue = { insert: false, read: false, update: false, delete: false };
+  Object.keys(temp).forEach(function(key) { if (accessLevel >= temp[key]) { returnValue[key] = true; } });
+  return returnValue;
+}
+
+exports.FormatUserInfo = function(userDetails) {
+  let signUpTemplate = { "first": null, "last": null, "phone": null, "email": null, "username": null };
+
+  Object.keys(signUpTemplate).forEach(function(key) {
+    if (!(userDetails[key] && ValidateString(userDetails[key]))) { return null; }
+    else { signUpTemplate[key] = userDetails[key]; }
+  });
+
+  const minPassLength = 6;
+  if (typeof userDetails.password === "string" && userDetails.password.length >= minPassLength) {
+    signUpTemplate["password"] = GenerateStringHash(userDetails.password);
+  } else { return null; }; return signUpTemplate;
+}
+
+exports.UpdatePassword = async function(username, requestedPass) {
+	const operation = 3, accountsIndex = 8;
+  const accountData = await GetAccountDetails(username);
+	if (!accountData) { return "Password Not Updated."; } else {
+    let newAccountData = copyObject(accountData);
+    newAccountData.password = await GenerateStringHash(requestedPass);
+    if (!newAccountData.password) { return "Password Not Updated."; } else {
+      const reqData = { cNum: accountsIndex, newData: newAccountData, recordID: username };
+      const passwordUpdated = await planneyModules.databaseConnector.UpdateDatabase(operation, reqData);
+      if (passwordUpdated) { return "Password Updated." } else { return "Password Not Updated."; }
+    }
+	}
+}
+
+exports.SetupOTP = async function(username) {
+  const otpDetails = await GenerateOTP(username);
+  if (otpDetails) { return await EmailOTP(username, otpDetails); }
+  return "OTP cannot be generated. Please try again later.";
 }

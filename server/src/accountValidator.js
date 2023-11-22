@@ -2,15 +2,13 @@ console.log("Account validation functions module imported");
 
 const { GetAccountDetails } = require("./accountManagement.js");
 
-// NOTE: passwords are intended to be stored as hashes (NOT plaintext),
-// it's just I haven't implemented that part in account management module.
-// So, that's why current testing is happening in plaintext. Will update this
-// to use bcrypt of built in crypto module once that functionality is implemented.
+var bcrypt = require('bcrypt');
 
 exports.ValidateCredentials = async function(userCredentials) {
 	const accountData = await GetAccountDetails(userCredentials.username);
 	if (!accountData) { return -1; } else {
-		if (userCredentials.password === accountData.password) { return accountData.accessLevel; } else { return -1; }
+    const passwordMatch = await bcrypt.compare(userCredentials.password, accountData.password);
+    if (passwordMatch) { return accountData.accessLevel; } else { return -1; }
 	}
 }
 
