@@ -17,15 +17,17 @@ async function SendUserData(res, accessLevel) {
     serverResponse["headings"] = [["Entry #", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status"]];
     serverResponse["listings"] = [filteredData];
   } else if (accessLevel === 2) {
-    const schedules = await planneyModules.databaseConnector.CallDatabase(sIndex);
-    const accounts = await planneyModules.databaseConnector.CallDatabase(aIndex, ["password"]);
+    queryDetails.cNum = sIndex; queryDetails.exclusions = [];
+    const schedules = await planneyModules.databaseConnector.CallDatabase(operationNum, queryDetails);
+    queryDetails.cNum = aIndex; queryDetails.exclusions = ["password"];
+    const accounts = await planneyModules.databaseConnector.CallDatabase(operationNum, queryDetails);
     serverResponse["readOnly"] = false;
     serverResponse["listings"] = [accounts, schedules];
     serverResponse["categories"] = ["Accounts", "Schedules"];
     serverResponse["headings"] = [
       ["Account #", "Level", "First Name", "Last Name", "Username", "Email", "Phone"],
       ["Entry #", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status", "Client", "Waitlist"]
-    ];
+    ]; console.log(serverResponse);
   }; res.send(JSON.stringify({ "data": serverResponse }));
 }
 

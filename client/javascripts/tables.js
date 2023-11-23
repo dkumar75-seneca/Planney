@@ -4,6 +4,7 @@ let tableChoices = [
   "Rosters", "Reminders", "Allocations", "Accounts", "SystemLogs"
 ];
 
+var selectedCollectionNum = 0;
 var selectedRecordNum = -1, readOnly = true, authority = true;
 var tableHeadings = ["Company", "Contact", "Country"];
 var tableRows = [
@@ -94,19 +95,22 @@ async function updateRecord(recordNum) {
 function renderTable() {
   const elem = document.getElementById("viewTable");
   let tableContent = ""; elem.innerHTML = "";
-  if (tableHeadings.length > 0) {
+  const temp = selectedCollectionNum;
+  if (tableHeadings[temp].length > 0) {
     tableContent += "<tr>";
-    for (let i = 0; i < tableHeadings.length; i++) {
+    for (let i = 0; i < tableHeadings[temp].length; i++) {
       tableContent += '<th onclick="sortTable(' + i;
-      tableContent += ')">' + tableHeadings[i] + '</th>';
+      tableContent += ')">' + tableHeadings[temp][i] + '</th>';
     }
 
     tableContent += "<th></th>"; // if (!readOnly) { tableContent += "<th></th>"; }
     tableContent += "</tr>";
-    for (let i = 0; i < tableRows.length; i++) {
-      const temp = Math.min(tableRows[i].length, tableHeadings.length);
+    for (let i = 0; i < tableRows[temp].length; i++) {
+      const tempNew = Math.min(tableRows[temp][i].length, tableHeadings[temp].length);
       tableContent += '<tr>';
-      for (let j = 0; j < temp; j++) { tableContent += "<td>" + tableRows[i][j] + "</td>"; }
+      console.log(tableRows[temp][i], tableHeadings[temp]);
+      console.log(tableRows[temp][i].length, tableHeadings[temp].length);
+      for (let j = 0; j < tempNew; j++) { tableContent += "<td>" + tableRows[temp][i][j] + "</td>"; console.log(tableRows[temp][i][j]); }
         tableContent += '<td style="text-align: center; width: 200px; ">';
         tableContent += '&nbsp &nbsp <button class="btn btn-secondary" ';
         tableContent += 'data-bs-toggle="modal" data-bs-target="#exampleModal" ';
