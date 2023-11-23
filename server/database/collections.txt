@@ -1,4 +1,5 @@
 Location (Collection 1)
+  reference
   branchID
   state
   country
@@ -6,12 +7,14 @@ Location (Collection 1)
   streetAddress
 
 Massages (Collection 2)
+  reference
   massageID
   massageName
   price
   duration
 
 Employees (Collection 3)
+  reference
   employeeID
   personName
   personPhone
@@ -20,12 +23,14 @@ Employees (Collection 3)
     massageIDs
 
 Customers (Collection 4)
+  reference
   customerID
   personName
   personPhone
   whitelisted
 
 Timeslots (Collection 5)
+  reference
   timeslotID
   status
   roomNumber
@@ -34,13 +39,15 @@ Timeslots (Collection 5)
   personName
 
 Rosters (Collection 6)
+  reference
   rosterID
-  date
+  rosterDate
   branchID
   timeslots
     timeslotIDs
 
 Reminders (Collection 7)
+  reference
   reminderID
   title
   status
@@ -48,6 +55,7 @@ Reminders (Collection 7)
   description
 
 Allocations (Collection 8)
+  reference
   allocationID
   branchID
   rosterID
@@ -59,6 +67,7 @@ Allocations (Collection 8)
     reminderIDs
 
 Accounts (Collection 9)
+  reference
   accountID
   username
   password
@@ -74,7 +83,16 @@ SystemLogs (Collection 10)
   accessTime
   accountID
 
-Reviews (Collection 11)
+Availabilities (Collection 11)
+  reference
+  availabilityID
+  employeeID
+  rosterDate
+  startTimeSlot
+  endTimeSlot
+
+Reviews (Collection 12)
+  reference
   employeeID
   massageID
   totalScore

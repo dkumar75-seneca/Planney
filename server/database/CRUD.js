@@ -40,15 +40,15 @@ async function ReadAllRecords(collection) {
   } catch (e) { console.log(e); return []; }
 }
 
-async function ReadRecord(collection, uName) {
-  const query = { username: uName };
+async function ReadRecord(collection, recordID) {
+  const query = { reference: recordID };
   const result = await collection.findOne(query);
   return result;
 }
 
 async function UpdateRecord(collection, recordID, newData, cNum) {
   if (ValidateNewData(newData, cNum)) {
-    const filter = { _id: recordID };
+    const filter = { reference: recordID };
     const update = { $set: newData };
     const result = await collection.updateOne(filter, update);
     return "Update request successfully processed.";
@@ -56,7 +56,7 @@ async function UpdateRecord(collection, recordID, newData, cNum) {
 }
 
 async function DeleteRecord(collection, recordID) {
-  const query = { _id: recordID };
+  const query = { reference: recordID };
   const result = await collection.deleteOne(query);
   if (result.deletedCount === 1) { console.log("Successfully deleted one document."); }
   else { console.log("No documents matched the query. Deleted 0 documents."); };

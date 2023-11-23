@@ -9,7 +9,7 @@ const apiEndpoints = planneyModules.helpers.copyObject(collectionNames);
 router.get("/", function(req, res) { res.render("index.html"); });
 for (let i = 0; i < apiEndpoints.length; i++) {
   const currentURI = "/api/" + apiEndpoints[i];
-  router.get(currentURI, function(_, res) { GetRequestHandler(i, res); });
+  // router.get(currentURI, function(_, res) { GetRequestHandler(i, res); });
   router.post(currentURI, function(req, res) { PostRequestHandler(i, req, res); });
 }
 
@@ -87,19 +87,21 @@ async function PostRequestHandler(collectionNum, req, res) {
 }
 
 async function RunServerTests() {
-  /*
+/*
   const inputData = {"personName" : "John", "employeeTitle": "Therapist", "offeredMassages": [ "Swiss", "Swedish" ] };
   const dummyAccountOne = { accessLevel: 1, userID: "abc", password: "password123", username: "bob", phone: "abc", email: "a@b.com" };
   const dummyAccountTwo = { accessLevel: 3, userID: "abcd", password: "password1234", username: "james", phone: "abcd", email: "c@b.com" };
   const dummyRequest = { body: { operation: 3, access: dummyAccountOne, input: inputData, reference: "abc" } };
   PostRequestHandler(2, dummyRequest, null);
-  */
-
+*/
+  console.log("Starting Server Tests."); console.log("Finishing Server Tests.");
   // planneyModules.databaseConnectorTest.RunAllDBTests();
   // planneyModules.accountValidatorTest.RunAllAccountValidationTests();
   // planneyModules.accountManagementTest.RunAllAccountManagementTests();
   // planneyModules.requestValidatorTest.RunAllRequestValidationTests();
   // planneyModules.requestManagementTest.RunAllRequestFormattingTests();
 }
+
+RunServerTests();
 
 module.exports = router;
