@@ -1,107 +1,70 @@
 var express = require('express');
 var router = express.Router();
 
-const planneyModules = require("./index.js");
-const { ValidateString } = require('./src/requestValidator.js');
-const { collectionNames } = require('./database/collectionNames.js');
-const apiEndpoints = planneyModules.helpers.copyObject(collectionNames);
+const planneyModules = require('./index.js');
 
-router.get("/", function(req, res) { res.render("index.html"); });
-for (let i = 0; i < apiEndpoints.length; i++) {
-  const currentURI = "/api/" + apiEndpoints[i];
-  // router.get(currentURI, function(_, res) { GetRequestHandler(i, res); });
-  router.post(currentURI, function(req, res) { PostRequestHandler(i, req, res); });
-}
+function copyObject(input) { return JSON.parse(JSON.stringify(input)); };
 
 function RaiseDataError(res) { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
 
-async function GetRequestHandler(collectionNum, res) {
-  const operationNum = 5, queryDetails = { cNum: collectionNum };
-  const returnMessage = "GET Request For /" + apiEndpoints[collectionNum] + " Received";
-  const returnData = await planneyModules.databaseConnector.UpdateDatabase(operationNum, queryDetails);
-  res.send(JSON.stringify({ "message": returnMessage, "data": returnData }));
+async function SendUserData(res, accessLevel) {
+  const aIndex = 0, sIndex = 1, operationNum = 5;
+  let serverResponse = {}, queryDetails = { cNum: null, exclusions: null };
+  if (accessLevel === 1) {
+    queryDetails.cNum = sIndex; queryDetails.exclusions = ["_id", "client", "waitlist"];
+    const filteredData = await planneyModules.databaseConnector.CallDatabase(operationNum, queryDetails);
+    serverResponse["categories"] = ["Schedules"]; serverResponse["readOnly"] = true;
+    serverResponse["headings"] = [["Entry #", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status"]];
+    serverResponse["listings"] = [filteredData];
+  } else if (accessLevel === 2) {
+    const schedules = await planneyModules.databaseConnector.CallDatabase(sIndex);
+    const accounts = await planneyModules.databaseConnector.CallDatabase(aIndex, ["password"]);
+    serverResponse["readOnly"] = false;
+    serverResponse["listings"] = [accounts, schedules];
+    serverResponse["categories"] = ["Accounts", "Schedules"];
+    serverResponse["headings"] = [
+      ["Account #", "Level", "First Name", "Last Name", "Username", "Email", "Phone"],
+      ["Entry #", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status", "Client", "Waitlist"]
+    ];
+  }; res.send(JSON.stringify({ "data": serverResponse }));
+}
+
+async function LoginUser(res, userDetails) {
+  const userCredentials = planneyModules.accountValidator.ExtractCredentials(userDetails);
+  const accessLevel = await planneyModules.accountValidator.ValidateCredentials(userCredentials);
+  if (accessLevel >= 0) { await SendUserData(res, accessLevel); }
+  else { res.send(JSON.stringify({ "error": "Login Failed. Recheck Credentials." })); }
 }
 
 async function SignUpUser(res, userDetails) {
-  if (!userDetails) { return; } // { RaiseDataError(res); }
-  const userInformation = planneyModules.accountManagement.FormatUserInfo(userDetails);
-  if (userInformation) {
+  if (!userDetails) { RaiseDataError(res); }
+  const userInformation = await planneyModules.accountManagement.FormatUserInfo(userDetails);
+  if (userInformation) { const collectionNum = 0;
     const newRecord = 1, reqQuery = { cNum: collectionNum, newData: userInformation };
-    const serverRes = await planneyModules.databaseConnector.UpdateDatabase(newRecord, reqQuery);
-    const postResponse = JSON.stringify({ "message": serverRes }); // res.send(postResponse);
-  } else { return; } // { RaiseDataError(res); }
+    const accountCheck = await planneyModules.accountManagement.GetAccountDetails(userInformation.username);
+    if (!accountCheck) {
+      await planneyModules.databaseConnector.CallDatabase(newRecord, reqQuery); await SendUserData(res, 1);
+      // const postResponse = JSON.stringify({ "data": 1 }); res.send(postResponse);
+    } else { res.send(JSON.stringify({ "error": "Failed Registration. Account Already Exists." })); }
+  } else { RaiseDataError(res); }
 }
 
-async function ResetPassword(res, oneTimePass, requestedPass) {
-  // Verify whether correct OTP is provided and update password to provided one if OTPs match within 5 attempts.
-  if (typeof oneTimePass === "string") {
-    const otpStatus = await planneyModules.accountValidator.ValidateOTP(username);
-    if (otpStatus && typeof requestedPass === "string") {
-      const passStatus = await planneyModules.accountManagement.UpdatePassword(username, requestedPass);
-      return; // res.send(JSON.stringify({ "data": passStatus }));
-    } else { return; } // res.send(JSON.stringify({ "error": "Password Not Provided." }));
-  } else {
-    const otpStatus = await planneyModules.accountManagement.SetupOTP(username);
-    return; // res.send(JSON.stringify({ "data": otpStatus }));
-  } // Generate temporary One-Time Password (OTP) and save to database with 5 minute expiry time.
-}
+async function ProcessViewerRequest(res, userDetails) { RaiseDataError(res); }
+async function ProcessCustomerRequest(res, userDetails) { RaiseDataError(res); }
+async function ProcessEmployeeRequest(res, userDetails) { RaiseDataError(res); }
 
-async function PerformDatabaseUpdate(res, collectionNum, input, operation, reference) {
-  const x = operation === 3, y = operation === 4;
-  if (planneyModules.requestValidator.ValidateRequest(collectionNum, input, x, y)) {
-    if (!(typeof reference === "string")) { return; } // { RaiseDataError(res); }
-    if (!planneyModules.requestValidator.ValidateString(reference)) { return; } // { RaiseDataError(res); }
-    const checkedData = planneyModules.requestManagement.FormatRequestData(collectionNum, input, x, y);
-    const reqData = { cNum: collectionNum, newData: checkedData, recordID: reference };
-    const serverRes = await planneyModules.databaseConnector.UpdateDatabase(operation, reqData);
-    // res.send(JSON.stringify({ "data": serverRes }));
-  } else { console.log(2); } // { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
-}
+router.post("/api", function(req, res) {
+  const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" });
+  if (!(req || req === 0) || !(req.body || req.body === 0)) { RaiseDataError(res); }
+  const requestType = req.body.requestType, signup = 1, login = 2, employee = 3, customer = 4;
+  if (requestType === signup) { SignUpUser(res, req.body.userDetails); }
+  else if (requestType === login) { LoginUser(res, req.body.userDetails); }
+  else if (requestType === viewer) { ProcessViewerRequest(res, req.body.userDetails); }
+  else if (requestType === employee) { ProcessEmployeeRequest(res, req.body.userDetails); }
+  else if (requestType === customer) { ProcessCustomerRequest(res, req.body.userDetails); }
+  else { res.send(postResponse); console.log(req.body); } // RaiseDataError(res);
+});
 
-async function HandleUserRequest(res, access, collectionNum, input, operation, reference, loginRequest) {
-  const userCredentials = planneyModules.requestManagement.ExtractCredentials(access);
-  const accessLevel = await planneyModules.accountValidator.ValidateCredentials(userCredentials);
-  if (accessLevel > 0) { const username = userCredentials.username;
-    if (loginRequest) { res.send(JSON.stringify({ "data": 1 })); return; }
-    const accessRights = planneyModules.accountManagement.GetAccessRights(accessLevel, collectionNum);
-    if (!(operation || operation === 0)) { return; }; // { RaiseDataError(res); }
-    if (planneyModules.requestValidator.ValidateAccessRights(operation, accessRights, reference, username)) {
-      PerformDatabaseUpdate(res, collectionNum, input, operation, reference);
-    } else { console.log(3); } // { res.send(JSON.stringify({ "error": "Failed Input. Not Enough Authorisation." })); }
-  } else { console.log(4); } // { res.send(JSON.stringify({ "error": "Failed Login. Recheck Credentials." })); }  
-}
-
-async function PostRequestHandler(collectionNum, req, res) {
-  const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" }); // res.send(postResponse);
-  if (!(req || req === 0) || !(req.body || req.body === 0)) { return; } // { RaiseDataError(res); }
-  const requestType = req.body.requestType, signup = 1, login = 2, resetPassword = 3, accountsIndex = 8;
-  if (collectionNum === accountsIndex && requestType === signup) {
-    SignUpUser(res, req.body.userDetails);
-  } else if (collectionNum === accountsIndex && requestType === resetPassword) {
-    ResetPassword(res, req.body.oneTimePass, req.body.requestedPass);
-  } else {
-    const reference = req.body.reference, collectionNum = req.body.collectionNum; 
-    const input = req.body.input, access = req.body.access, operation = req.body.operation;
-    HandleUserRequest(res, access, collectionNum, input, operation, reference, requestType === login);
-  }
-}
-
-async function RunServerTests() {
-/*
-  const inputData = {"personName" : "John", "employeeTitle": "Therapist", "offeredMassages": [ "Swiss", "Swedish" ] };
-  const dummyAccountOne = { accessLevel: 1, userID: "abc", password: "password123", username: "bob", phone: "abc", email: "a@b.com" };
-  const dummyAccountTwo = { accessLevel: 3, userID: "abcd", password: "password1234", username: "james", phone: "abcd", email: "c@b.com" };
-  const dummyRequest = { body: { operation: 3, access: dummyAccountOne, input: inputData, reference: "abc" } };
-  PostRequestHandler(2, dummyRequest, null);
-*/
-  console.log("Starting Server Tests."); console.log("Finishing Server Tests.");
-  // planneyModules.databaseConnectorTest.RunAllDBTests();
-  // planneyModules.accountValidatorTest.RunAllAccountValidationTests();
-  // planneyModules.accountManagementTest.RunAllAccountManagementTests();
-  // planneyModules.requestValidatorTest.RunAllRequestValidationTests();
-  // planneyModules.requestManagementTest.RunAllRequestFormattingTests();
-}
-
-RunServerTests();
+router.get("/", function(_, res) { res.render("index.html"); });
 
 module.exports = router;

@@ -4,14 +4,8 @@ var bcrypt = require('bcrypt');
 var nodemailer = require('nodemailer');
 
 const { randomInt } = require('crypto');
-const { CallDatabase } = require('./CRUD.js');
-//const { ValidateString } = require("./accountValidator.js");
-
-function ValidateString(input) {
-  const maxLength = 50, allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@+. ";
-  for (let i = 0; i < input.length; i++) { if (!allowedCharacters.includes(input[i])) { return false; } }
-  if (input.length > maxLength) { return false; }; return true;
-}
+const { ValidateString } = require("./requestValidator.js");
+const { collectionAccessRequirements } = require('../database/collectionNames.js');
 
 function copyObject(input) { return JSON.parse(JSON.stringify(input)); };
 
@@ -30,9 +24,8 @@ async function GenerateStringHash(input) {
 }
 
 async function GetAccountDetails(username) {
-	const readRecord = 2, collectionNum = 0;
-  const temp = {cNum: collectionNum, recordID: username, recordField: "username" };
-  const returnData = await CallDatabase(readRecord, temp);
+	const readRecord = 2, collectionNum = 8;
+  const returnData = await UpdateDatabase(readRecord, {cNum: collectionNum, recordID: username });
 	return returnData;
 }
 
@@ -61,7 +54,14 @@ async function EmailOTP(emailDetails) {
 
 exports.GetAccountDetails = GetAccountDetails;
 
-exports.FormatUserInfo = async function(userDetails) {
+exports.GetAccessRights = function(accessLevel, collectionNum) {
+  const temp = collectionAccessRequirements[collectionNum];
+  let returnValue = { insert: false, read: false, update: false, delete: false };
+  Object.keys(temp).forEach(function(key) { if (accessLevel >= temp[key]) { returnValue[key] = true; } });
+  return returnValue;
+}
+
+exports.FormatUserInfo = function(userDetails) {
   let signUpTemplate = { "first": null, "last": null, "phone": null, "email": null, "username": null };
 
   Object.keys(signUpTemplate).forEach(function(key) {
@@ -69,9 +69,9 @@ exports.FormatUserInfo = async function(userDetails) {
     else { signUpTemplate[key] = userDetails[key]; }
   });
 
-  const minPassLength = 6; signUpTemplate["accessLevel"] = 1;
+  const minPassLength = 6;
   if (typeof userDetails.password === "string" && userDetails.password.length >= minPassLength) {
-    signUpTemplate["password"] = await GenerateStringHash(userDetails.password);
+    signUpTemplate["password"] = GenerateStringHash(userDetails.password);
   } else { return null; }; return signUpTemplate;
 }
 
@@ -83,7 +83,7 @@ exports.UpdatePassword = async function(username, requestedPass) {
     newAccountData.password = await GenerateStringHash(requestedPass);
     if (!newAccountData.password) { return "Password Not Updated."; } else {
       const reqData = { cNum: accountsIndex, newData: newAccountData, recordID: username };
-      const passwordUpdated = await planneyModules.databaseConnector.CallDatabase(operation, reqData);
+      const passwordUpdated = await planneyModules.databaseConnector.UpdateDatabase(operation, reqData);
       if (passwordUpdated) { return "Password Updated." } else { return "Password Not Updated."; }
     }
 	}
@@ -105,7 +105,7 @@ exports.SetupOTP = async function(username) {
       newAccountData.otp = oneTimePassword; newAccountData.remainingAttempts = 3;
       newAccountData.otpExpiry = new Date(Date.now() + (allocatedMinutes * secondsInMin * msInSecond));
       const reqData = { cNum: accountsIndex, newData: newAccountData, recordID: username };
-      const otpSetup = await planneyModules.databaseConnector.CallDatabase(operation, reqData);
+      const otpSetup = await planneyModules.databaseConnector.UpdateDatabase(operation, reqData);
       if (otpSetup) { return messageOne; } else { return messageTwo; }
     } 
 	}

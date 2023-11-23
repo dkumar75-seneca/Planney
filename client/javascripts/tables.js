@@ -1,10 +1,10 @@
 // Needs to be same order as drop down menu
-const tableChoices = [
+let tableChoices = [
   "Locations", "Massages", "Employees", "Customers", "Timeslots",
   "Rosters", "Reminders", "Allocations", "Accounts", "SystemLogs"
 ];
 
-var selectedRecordNum = -1, readOnly = false;
+var selectedRecordNum = -1, readOnly = true, authority = true;
 var tableHeadings = ["Company", "Contact", "Country"];
 var tableRows = [
   ["Alfreds Futterkiste", "Maria Anders", "Germany"],
@@ -69,7 +69,7 @@ function checkForCompleteness() {
 }
 
 // await SendPostRequest(serverUri, exampleJSON);
-updateTable(0); console.log("Application script module imported");
+console.log("Application script module imported");
 function sortTable(colNum) { console.log("Table was sorted based on " + tableHeadings[colNum] + "."); }
 async function removeRecord(recordNum) { console.log("Delete Button has been pressed. Record Number: " + recordNum); } // await SendPostRequest(serverUri, exampleJSON); }
 
@@ -93,9 +93,6 @@ async function updateRecord(recordNum) {
 
 function renderTable() {
   const elem = document.getElementById("viewTable");
-  if (readOnly) { document.getElementById("MyAddButton").style.visibility = "hidden"; }
-  else { document.getElementById("MyAddButton").style.visibility = "visible"; }
-  
   let tableContent = ""; elem.innerHTML = "";
   if (tableHeadings.length > 0) {
     tableContent += "<tr>";
@@ -104,23 +101,25 @@ function renderTable() {
       tableContent += ')">' + tableHeadings[i] + '</th>';
     }
 
-    if (!readOnly) { tableContent += "<th></th>"; }
+    tableContent += "<th></th>"; // if (!readOnly) { tableContent += "<th></th>"; }
     tableContent += "</tr>";
     for (let i = 0; i < tableRows.length; i++) {
       const temp = Math.min(tableRows[i].length, tableHeadings.length);
       tableContent += '<tr>';
       for (let j = 0; j < temp; j++) { tableContent += "<td>" + tableRows[i][j] + "</td>"; }
-      if (!readOnly) {
         tableContent += '<td style="text-align: center; width: 200px; ">';
         tableContent += '&nbsp &nbsp <button class="btn btn-secondary" ';
         tableContent += 'data-bs-toggle="modal" data-bs-target="#exampleModal" ';
+      if (!readOnly) {
         tableContent += 'onclick="updateRecordNum(' + i + ')">Edit</button> &nbsp &nbsp';
         tableContent += '<button class="btn btn-danger" onclick="removeRecord(' + i;
         tableContent += ')">Delete</button> &nbsp &nbsp </td>';
+      } else {
+        tableContent += 'onclick="updateRecordNum(' + i + ')">Book</button> &nbsp &nbsp';
+        tableContent += '<button class="btn btn-danger" onclick="removeRecord(' + i;
+        tableContent += ')">Cancel</button> &nbsp &nbsp </td>';
       }
       tableContent += '</tr>';
     }
-  }
-
-  elem.innerHTML = tableContent;
+  }; elem.innerHTML = tableContent;
 }

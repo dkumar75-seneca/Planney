@@ -1,0 +1,19 @@
+Accounts
+  accountID
+  accessLevel
+  firstName
+  lastName
+  username
+  password
+  email
+  phone
+
+Schedules
+  entryID
+  location
+  meetingTime
+  therapistName
+  offeredMassages
+  status
+  client
+  waitlist

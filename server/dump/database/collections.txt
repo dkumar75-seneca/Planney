@@ -1,0 +1,79 @@
+Locations (Collection 1)
+  reference
+  state
+  country
+  postalCode
+  streetAddress
+
+Rosters (Collection 2)
+  reference
+  rosterDate
+  branchID
+
+Timeslots (Collection 3)
+  reference
+  roomNumber
+  slotNumber
+  employeeID
+  personName
+  rosterID
+
+Massages (Collection 4)
+  reference
+  massageName
+  price
+  duration
+
+Allocations (Collection 8)
+  reference
+  timeslotID
+  customerID
+  waitlist
+    customerIDs
+  reminders
+    reminderIDs
+
+Accounts (Collection 9)
+  reference
+  username
+  password
+  email
+
+Employees (Collection 3)
+  reference
+  personName
+  personPhone
+  employeeTitle
+  offeredMassages
+    massageIDs
+
+Customers (Collection 4)
+  reference
+  personName
+  personPhone
+  whitelisted
+
+Availabilities (Collection 11)
+  reference
+  rosterDate
+  startTimeSlot
+  endTimeSlot
+
+AccessLevels (Collection 12)
+  reference
+  accessLevel
+
+SystemLogs (Collection 10)
+  logID
+  username
+  actionType
+  description
+  accessTime
+  accountID
+
+Reminders (Collection 7)
+  reference
+  title
+  status
+  alertTime
+  description

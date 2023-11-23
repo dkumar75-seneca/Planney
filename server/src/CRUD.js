@@ -1,90 +1,70 @@
 const { MongoClient } = require('mongodb');
 
-const { copyObject } = require("../src/helpers.js");
-const { collectionNames, collectionTemplates } = require('./collectionNames.js');
-
 // normally you should NOT share credentials (or ANY environment variables) within source code
 // but since this is a test database with a restricted user account, its okay for now I guess
 const uri = 'mongodb+srv://new-user:Up43nVs3VpvO0Lnk@cluster-dhiraj.xg6us6r.mongodb.net/PlanneyDB';
 const client = new MongoClient(uri);
 
-// Note: cNames and cTemplates list order synchronisation affect system functionality.
-// ------------------------------------------------------------------------
-const cNames = copyObject(collectionNames);
-const cTemplates = copyObject(collectionTemplates);
-// ------------------------------------------------------------------------
-// Note: cNames and cTemplates list order synchronisation affect system functionality.
+function copyObject(input) { return JSON.parse(JSON.stringify(input)); };
 
-async function ValidateNewData(newData, cNum) {
-  let newDataTemplate = copyObject(cTemplates[cNum]);
-  Object.keys(newDataTemplate).forEach(function(key) {
-    if (!newData[key]) { return false; }
-    if (isNaN(newDataTemplate[key]) !== isNaN(newData[key])) { return false; }
-  });
-  return true;
+const cNames = ["Accounts", "Schedules"];
+async function CreateRecord(collection, newData) {
+  const result = await collection.insertOne(newData);
+  return "Insert request successfully processed.";
 }
 
-async function CreateRecord(collection, newData, cNum) {
-  if (ValidateNewData(newData, cNum)) {
-    const result = await collection.insertOne(newData);
-    return "Insert request successfully processed.";
-  } else { return "Invalid data type provided, insert request rejected."; }
-}
-
-async function ReadAllRecords(collection) {
+async function ReadAllRecords(collection, exclusions) {
   try {
-    let testArray = [];
-    const cursor = await collection.find({}, { projection: {_id:0} });
+    let testArray = [], temp = {};
+    if (exclusions) { for (let i = 0; i < exclusions.length; i++) { temp[exclusions[i]] = 0; } }
+    const cursor = await collection.find({}, { projection: temp });
     for await (const doc of cursor) { console.log(doc); testArray.push(doc); }
     return testArray;
   } catch (e) { console.log(e); return []; }
 }
 
-async function ReadRecord(collection, recordID) {
-  const query = { reference: recordID };
+async function ReadRecord(collection, recordID, recordField) {
+  let query = {}; query[recordField] = recordID;
   const result = await collection.findOne(query);
   return result;
 }
 
-async function UpdateRecord(collection, recordID, newData, cNum) {
-  if (ValidateNewData(newData, cNum)) {
-    const filter = { reference: recordID };
-    const update = { $set: newData };
-    const result = await collection.updateOne(filter, update);
-    return "Update request successfully processed.";
-  } else { return "Invalid data type provided, update request rejected."; }
+async function UpdateRecord(collection, recordID, recordField, newData) {
+  let filter = {}; filter[recordField] = recordID;
+  const update = { $set: newData };
+  await collection.updateOne(filter, update);
+  return "Update request successfully processed.";
 }
 
-async function DeleteRecord(collection, recordID) {
-  const query = { reference: recordID };
+async function DeleteRecord(collection, recordID, recordField) {
+  let query = {}; query[recordField] = recordID;
   const result = await collection.deleteOne(query);
   if (result.deletedCount === 1) { console.log("Successfully deleted one document."); }
   else { console.log("No documents matched the query. Deleted 0 documents."); };
   return "Delete request successfully processed.";
 }
 
-async function UpdateDatabase(operationNum, queryDetails) {
+async function CallDatabase(operationNum, queryDetails) {
   try {
     if (queryDetails.cNum || queryDetails.cNum === 0) {
       const cNum = queryDetails.cNum;
-      let numChecks = !isNaN(cNum) && cNum >= 0;
-      numChecks = numChecks && cNum < cNames.length;
-      
+      const numChecks = !isNaN(cNum) && cNum >= 0 && cNum <= 1;
       if (numChecks) {
         const newData = queryDetails.newData;
         const collection = client.db().collection(cNames[cNum]);
         if (operationNum === 1 && newData) {
-          return await CreateRecord(collection, newData, cNum);
-        } else if (queryDetails.recordID) {
+          return await CreateRecord(collection, newData);
+        } else if (queryDetails.recordID && queryDetails.recordField) {
           const recordID = queryDetails.recordID;
+          const recordField = queryDetails.recordField;
           if (operationNum === 2) {
-            return await ReadRecord(collection, recordID);
+            return await ReadRecord(collection, recordID, recordField);
           } else if (operationNum === 3 && newData) {
-            return await UpdateRecord(collection, recordID, newData, cNum);
+            return await UpdateRecord(collection, recordID, recordField, newData);
           } else if (operationNum === 4) {
-            return await DeleteRecord(collection, recordID);
+            return await DeleteRecord(collection, recordID, recordField);
           } else { console.error("Invalid database operation has been given."); }
-        } else if (operationNum === 5) { return await ReadAllRecords(collection); }
+        } else if (operationNum === 5) { return await ReadAllRecords(collection, queryDetails.exclusions); }
         else { console.error("Incomplete database query has been given."); }
       } else { console.error("Invalid collection number has been given."); }
     } else { console.error("No collection number has been given."); }
@@ -127,4 +107,4 @@ async function ExitProgram() { await StopDatabase(); console.log("Server Exiting
 
 process.on('SIGINT', function() { ExitProgram(); });
 
-module.exports = { UpdateDatabase };
+module.exports = { CallDatabase };
