@@ -18,8 +18,10 @@ function updateRecordNum(recordNum) {
   let modalTitle = document.getElementById("MyModalTitle");
   let modalButton = document.getElementById("MyModalButton");
 
+  const temp = selectedCollectionNum;
   const recordsPerRow = 2; selectedRecordNum = recordNum;
-  for (let i = 0; i < tableHeadings.length; i += recordsPerRow) {
+  console.log(tableHeadings[temp]); return;
+  for (let i = 0; i < tableHeadings[temp].length; i += recordsPerRow) {
     for (let j = i; j < Math.min(i + recordsPerRow, tableHeadings.length); j++) {
       bodyText += '<label for="' + tableHeadings[j].toLowerCase() + '">';
       bodyText += tableHeadings[j] + ':</label>';
