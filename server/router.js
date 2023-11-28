@@ -27,7 +27,7 @@ async function SendUserData(res, accessLevel) {
     serverResponse["headings"] = [
       ["Account #", "Level", "First Name", "Last Name", "Username", "Email", "Phone"],
       ["Entry #", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status", "Client", "Waitlist"]
-    ]; console.log(serverResponse);
+    ]; //console.log(serverResponse);
   }; res.send(JSON.stringify({ "data": serverResponse }));
 }
 
@@ -45,8 +45,8 @@ async function SignUpUser(res, userDetails) {
     const newRecord = 1, reqQuery = { cNum: collectionNum, newData: userInformation };
     const accountCheck = await planneyModules.accountManagement.GetAccountDetails(userInformation.username);
     if (!accountCheck) {
-      await planneyModules.databaseConnector.CallDatabase(newRecord, reqQuery); await SendUserData(res, 1);
       // const postResponse = JSON.stringify({ "data": 1 }); res.send(postResponse);
+      await planneyModules.databaseConnector.CallDatabase(newRecord, reqQuery); await SendUserData(res, 1);
     } else { res.send(JSON.stringify({ "error": "Failed Registration. Account Already Exists." })); }
   } else { RaiseDataError(res); }
 }

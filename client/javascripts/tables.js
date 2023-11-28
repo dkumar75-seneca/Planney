@@ -105,12 +105,15 @@ function renderTable() {
 
     tableContent += "<th></th>"; // if (!readOnly) { tableContent += "<th></th>"; }
     tableContent += "</tr>";
+    console.log(tableRows[temp], tableRows[temp].length);
+    const tempList = Object.values(tableRows[temp][0]);
+    console.log(tempList, tempList.length);
     for (let i = 0; i < tableRows[temp].length; i++) {
-      const tempNew = Math.min(tableRows[temp][i].length, tableHeadings[temp].length);
+      const tempList = Object.values(tableRows[temp][i]);
+      const tempNew = Math.min(tempList.length, tableHeadings[temp].length);
       tableContent += '<tr>';
-      console.log(tableRows[temp][i], tableHeadings[temp]);
-      console.log(tableRows[temp][i].length, tableHeadings[temp].length);
-      for (let j = 0; j < tempNew; j++) { tableContent += "<td>" + tableRows[temp][i][j] + "</td>"; console.log(tableRows[temp][i][j]); }
+      for (let j = 0; j < tempNew; j++) { tableContent += "<td>" + tempList[j] + "</td>"; }
+      for (let j = tempNew; j < tableHeadings[temp].length; j++) { tableContent += "<td></td>"; }
         tableContent += '<td style="text-align: center; width: 200px; ">';
         tableContent += '&nbsp &nbsp <button class="btn btn-secondary" ';
         tableContent += 'data-bs-toggle="modal" data-bs-target="#exampleModal" ';

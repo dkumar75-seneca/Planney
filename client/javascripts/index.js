@@ -17,6 +17,7 @@ async function MakeLoginAttempt() {
     const serverResponse = await SendPostRequest(serverUri, input);
     if (serverResponse.data) { SignIntoApplication(serverResponse.data); }
     // { userLoggedIn = true; credentials.u = user; credentials.p = password }
+    else if (serverResponse.error) { elem.innerHTML = "Login Failed. Recheck credentials."; elem.style.color = "red"; }
   } else { elem.innerHTML = "Kindly fill all fields before sending request."; elem.style.color = "red"; }
 }
 
@@ -36,8 +37,8 @@ async function MakeSignupAttempt() {
     };
     
     elem.innerHTML = "Request Sent. Kindly wait for server response."; elem.style.color = "green";
-    const serverResponse = await SendPostRequest(serverUri, input);
     if (serverResponse.data) { SignIntoApplication(serverResponse.data); }
     // { userLoggedIn = true; credentials.u = user; credentials.p = password }
+    else if (serverResponse.error) { elem.innerHTML = "Sign Up Failed. Recheck user details."; elem.style.color = "red"; }
   } else { elem.innerHTML = "Kindly fill all fields before sending request."; elem.style.color = "red"; }
 }

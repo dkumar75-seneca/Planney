@@ -14,7 +14,7 @@ async function SignIntoApplication(serverResponse) {
 }
 
 function RenderDashboard() {
-  const elem = document.getElementById("content")
+  const elem = document.getElementById("content");
   elem.innerHTML = `
   <div id="tableRender">
     <div class="row">

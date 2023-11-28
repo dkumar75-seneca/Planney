@@ -18,7 +18,7 @@ async function ReadAllRecords(collection, exclusions) {
     let testArray = [], temp = {};
     if (exclusions) { for (let i = 0; i < exclusions.length; i++) { temp[exclusions[i]] = 0; } }
     const cursor = await collection.find({}, { projection: temp });
-    for await (const doc of cursor) { console.log(doc); testArray.push(doc); }
+    for await (const doc of cursor) { testArray.push(doc); }
     return testArray;
   } catch (e) { console.log(e); return []; }
 }
