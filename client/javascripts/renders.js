@@ -1,16 +1,14 @@
 async function SignIntoApplication(serverResponse) {
-  RenderDashboard();
+  const temp = selectedCollectionNum; RenderDashboard();
   tableChoices = serverResponse.categories; readOnly = serverResponse.readOnly;
   tableHeadings = serverResponse.headings; tableRows = serverResponse.listings;
-  console.log(readOnly, tableChoices, tableHeadings, tableRows);
   if (readOnly) { document.getElementById("MyAddButton").style.visibility = "hidden"; }
   else { document.getElementById("MyAddButton").style.visibility = "visible"; }
   if (tableChoices.length > 1) { document.getElementById("firstColumn").style.visibility = "visible"; }
   else { document.getElementById("firstColumn").style.visibility = "hidden"; }
-  renderTable(); return; 
-  let elem = document.getElementById("NotificationLabel");
-  elem.innerHTML = tableChoices[0] + " data has been loaded.";
-  console.log(readOnly, tableChoices, tableHeadings, tableRows); return;
+  document.getElementById("myButton").innerHTML = tableChoices[temp].toString();
+  document.getElementById("NotificationLabel").innerHTML = tableChoices[temp] + " data has been loaded.";
+  document.getElementById("NotificationLabel").style.color = "green"; renderTable();
 }
 
 function RenderDashboard() {
@@ -79,7 +77,6 @@ function SignOutFromApplication() {
 
 function ShowLoginContent() {
   if (loginPressed) { MakeLoginAttempt(); return; }
-  console.log("Show login function was called.");
   loginPressed = true; signupPressed = false;
   const lBtn = document.getElementById("loginButton"); lBtn.innerHTML = "Login";
   const sBtn = document.getElementById("signupButton"); sBtn.innerHTML = "Create An Account";
@@ -94,7 +91,6 @@ function ShowLoginContent() {
 
 function ShowSignUpContent() {
   if (signupPressed) { MakeSignupAttempt(); return; }
-  console.log("Sign up function was called.");
   loginPressed = false; signupPressed = true;
   const lBtn = document.getElementById("loginButton"); lBtn.innerHTML = "Login Instead";
   const sBtn = document.getElementById("signupButton"); sBtn.innerHTML = "Sign Up";

@@ -14,7 +14,7 @@ async function SendUserData(res, accessLevel) {
     queryDetails.cNum = sIndex; queryDetails.exclusions = ["_id", "client", "waitlist"];
     const filteredData = await planneyModules.databaseConnector.CallDatabase(operationNum, queryDetails);
     serverResponse["categories"] = ["Schedules"]; serverResponse["readOnly"] = true;
-    serverResponse["headings"] = [["Entry #", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status"]];
+    serverResponse["headings"] = [["Entry Number", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status"]];
     serverResponse["listings"] = [filteredData];
   } else if (accessLevel === 2) {
     queryDetails.cNum = sIndex; queryDetails.exclusions = [];
@@ -25,8 +25,8 @@ async function SendUserData(res, accessLevel) {
     serverResponse["listings"] = [accounts, schedules];
     serverResponse["categories"] = ["Accounts", "Schedules"];
     serverResponse["headings"] = [
-      ["Account #", "Level", "First Name", "Last Name", "Username", "Email", "Phone"],
-      ["Entry #", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status", "Client", "Waitlist"]
+      ["Account Number", "Access Level", "First Name", "Last Name", "Username", "Email", "Phone"],
+      ["Entry Number", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status", "Client", "Waitlist"]
     ]; //console.log(serverResponse);
   }; res.send(JSON.stringify({ "data": serverResponse }));
 }

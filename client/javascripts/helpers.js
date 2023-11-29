@@ -1,24 +1,22 @@
 async function SendGetRequest(uri) {
-  const response = await fetch(uri, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' }
-  });
-  const output = await response.json(); //extract JSON from the http response
-  return output;
+  try {
+    const response = await fetch(uri, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const output = await response.json(); return output;
+  } catch (e) { return "Server Not Responding As Expected"; }
 }
 
 async function SendPostRequest(uri, input) {
-  const response = await fetch(uri, {
-    body: JSON.stringify(input),
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' }
-  });
-  const output = await response.json(); //extract JSON from the http response
-  return output;
+  try {
+    const response = await fetch(uri, {
+      body: JSON.stringify(input),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const output = await response.json(); return output;
+  } catch (e) { return "Server Not Responding As Expected"; }
 }
 
-function copyJSON(input) {
-  return JSON.parse(JSON.stringify(input));
-};
-
-console.log("Client side helper script is integrated and running.");
+function copyJSON(input) { return JSON.parse(JSON.stringify(input)); };

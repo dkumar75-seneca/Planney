@@ -12,54 +12,51 @@ var tableRows = [
   ["Centro comercial Moctezuma", "Francisco Chang", "Mexico"],
 ];
 
+function adjustStringLength(input, desiredLength) {
+  const inputLength = input.length, desiredDifference = desiredLength - inputLength;
+  console.log(inputLength, desiredDifference);
+  if (desiredDifference <= 2) { return input.substring(0, desiredLength) + ":"; } else {
+    let output = ""; paddingLength = Math.floor(desiredDifference / 1);
+    for (let i = 0; i < paddingLength; i++) { output += "&nbsp"; }; output += input + ":";
+    for (let i = 0; i < paddingLength; i++) { output += "&nbsp"; }; return output;
+  }
+}
+
 function updateRecordNum(recordNum) {
   let titleText = "", bodyText = "";
   let modalBody = document.getElementById("MyModalBody");
   let modalTitle = document.getElementById("MyModalTitle");
   let modalButton = document.getElementById("MyModalButton");
 
-  const temp = selectedCollectionNum;
-  const recordsPerRow = 2; selectedRecordNum = recordNum;
-  console.log(tableHeadings[temp]); return;
+  const recordsPerRow = 2, temp = selectedCollectionNum; selectedRecordNum = recordNum;
   for (let i = 0; i < tableHeadings[temp].length; i += recordsPerRow) {
-    for (let j = i; j < Math.min(i + recordsPerRow, tableHeadings.length); j++) {
-      bodyText += '<label for="' + tableHeadings[j].toLowerCase() + '">';
-      bodyText += tableHeadings[j] + ':</label>';
-      for (let k = 0; k < 5; k++) { bodyText += '&nbsp &nbsp &nbsp &nbsp'; }
-    }
-    bodyText += '<br>';
-    for (let j = i; j < Math.min(i + recordsPerRow, tableHeadings.length); j++) {
-      const category = tableHeadings[j].toLowerCase();
-      bodyText += '<input type="text" id="My' + tableHeadings[j] + '" name="';
-      if (recordNum < 0 || recordNum >= tableRows.length) { bodyText += category + '">'; }
-      else { bodyText += category + '" value="' + tableRows[recordNum][j] + '">'; }
-      bodyText += '&nbsp &nbsp &nbsp &nbsp';
-    }
-    bodyText += '<br>';
-  }
+    for (let j = i; j < Math.min(i + recordsPerRow, tableHeadings[temp].length); j++) {
+      const category = tableHeadings[temp][j].replace(/\s+/g, '-').toLowerCase();
+      bodyText += '<label for="' + category + '">' + adjustStringLength(tableHeadings[temp][j], 16) + '</label>';
+    }; bodyText += '<br>';
 
-  if (recordNum >= 0 && recordNum < tableRows.length) {
+    for (let j = i; j < Math.min(i + recordsPerRow, tableHeadings[temp].length); j++) {
+      const category = tableHeadings[temp][j].replace(/\s+/g, '-').toLowerCase();
+      bodyText += '<input type="text" class="w-25" id="' + category + '" name="';
+      if (recordNum >= 0 && recordNum < tableRows[temp].length) {
+        const tempList = Object.values(tableRows[temp][recordNum]);
+        bodyText += category + '" value="' + tempList[j] + '">';
+      } else { bodyText += category + '">'; }; bodyText += '&nbsp &nbsp';
+    }; bodyText += '<br>';
+  }
+  
+  if (recordNum >= 0 && recordNum < tableRows[temp].length) {
     titleText = "Update Record"; modalButton.onclick = function() { updateRecord(recordNum); } // .onclick = updateRecord(recordNum);
   } else { titleText = "Add Record"; modalButton.onclick = function() { addRecord(recordNum); } } // .onclick = addRecord(recordNum); }
-  modalTitle.innerHTML = titleText; modalBody.innerHTML = bodyText;
+  modalTitle.innerHTML = titleText; modalBody.innerHTML = bodyText; // console.log(titleText, bodyText);
 }
 
-async function updateTable(optionNum) {
+function updateTable(optionNum) {
   let elem = document.getElementById("myButton");
   elem.innerHTML = tableChoices[optionNum].toString();
-  elem = document.getElementById("NotificationLabel"); 
-  elem.innerHTML = tableChoices[optionNum].toString() + " records loaded.";
-  elem.style.color = "green"; // await SendPostRequest(serverUri, exampleJSON);
-  const serverData = await SendGetRequest(serverUri + "/" + tableChoices[optionNum]);
-  if (serverData.data) {
-    for (let i = 0; i < serverData.data.length; i++) {
-      console.log(serverData.data[i]);
-      for (var key of Object.keys(serverData.data[i])) {
-        console.log(key + " -> " + serverData.data[i][key]);
-      }
-    }
-  } // tableRows = serverData.data;
-  renderTable();
+  elem = document.getElementById("NotificationLabel"); elem.style.color = "green"; 
+  elem.innerHTML = tableChoices[optionNum].toString() + " data has been loaded.";
+  selectedCollectionNum = optionNum; renderTable();
 }
 
 function checkForCompleteness() {
@@ -67,14 +64,12 @@ function checkForCompleteness() {
     const elemID = "My" + tableHeadings[i];
     const elem = document.getElementById(elemID);
     if (elem.value.toString() === "") { return false; }
-  }
-  return true;
+  }; return true;
 }
 
 // await SendPostRequest(serverUri, exampleJSON);
-console.log("Application script module imported");
 function sortTable(colNum) { console.log("Table was sorted based on " + tableHeadings[colNum] + "."); }
-async function removeRecord(recordNum) { console.log("Delete Button has been pressed. Record Number: " + recordNum); } // await SendPostRequest(serverUri, exampleJSON); }
+async function removeRecord(recordNum) { console.log("Delete Button has been pressed. Record Number: " + recordNum); }
 
 async function addRecord(recordNum) {
   console.log("Add Button has been pressed. Record Number: " + recordNum);
@@ -99,26 +94,22 @@ function renderTable() {
   let tableContent = ""; elem.innerHTML = "";
   const temp = selectedCollectionNum;
   if (tableHeadings[temp].length > 0) {
-    tableContent += "<tr>";
+    tableContent += "<tr>"; // if (!readOnly) { tableContent += "<th></th>"; }
     for (let i = 0; i < tableHeadings[temp].length; i++) {
       tableContent += '<th onclick="sortTable(' + i;
       tableContent += ')">' + tableHeadings[temp][i] + '</th>';
-    }
+    }; tableContent += "<th></th></tr>";
 
-    tableContent += "<th></th>"; // if (!readOnly) { tableContent += "<th></th>"; }
-    tableContent += "</tr>";
-    console.log(tableRows[temp], tableRows[temp].length);
-    const tempList = Object.values(tableRows[temp][0]);
-    console.log(tempList, tempList.length);
     for (let i = 0; i < tableRows[temp].length; i++) {
       const tempList = Object.values(tableRows[temp][i]);
       const tempNew = Math.min(tempList.length, tableHeadings[temp].length);
+
       tableContent += '<tr>';
       for (let j = 0; j < tempNew; j++) { tableContent += "<td>" + tempList[j] + "</td>"; }
       for (let j = tempNew; j < tableHeadings[temp].length; j++) { tableContent += "<td></td>"; }
-        tableContent += '<td style="text-align: center; width: 200px; ">';
-        tableContent += '&nbsp &nbsp <button class="btn btn-secondary" ';
-        tableContent += 'data-bs-toggle="modal" data-bs-target="#exampleModal" ';
+      tableContent += '<td style="text-align: center; width: 200px; ">';
+      tableContent += '&nbsp &nbsp <button class="btn btn-secondary" ';
+      tableContent += 'data-bs-toggle="modal" data-bs-target="#exampleModal" ';
       if (!readOnly) {
         tableContent += 'onclick="updateRecordNum(' + i + ')">Edit</button> &nbsp &nbsp';
         tableContent += '<button class="btn btn-danger" onclick="removeRecord(' + i;
@@ -127,8 +118,7 @@ function renderTable() {
         tableContent += 'onclick="updateRecordNum(' + i + ')">Book</button> &nbsp &nbsp';
         tableContent += '<button class="btn btn-danger" onclick="removeRecord(' + i;
         tableContent += ')">Cancel</button> &nbsp &nbsp </td>';
-      }
-      tableContent += '</tr>';
+      }; tableContent += '</tr>';
     }
   }; elem.innerHTML = tableContent;
 }
