@@ -61,9 +61,9 @@ function updateRecordNum(recordNum) {
   }
 
   if (recordNum >= 0 && recordNum < rowsCopy.length) {
-    titleText = "Update Record"; modalButton.onclick = function() { updateRecord(recordNum); } // .onclick = updateRecord(recordNum);
-  } else { titleText = "Add Record"; modalButton.onclick = function() { addRecord(recordNum); } } // .onclick = addRecord(recordNum); }
-  modalTitle.innerHTML = titleText; modalBody.innerHTML = bodyText; // console.log(titleText, bodyText);
+    titleText = "Update Record"; modalButton.onclick = function() { updateRecord(recordNum); } 
+  } else { titleText = "Add Record"; modalButton.onclick = function() { addRecord(recordNum); } }
+  modalTitle.innerHTML = titleText; modalBody.innerHTML = bodyText;
 }
 
 function updateTable(optionNum) {
@@ -98,7 +98,7 @@ async function removeRecord(recordNum) {
   let elem = document.getElementById("NotificationLabel");
   elem.innerHTML = "Request Sent. Kindly wait for server response."; elem.style.color = "green";
   const serverResponse = await SendPostRequest(serverUri, input);
-  if (serverResponse.data) { console.log(serverResponse.data); } // SignIntoApplication(serverResponse.data); }
+  if (serverResponse.data) { SignIntoApplication(serverResponse.data); }  
   else if (serverResponse.error) { elem.innerHTML = "Request Denied. Recheck Data."; elem.style.color = "red"; }
 }
 
@@ -122,8 +122,8 @@ async function submitRecord(operationNum, recordNum) {
     const requestJSON = { categoryNum: selectedCollectionNum, operationNum: operationNum, requestData: rData };
     const input = { requestType: 3, userDetails: credentials, requestDetails: requestJSON };
     elem.innerHTML = "Request Sent. Kindly wait for server response."; elem.style.color = "green";
-    const serverResponse = await SendPostRequest(serverUri, input); console.log(serverResponse);
-    if (serverResponse.data) { console.log(serverResponse.data); } // SignIntoApplication(serverResponse.data); }
+    const serverResponse = await SendPostRequest(serverUri, input);
+    if (serverResponse.data) { SignIntoApplication(serverResponse.data); }
     else if (serverResponse.error) { elem.innerHTML = "Request Denied. Recheck Data."; elem.style.color = "red"; }
   } else { elem.innerHTML = "Kindly fill all input fields before sending request."; elem.style.color = "red"; }
 }
@@ -133,14 +133,13 @@ function renderTable() {
   let tableContent = ""; elem.innerHTML = "";
   const temp = selectedCollectionNum;
   if (tableHeadings[temp].length > 0) {
-    tableContent += "<tr>"; // if (!readOnly) { tableContent += "<th></th>"; }
+    tableContent += "<tr>";
     for (let i = 0; i < tableHeadings[temp].length; i++) {
       tableContent += '<th onclick="sortTable(' + i;
       tableContent += ')">' + tableHeadings[temp][i] + '</th>';
     }; tableContent += "<th></th></tr>";
 
     for (let i = 0; i < tableRows[temp].length; i++) {
-      //const tempList = Object.values(tableRows[temp][i]);
       let tempList = [];
       if (tableChoices[temp] === "Accounts") {
         tempList.push(tableRows[temp][i].username); tempList.push(tableRows[temp][i].accessLevel);
