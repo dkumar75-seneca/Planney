@@ -16,10 +16,10 @@ async function SendUserData(res, accessLevel) {
   const aIndex = 0, sIndex = 1, operationNum = 5;
   let serverResponse = {}, queryDetails = { cNum: null, exclusions: null };
   if (accessLevel === 1) {
-    queryDetails.cNum = sIndex; queryDetails.exclusions = ["_id", "client", "waitlist"];
+    queryDetails.cNum = sIndex; queryDetails.exclusions = ["_id", "waitlist"];
     const filteredData = await planneyModules.databaseConnector.CallDatabase(operationNum, queryDetails);
     serverResponse["categories"] = ["Schedules"]; serverResponse["readOnly"] = true;
-    serverResponse["headings"] = [["Entry Number", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status"]];
+    serverResponse["headings"] = [["Location", "Meeting Time", "Therapist", "Offered Massages", "Status", "Client", "Reference"]];
     serverResponse["listings"] = [filteredData];
   } else if (accessLevel === 2) {
     queryDetails.cNum = sIndex; queryDetails.exclusions = ["_id", "waitlist"];
@@ -55,12 +55,39 @@ async function SignUpUser(res, userDetails, aL1, aL2) {
   } else { RaiseDataError(res); }
 }
 
+async function GetBookingDetails(reference) {
+	const readRecord = 2, collectionNum = 1;
+  const temp = {cNum: collectionNum, recordID: reference, recordField: "reference" };
+  const returnData = await planneyModules.databaseConnector.CallDatabase(readRecord, temp);
+  return returnData;
+}
+
 async function ProcessCustomerRequest(res, userDetails, requestDetails) {
+  const submitBooking = 1, cancelBooking = -1;
   const accessLevel = await GetAccessLevel(userDetails);
   if (accessLevel === 1) {
     const validUserRequest = planneyModules.requestValidator.ExtractRequest(requestDetails, false);
-    console.log(validUserRequest);
-    if (validUserRequest) { console.log(validUserRequest); RaiseDataError(res); } else { RaiseDataError(res); }
+    if (!validUserRequest) { RaiseDataError(res); } else {
+      let bookingDetails = await GetBookingDetails(validUserRequest.scheduleReference);
+      if (!bookingDetails) { RaiseDataError(res); } else {
+        const checkOne = bookingDetails.status === "Booked";
+        const checkTwo = bookingDetails.client === userDetails.username;
+        const checkThree = validUserRequest.bookingAction === cancelBooking
+        if (bookingDetails.status === "Vacant" && validUserRequest.bookingAction === submitBooking) {
+          bookingDetails["status"] = "Booked"; bookingDetails["client"] = userDetails.username;
+          const update = 3, reqQuery = {
+            cNum: 1, newData: bookingDetails, recordID: validUserRequest.scheduleReference, recordField: "reference" 
+          }; await planneyModules.databaseConnector.CallDatabase(update, reqQuery);
+          await SendUserData(res, 1);
+        } else if (checkOne && checkTwo && checkThree) {
+            bookingDetails["status"] = "Vacant"; bookingDetails["client"] = "";
+            const update = 3, reqQuery = {
+              cNum: 1, newData: bookingDetails, recordID: validUserRequest.scheduleReference, recordField: "reference" 
+            }; await planneyModules.databaseConnector.CallDatabase(update, reqQuery);
+          await SendUserData(res, 1);
+        } else { RaiseDataError(res); }
+      }
+    }
   } else { res.send(JSON.stringify({ "error": "Login Failed. Recheck Credentials." })); }
 }
 
@@ -69,7 +96,6 @@ async function ProcessEmployeeRequest(res, userDetails, requestDetails) {
   if (accessLevel === 2) {
     const validUserRequest = planneyModules.requestValidator.ExtractRequest(requestDetails, true);
     if (!validUserRequest) { RaiseDataError(res); } else {
-      // categoryNum: rDetails.categoryNum, operationNum: rDetails.operationNum, requestData: rData }; }
       if (validUserRequest.operationNum === 1 && validUserRequest.categoryNum === 0) {
         const temp = validUserRequest.requestData.accessLevel;
         await SignUpUser(res, validUserRequest.requestData, temp, 2);
@@ -99,20 +125,18 @@ async function ProcessEmployeeRequest(res, userDetails, requestDetails) {
         }; await planneyModules.databaseConnector.CallDatabase(validUserRequest.operationNum, reqQuery);
         await SendUserData(res, 2);
       } else { RaiseDataError(res); }      
-      //RaiseDataError(res); // await SendUserData(res, 2);
     }
   } else { res.send(JSON.stringify({ "error": "Login Failed. Recheck Credentials." })); }
 }
 
 router.post("/api", function(req, res) {
-  const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" });
   if (!(req || req === 0) || !(req.body || req.body === 0)) { RaiseDataError(res); }
   const requestType = req.body.requestType, signup = 1, login = 2, employee = 3, customer = 4;
   if (requestType === signup) { SignUpUser(res, req.body.userDetails, 1); }
   else if (requestType === login) { LoginUser(res, req.body.userDetails); }
   else if (requestType === employee) { ProcessEmployeeRequest(res, req.body.userDetails, req.body.requestDetails); }
   else if (requestType === customer) { ProcessCustomerRequest(res, req.body.userDetails, req.body.requestDetails); }
-  else { res.send(postResponse); console.log(req.body); } // RaiseDataError(res);
+  else { RaiseDataError(res); } 
 });
 
 router.get("/", function(_, res) { res.render("index.html"); });

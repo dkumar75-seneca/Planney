@@ -128,6 +128,40 @@ async function submitRecord(operationNum, recordNum) {
   } else { elem.innerHTML = "Kindly fill all input fields before sending request."; elem.style.color = "red"; }
 }
 
+async function bookAppointment(recordNum) {
+  if (selectedCollectionNum === 0) {
+    const test = tableRows[0][recordNum].status;
+    let elem = document.getElementById("NotificationLabel");
+    if (test === "Vacant") { let ref = null;
+      try { ref = tableRows[0][recordNum].reference } catch (e) { ref = null; }
+      if (ref) {
+        const requestJSON = { scheduleReference: ref, bookingAction: 1 };
+        const input = { requestType: 4, userDetails: credentials, requestDetails: requestJSON };
+        const serverResponse = await SendPostRequest(serverUri, input);
+        if (serverResponse.data) { SignIntoApplication(serverResponse.data); }
+        else if (serverResponse.error) { elem.innerHTML = "Request Denied. Recheck Request."; elem.style.color = "red"; }
+      } else { console.log("Something unexpected happened with booking."); }
+    } else { elem.innerHTML = "This slot is already booked. Kindly choose a vacant one."; elem.style.color = "red"; return; }
+  }
+}
+
+async function cancelAppointment(recordNum) {
+  if (selectedCollectionNum === 0) {
+    const testOne = tableRows[0][recordNum].status, testTwo = tableRows[0][recordNum].client;
+    let elem = document.getElementById("NotificationLabel");
+    if (testOne === "Booked" && testTwo === credentials.username) { let ref = null;
+      try { ref = tableRows[0][recordNum].reference } catch (e) { ref = null; }
+      if (ref) {
+        const requestJSON = { scheduleReference: ref, bookingAction: -1 };
+        const input = { requestType: 4, userDetails: credentials, requestDetails: requestJSON };
+        const serverResponse = await SendPostRequest(serverUri, input);
+        if (serverResponse.data) { SignIntoApplication(serverResponse.data); }
+        else if (serverResponse.error) { elem.innerHTML = "Request Denied. Recheck Request."; elem.style.color = "red"; }
+      } else { console.log("Something unexpected happened with booking cancellation."); }
+    } else { elem.innerHTML = "You do not have this slot booked. Kindly choose another one."; elem.style.color = "red"; return; }
+  }
+}
+
 function renderTable() {
   const elem = document.getElementById("viewTable");
   let tableContent = ""; elem.innerHTML = "";
@@ -155,16 +189,18 @@ function renderTable() {
       tableContent += '<tr>';
       for (let j = 0; j < tempNew; j++) { tableContent += "<td>" + tempList[j] + "</td>"; }
       for (let j = tempNew; j < tableHeadings[temp].length; j++) { tableContent += "<td></td>"; }
-      tableContent += '<td style="text-align: center; width: 200px; ">';
-      tableContent += '&nbsp &nbsp <button class="btn btn-secondary" ';
-      tableContent += 'data-bs-toggle="modal" data-bs-target="#exampleModal" ';
       if (!readOnly) {
+        tableContent += '<td style="text-align: center; width: 200px; ">';
+        tableContent += '&nbsp &nbsp <button class="btn btn-secondary" ';
+        tableContent += 'data-bs-toggle="modal" data-bs-target="#exampleModal" ';
         tableContent += 'onclick="updateRecordNum(' + i + ')">Edit</button> &nbsp &nbsp';
         tableContent += '<button class="btn btn-danger" onclick="removeRecord(' + i;
         tableContent += ')">Delete</button> &nbsp &nbsp </td>';
       } else {
-        tableContent += 'onclick="updateRecordNum(' + i + ')">Book</button> &nbsp &nbsp';
-        tableContent += '<button class="btn btn-danger" onclick="removeRecord(' + i;
+        tableContent += '<br><td style="text-align: center; width: 200px; ">';
+        tableContent += '&nbsp &nbsp <button class="btn btn-success" ';
+        tableContent += 'onclick="bookAppointment(' + i + ')">Book</button> &nbsp &nbsp';
+        tableContent += '<button class="btn btn-danger" onclick="cancelAppointment(' + i;
         tableContent += ')">Cancel</button> &nbsp &nbsp </td>';
       }; tableContent += '</tr>';
     }
