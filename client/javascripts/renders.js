@@ -85,7 +85,7 @@ function ShowLoginContent() {
     <label for="user">Username</label><br>
     <input type="text" id="user" name="user" value=""><br><br>
     <label for="pass">Password</label><br>
-    <input type="text" id="pass" name="pass" value=""><br><br>
+    <input type="password" id="pass" name="pass" value=""><br><br>
   `;
 }
 
@@ -133,7 +133,7 @@ function ShowSignUpContent() {
       </div>
       <div class="col-lg-2">
         <label for="pass">Password</label><br>
-        <input type="text" id="pass" name="pass" value=""><br><br>
+        <input type="password" id="pass" name="pass" value=""><br><br>
       </div>
       <div class="col-lg-2"></div>
       <div class="col-lg-2"></div>

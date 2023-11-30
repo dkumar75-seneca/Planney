@@ -41,7 +41,9 @@ function updateRecordNum(recordNum) {
 
     for (let j = i; j < Math.min(i + recordsPerRow, headingsCopy.length); j++) {
       const category = headingsCopy[j].replace(/\s+/g, '-').toLowerCase();
-      bodyText += '<input type="text" class="w-25" id="' + category + '" name="';
+      if (headingsCopy[j] === "Password") {
+        bodyText += '<input type="password" class="w-25" id="' + category + '" name="';
+      } else { bodyText += '<input type="text" class="w-25" id="' + category + '" name="'; }
       inputFields.push(category);
       if (recordNum >= 0 && recordNum < rowsCopy.length) {
         let tempList = [];
