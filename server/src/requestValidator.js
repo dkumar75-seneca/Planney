@@ -1,5 +1,13 @@
 console.log("Request validator functions module imported");
 
+const { randomInt } = require('crypto');
+
+function GenerateRandomOTP(length) {
+  let randomPassword = '';
+  for (let i = 0; i < length; i++) { const number = randomInt(0, 9); randomPassword += number }
+  return randomPassword;
+}
+
 // function ValidateNumber(input, collectionName, collectionField) { return true; }
 
 function ValidateString(input) {
@@ -16,11 +24,13 @@ function ExtractEmployeeRequest(rDetails) {
     if (rDetails.operationNum === insert) {
       rData = { username: null, accessLevel: null, first: null, last: null, phone: null, email: null, password: null };
     } else if (rDetails.operationNum === update) {
-      rData = { accessLevel: null, first: null, last: null, phone: null, email: null };
+      rData = { accessLevel: null, first: null, last: null, phone: null, email: null, username: null };
     } else if (rDetails.operationNum === remove) { rData = { username: null }; } else { return null; }
   } else if (rDetails.categoryNum === schedulesNum) {
-    if (rDetails.operationNum === insert || rDetails.operationNum === update) {
-      rData = { location: null, meetingTime: null, therapistName: null, offeredMassages: null, reference: null, status: null, client: null };
+    if (rDetails.operationNum === insert) {
+      rData = { location: null, meetingTime: null, therapistName: null, offeredMassages: null };
+    } else if (rDetails.operationNum === update) {
+      rData = { location: null, meetingTime: null, therapistName: null, offeredMassages: null, reference: null };
     } else if (rDetails.operationNum === remove) { rData = { reference: null }; } else { return null; }
   } else { return null; }
 
@@ -29,16 +39,15 @@ function ExtractEmployeeRequest(rDetails) {
       if (rDetails.requestData[key] === "1" || rDetails.requestData[key] === 1) { rData[key] = 1; }
       else if (rDetails.requestData[key] === "2" || rDetails.requestData[key] === 2) { rData[key] = 2; }
       else { returnFlag = false; }
-    } else if (key === "status") {
-      if (rDetails.requestData[key] === "Booked" || rDetails.requestData[key] === "Vacant") {
-        rData[key] = rDetails.requestData[key];
-      } else { returnFlag = false; }
     } else if (!(rDetails.requestData[key] && ValidateString(rDetails.requestData[key]))) { returnFlag = false; }
     else { rData[key] = rDetails.requestData[key]; }
   }); 
-  
-  if (returnFlag) { return { categoryNum: rDetails.categoryNum, operationNum: rDetails.operationNum, requestData: rData }; }
-  return null;
+
+  if (returnFlag) { 
+    if (rDetails.categoryNum === schedulesNum && rDetails.operationNum === insert) {
+      rData["reference"] = GenerateRandomOTP(6); rData["status"] = "Vacant"; rData["client"] = "";
+    }; return { categoryNum: rDetails.categoryNum, operationNum: rDetails.operationNum, requestData: rData };
+  }; return null;
 }
 
 function ExtractCustomerRequest(rDetails) {

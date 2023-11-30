@@ -47,13 +47,13 @@ function updateRecordNum(recordNum) {
         let tempList = [];
         if (tableChoices[temp] === "Accounts") {
           tempList.push(rowsCopy[recordNum].username); tempList.push(rowsCopy[recordNum].accessLevel);
-          tempList.push(rowsCopy[recordNum].fname); tempList.push(rowsCopy[recordNum].lname);
+          tempList.push(rowsCopy[recordNum].first); tempList.push(rowsCopy[recordNum].last);
           tempList.push(rowsCopy[recordNum].phone); tempList.push(rowsCopy[recordNum].email);
         } else {
           tempList.push(rowsCopy[recordNum].location); tempList.push(rowsCopy[recordNum].meetingTime);
           tempList.push(rowsCopy[recordNum].therapistName); tempList.push(rowsCopy[recordNum].offeredMassages);
-          tempList.push(rowsCopy[recordNum].reference); tempList.push(rowsCopy[recordNum].status);
-          tempList.push(rowsCopy[recordNum].client);
+          tempList.push(rowsCopy[recordNum].status); tempList.push(rowsCopy[recordNum].client);
+          tempList.push(rowsCopy[recordNum].reference); 
         }
         bodyText += category + '" value="' + tempList[j] + '">';
       } else { bodyText += category + '">'; }; bodyText += '&nbsp &nbsp';
@@ -86,8 +86,8 @@ function checkForCompleteness() {
 function sortTable(colNum) { console.log("Table was sorted based on " + tableHeadings[colNum] + "."); }
 
 // await SendPostRequest(serverUri, exampleJSON);
-async function addRecord(recordNum) { const insert = 1; await submitRecord(insert); }
-async function updateRecord(recordNum) { const edit = 3; await submitRecord(edit); }
+async function addRecord(recordNum) { const insert = 1; await submitRecord(insert, recordNum); }
+async function updateRecord(recordNum) { const edit = 3; await submitRecord(edit, recordNum); }
 
 async function removeRecord(recordNum) {
   let rData = null; const remove = 4;
@@ -102,7 +102,7 @@ async function removeRecord(recordNum) {
   else if (serverResponse.error) { elem.innerHTML = "Request Denied. Recheck Data."; elem.style.color = "red"; }
 }
 
-async function submitRecord(operationNum) {
+async function submitRecord(operationNum, recordNum) {
   let elem = document.getElementById("NotificationLabel");
   const temp = checkForCompleteness(); inputFields = [];
   if (temp) {
@@ -114,12 +114,11 @@ async function submitRecord(operationNum) {
       };
     } else if (selectedCollectionNum === 0 && operationNum === 3 && temp.length === 6) {
       rData = { accessLevel: temp[1], first: temp[2], last: temp[3], phone: temp[4], email: temp[5] };
-    } else if (selectedCollectionNum === 1 && temp.length === 7) {
-      rData = {
-        location: temp[0], meetingTime: temp[1], therapistName: temp[2],
-        offeredMassages: temp[3], status: temp[4], client: temp[5], reference: temp[6] };
+      if (!(recordNum === -1)) { rData["username"] = tableRows[0][recordNum].username; }
+    } else if (selectedCollectionNum === 1 && temp.length === 4) {
+      rData = { location: temp[0], meetingTime: temp[1], therapistName: temp[2], offeredMassages: temp[3] };
+      if (!(recordNum === -1)) { rData["reference"] = tableRows[1][recordNum].reference; }
     } else { console.log("Something unexpected happened with user interface."); return; }
-
     const requestJSON = { categoryNum: selectedCollectionNum, operationNum: operationNum, requestData: rData };
     const input = { requestType: 3, userDetails: credentials, requestDetails: requestJSON };
     elem.innerHTML = "Request Sent. Kindly wait for server response."; elem.style.color = "green";
@@ -145,13 +144,13 @@ function renderTable() {
       let tempList = [];
       if (tableChoices[temp] === "Accounts") {
         tempList.push(tableRows[temp][i].username); tempList.push(tableRows[temp][i].accessLevel);
-        tempList.push(tableRows[temp][i].fname); tempList.push(tableRows[temp][i].lname);
+        tempList.push(tableRows[temp][i].first); tempList.push(tableRows[temp][i].last);
         tempList.push(tableRows[temp][i].phone); tempList.push(tableRows[temp][i].email);
       } else {
         tempList.push(tableRows[temp][i].location); tempList.push(tableRows[temp][i].meetingTime);
         tempList.push(tableRows[temp][i].therapistName); tempList.push(tableRows[temp][i].offeredMassages);
-        tempList.push(tableRows[temp][i].reference); tempList.push(tableRows[temp][i].status);
-        tempList.push(tableRows[temp][i].client);
+        tempList.push(tableRows[temp][i].status); tempList.push(tableRows[temp][i].client);
+        tempList.push(tableRows[temp][i].reference); 
       }
       const tempNew = Math.min(tempList.length, tableHeadings[temp].length);
       tableContent += '<tr>';

@@ -12,14 +12,6 @@ async function GetAccessLevel(userDetails) {
   return await planneyModules.accountValidator.ValidateCredentials(userCredentials);
 }
 
-/*
-
-Accounts: username, accessLevel, firstName, lastName, email, phone, password
-
-Schedules: location, meetingTime, therapistName, offeredMassages, reference, status
-
-*/
-
 async function SendUserData(res, accessLevel) {
   const aIndex = 0, sIndex = 1, operationNum = 5;
   let serverResponse = {}, queryDetails = { cNum: null, exclusions: null };
@@ -51,14 +43,14 @@ async function LoginUser(res, userDetails) {
   else { res.send(JSON.stringify({ "error": "Login Failed. Recheck Credentials." })); }
 }
 
-async function SignUpUser(res, userDetails, aL) {
+async function SignUpUser(res, userDetails, aL1, aL2) {
   if (!userDetails) { RaiseDataError(res); }
-  const userInformation = await planneyModules.accountManagement.FormatUserInfo(userDetails, aL);
+  const userInformation = await planneyModules.accountManagement.FormatUserInfo(userDetails, aL1);
   if (userInformation) { const collectionNum = 0;
     const newRecord = 1, reqQuery = { cNum: collectionNum, newData: userInformation };
     const accountCheck = await planneyModules.accountManagement.GetAccountDetails(userInformation.username);
     if (!accountCheck) {
-      await planneyModules.databaseConnector.CallDatabase(newRecord, reqQuery); await SendUserData(res, aL);
+      await planneyModules.databaseConnector.CallDatabase(newRecord, reqQuery); await SendUserData(res, aL2);
     } else { res.send(JSON.stringify({ "error": "Failed Registration. Account Already Exists." })); }
   } else { RaiseDataError(res); }
 }
@@ -79,14 +71,33 @@ async function ProcessEmployeeRequest(res, userDetails, requestDetails) {
     if (!validUserRequest) { RaiseDataError(res); } else {
       // categoryNum: rDetails.categoryNum, operationNum: rDetails.operationNum, requestData: rData }; }
       if (validUserRequest.operationNum === 1 && validUserRequest.categoryNum === 0) {
-        await SignUpUser(res, validUserRequest.requestData, 2);
+        const temp = validUserRequest.requestData.accessLevel;
+        await SignUpUser(res, validUserRequest.requestData, temp, 2);
       } else if (validUserRequest.operationNum === 1 && validUserRequest.categoryNum === 1) {
         const newRecord = 1, reqQuery = { cNum: 1, newData: validUserRequest.requestData };
         await planneyModules.databaseConnector.CallDatabase(newRecord, reqQuery); await SendUserData(res, 2);
+      } else if (validUserRequest.operationNum === 3 && validUserRequest.categoryNum === 0) {
+        const reqQuery = {
+          cNum: validUserRequest.categoryNum, newData: validUserRequest.requestData,
+          recordID: validUserRequest.requestData.username, recordField: "username" 
+        }; await planneyModules.databaseConnector.CallDatabase(validUserRequest.operationNum, reqQuery);
+        await SendUserData(res, 2);
       } else if (validUserRequest.operationNum === 3 && validUserRequest.categoryNum === 1) {
-        ;
-      } else if (validUserRequest.operationNum === 4) {
-        ;
+        const reqQuery = {
+          cNum: validUserRequest.categoryNum, newData: validUserRequest.requestData,
+          recordID: validUserRequest.requestData.reference, recordField: "reference" 
+        }; await planneyModules.databaseConnector.CallDatabase(validUserRequest.operationNum, reqQuery);
+        await SendUserData(res, 2);
+      } else if (validUserRequest.operationNum === 4 && validUserRequest.categoryNum === 0) {
+        const reqQuery = {
+          cNum: validUserRequest.categoryNum, recordID: validUserRequest.requestData.username, recordField: "username" 
+        }; await planneyModules.databaseConnector.CallDatabase(validUserRequest.operationNum, reqQuery);
+        await SendUserData(res, 2);
+      } else if (validUserRequest.operationNum === 4 && validUserRequest.categoryNum === 1) {
+        const reqQuery = {
+          cNum: validUserRequest.categoryNum, recordID: validUserRequest.requestData.reference, recordField: "reference" 
+        }; await planneyModules.databaseConnector.CallDatabase(validUserRequest.operationNum, reqQuery);
+        await SendUserData(res, 2);
       } else { RaiseDataError(res); }      
       //RaiseDataError(res); // await SendUserData(res, 2);
     }

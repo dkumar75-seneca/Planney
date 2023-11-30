@@ -1,3 +1,5 @@
+var nodemailer = require('nodemailer');
+
 async function EmailOTP(emailDetails) {
   return new Promise((resolve) => {
     // Again, this is NOT good practise but since this a dummy account

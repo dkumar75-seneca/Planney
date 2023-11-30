@@ -1,9 +1,7 @@
 console.log("Account management functions module imported");
 
 var bcrypt = require('bcrypt');
-var nodemailer = require('nodemailer');
 
-const { randomInt } = require('crypto');
 const { CallDatabase } = require('./CRUD.js');
 
 function ValidateString(input) {
@@ -13,12 +11,6 @@ function ValidateString(input) {
 }
 
 function copyObject(input) { return JSON.parse(JSON.stringify(input)); };
-
-function GenerateRandomOTP(length) {
-  let randomPassword = '';
-  for (let i = 0; i < length; i++) { const number = randomInt(0, 9); oneTimePassword += number }
-  return randomPassword;
-}
 
 async function GenerateStringHash(input) {
   try {
