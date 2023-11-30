@@ -19,4 +19,4 @@ async function SendPostRequest(uri, input) {
   } catch (e) { return "Server Not Responding As Expected"; }
 }
 
-function copyJSON(input) { return JSON.parse(JSON.stringify(input)); };
+function copyObject(input) { return JSON.parse(JSON.stringify(input)); };

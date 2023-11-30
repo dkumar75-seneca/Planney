@@ -4,8 +4,9 @@ let tableChoices = [
   "Rosters", "Reminders", "Allocations", "Accounts", "SystemLogs"
 ];
 
-var selectedCollectionNum = 0;
-var selectedRecordNum = -1, readOnly = true, authority = true;
+var inputFields = [];
+var readOnly = true, authority = true;
+var selectedCollectionNum = 0, selectedRecordNum = -1;
 var tableHeadings = ["Company", "Contact", "Country"];
 var tableRows = [
   ["Alfreds Futterkiste", "Maria Anders", "Germany"],
@@ -14,7 +15,6 @@ var tableRows = [
 
 function adjustStringLength(input, desiredLength) {
   const inputLength = input.length, desiredDifference = desiredLength - inputLength;
-  console.log(inputLength, desiredDifference);
   if (desiredDifference <= 2) { return input.substring(0, desiredLength) + ":"; } else {
     let output = ""; paddingLength = Math.floor(desiredDifference / 1);
     for (let i = 0; i < paddingLength; i++) { output += "&nbsp"; }; output += input + ":";
@@ -29,23 +29,26 @@ function updateRecordNum(recordNum) {
   let modalButton = document.getElementById("MyModalButton");
 
   const recordsPerRow = 2, temp = selectedCollectionNum; selectedRecordNum = recordNum;
-  for (let i = 0; i < tableHeadings[temp].length; i += recordsPerRow) {
-    for (let j = i; j < Math.min(i + recordsPerRow, tableHeadings[temp].length); j++) {
-      const category = tableHeadings[temp][j].replace(/\s+/g, '-').toLowerCase();
-      bodyText += '<label for="' + category + '">' + adjustStringLength(tableHeadings[temp][j], 16) + '</label>';
+  let headingsCopy = copyObject(tableHeadings[temp]), rowsCopy = copyObject(tableRows[temp]);
+  if (tableChoices[temp] === "Accounts") { headingsCopy.push("Password"); rowsCopy.push(""); }
+  for (let i = 0; i < headingsCopy.length; i += recordsPerRow) {
+    for (let j = i; j < Math.min(i + recordsPerRow, headingsCopy.length); j++) {
+      const category = headingsCopy[j].replace(/\s+/g, '-').toLowerCase();
+      bodyText += '<label for="' + category + '">' + adjustStringLength(headingsCopy[j], 16) + '</label>';
     }; bodyText += '<br>';
 
-    for (let j = i; j < Math.min(i + recordsPerRow, tableHeadings[temp].length); j++) {
-      const category = tableHeadings[temp][j].replace(/\s+/g, '-').toLowerCase();
+    for (let j = i; j < Math.min(i + recordsPerRow, headingsCopy.length); j++) {
+      const category = headingsCopy[j].replace(/\s+/g, '-').toLowerCase();
       bodyText += '<input type="text" class="w-25" id="' + category + '" name="';
-      if (recordNum >= 0 && recordNum < tableRows[temp].length) {
-        const tempList = Object.values(tableRows[temp][recordNum]);
+      inputFields.push(category);
+      if (recordNum >= 0 && recordNum < rowsCopy.length) {
+        const tempList = Object.values(rowsCopy[recordNum]);
         bodyText += category + '" value="' + tempList[j] + '">';
       } else { bodyText += category + '">'; }; bodyText += '&nbsp &nbsp';
     }; bodyText += '<br>';
   }
-  
-  if (recordNum >= 0 && recordNum < tableRows[temp].length) {
+
+  if (recordNum >= 0 && recordNum < rowsCopy.length) {
     titleText = "Update Record"; modalButton.onclick = function() { updateRecord(recordNum); } // .onclick = updateRecord(recordNum);
   } else { titleText = "Add Record"; modalButton.onclick = function() { addRecord(recordNum); } } // .onclick = addRecord(recordNum); }
   modalTitle.innerHTML = titleText; modalBody.innerHTML = bodyText; // console.log(titleText, bodyText);
@@ -59,12 +62,21 @@ function updateTable(optionNum) {
   selectedCollectionNum = optionNum; renderTable();
 }
 
+/*
+const input = {
+  requestType: 1, userDetails: {
+    username: user, password: pass, "first": fname, "last": lname, "phone": phone, "email": email
+  }
+};
+*/
+
 function checkForCompleteness() {
-  for (let i = 0; i < tableHeadings.length; i++) {
-    const elemID = "My" + tableHeadings[i];
-    const elem = document.getElementById(elemID);
-    if (elem.value.toString() === "") { return false; }
-  }; return true;
+  let result = [];
+  for (let i = 0; i < inputFields.length; i++) {
+    const elem = document.getElementById(inputFields[i]);
+    const temp = elem.value.toString();
+    if (temp === "") { return false; } else { console.log(1); result.push(temp); }
+  }; return result;
 }
 
 // await SendPostRequest(serverUri, exampleJSON);
@@ -74,18 +86,22 @@ async function removeRecord(recordNum) { console.log("Delete Button has been pre
 async function addRecord(recordNum) {
   console.log("Add Button has been pressed. Record Number: " + recordNum);
   let elem = document.getElementById("NotificationLabel");
-  if (checkForCompleteness()) {
-    elem.innerHTML = "Request Sent. Kindly wait for server response.";
-    elem.style.color = "green"; // await SendPostRequest(serverUri, exampleJSON);
+  const temp = checkForCompleteness(); inputFields = [];
+  if (temp) {
+    const requestJSON = { credentials: null, requestType: 5, userData: temp };
+    elem.innerHTML = "Request Sent. Kindly wait for server response."; elem.style.color = "green";
+    const serverResponse = await SendPostRequest(serverUri, requestJSON); console.log(serverResponse);
   } else { elem.innerHTML = "Kindly fill all input fields before sending request."; elem.style.color = "red"; }
 }
 
 async function updateRecord(recordNum) {
-  console.log("Add Button has been pressed. Record Number: " + recordNum);
+  console.log("Update Button has been pressed. Record Number: " + recordNum);
   let elem = document.getElementById("NotificationLabel");
-  if (checkForCompleteness()) {
-    elem.innerHTML = "Request Sent. Kindly wait for server response.";
-    elem.style.color = "green"; // await SendPostRequest(serverUri, exampleJSON);
+  const temp = checkForCompleteness(); inputFields = [];
+  if (temp) {
+    const requestJSON = { credentials: null, requestType: 6, userData: temp };
+    elem.innerHTML = "Request Sent. Kindly wait for server response."; elem.style.color = "green";
+    const serverResponse = await SendPostRequest(serverUri, requestJSON); console.log(serverResponse);
   } else { elem.innerHTML = "Kindly fill all input fields before sending request."; elem.style.color = "red"; }
 }
 

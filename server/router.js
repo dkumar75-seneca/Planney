@@ -17,7 +17,7 @@ async function SendUserData(res, accessLevel) {
     serverResponse["headings"] = [["Entry Number", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status"]];
     serverResponse["listings"] = [filteredData];
   } else if (accessLevel === 2) {
-    queryDetails.cNum = sIndex; queryDetails.exclusions = [];
+    queryDetails.cNum = sIndex; queryDetails.exclusions = ["waitlist"];
     const schedules = await planneyModules.databaseConnector.CallDatabase(operationNum, queryDetails);
     queryDetails.cNum = aIndex; queryDetails.exclusions = ["password"];
     const accounts = await planneyModules.databaseConnector.CallDatabase(operationNum, queryDetails);
@@ -26,7 +26,7 @@ async function SendUserData(res, accessLevel) {
     serverResponse["categories"] = ["Accounts", "Schedules"];
     serverResponse["headings"] = [
       ["Account Number", "Access Level", "First Name", "Last Name", "Username", "Email", "Phone"],
-      ["Entry Number", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status", "Client", "Waitlist"]
+      ["Entry Number", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status", "Client"]
     ]; //console.log(serverResponse);
   }; res.send(JSON.stringify({ "data": serverResponse }));
 }
@@ -61,7 +61,6 @@ router.post("/api", function(req, res) {
   const requestType = req.body.requestType, signup = 1, login = 2, employee = 3, customer = 4;
   if (requestType === signup) { SignUpUser(res, req.body.userDetails); }
   else if (requestType === login) { LoginUser(res, req.body.userDetails); }
-  else if (requestType === viewer) { ProcessViewerRequest(res, req.body.userDetails); }
   else if (requestType === employee) { ProcessEmployeeRequest(res, req.body.userDetails); }
   else if (requestType === customer) { ProcessCustomerRequest(res, req.body.userDetails); }
   else { res.send(postResponse); console.log(req.body); } // RaiseDataError(res);
