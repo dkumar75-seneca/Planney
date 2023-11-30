@@ -37,7 +37,7 @@ async function GetAccountDetails(username) {
 
 exports.GetAccountDetails = GetAccountDetails;
 
-exports.FormatUserInfo = async function(userDetails) {
+exports.FormatUserInfo = async function(userDetails, accessLevel) {
   let signUpTemplate = { "first": null, "last": null, "phone": null, "email": null, "username": null };
 
   Object.keys(signUpTemplate).forEach(function(key) {
@@ -45,7 +45,7 @@ exports.FormatUserInfo = async function(userDetails) {
     else { signUpTemplate[key] = userDetails[key]; }
   });
 
-  const minPassLength = 6; signUpTemplate["accessLevel"] = 1;
+  const minPassLength = 6; signUpTemplate["accessLevel"] = accessLevel;
   if (typeof userDetails.password === "string" && userDetails.password.length >= minPassLength) {
     signUpTemplate["password"] = await GenerateStringHash(userDetails.password);
   } else { return null; }; return signUpTemplate;

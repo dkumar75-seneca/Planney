@@ -51,14 +51,14 @@ async function LoginUser(res, userDetails) {
   else { res.send(JSON.stringify({ "error": "Login Failed. Recheck Credentials." })); }
 }
 
-async function SignUpUser(res, userDetails) {
+async function SignUpUser(res, userDetails, aL) {
   if (!userDetails) { RaiseDataError(res); }
-  const userInformation = await planneyModules.accountManagement.FormatUserInfo(userDetails);
+  const userInformation = await planneyModules.accountManagement.FormatUserInfo(userDetails, aL);
   if (userInformation) { const collectionNum = 0;
     const newRecord = 1, reqQuery = { cNum: collectionNum, newData: userInformation };
     const accountCheck = await planneyModules.accountManagement.GetAccountDetails(userInformation.username);
     if (!accountCheck) {
-      await planneyModules.databaseConnector.CallDatabase(newRecord, reqQuery); await SendUserData(res, 1);
+      await planneyModules.databaseConnector.CallDatabase(newRecord, reqQuery); await SendUserData(res, aL);
     } else { res.send(JSON.stringify({ "error": "Failed Registration. Account Already Exists." })); }
   } else { RaiseDataError(res); }
 }
@@ -76,8 +76,20 @@ async function ProcessEmployeeRequest(res, userDetails, requestDetails) {
   const accessLevel = await GetAccessLevel(userDetails);
   if (accessLevel === 2) {
     const validUserRequest = planneyModules.requestValidator.ExtractRequest(requestDetails, true);
-    console.log(validUserRequest);
-    if (validUserRequest) { console.log(validUserRequest); RaiseDataError(res); } else { RaiseDataError(res); }
+    if (!validUserRequest) { RaiseDataError(res); } else {
+      // categoryNum: rDetails.categoryNum, operationNum: rDetails.operationNum, requestData: rData }; }
+      if (validUserRequest.operationNum === 1 && validUserRequest.categoryNum === 0) {
+        await SignUpUser(res, validUserRequest.requestData, 2);
+      } else if (validUserRequest.operationNum === 1 && validUserRequest.categoryNum === 1) {
+        const newRecord = 1, reqQuery = { cNum: 1, newData: validUserRequest.requestData };
+        await planneyModules.databaseConnector.CallDatabase(newRecord, reqQuery); await SendUserData(res, 2);
+      } else if (validUserRequest.operationNum === 3 && validUserRequest.categoryNum === 1) {
+        ;
+      } else if (validUserRequest.operationNum === 4) {
+        ;
+      } else { RaiseDataError(res); }      
+      //RaiseDataError(res); // await SendUserData(res, 2);
+    }
   } else { res.send(JSON.stringify({ "error": "Login Failed. Recheck Credentials." })); }
 }
 
@@ -85,7 +97,7 @@ router.post("/api", function(req, res) {
   const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" });
   if (!(req || req === 0) || !(req.body || req.body === 0)) { RaiseDataError(res); }
   const requestType = req.body.requestType, signup = 1, login = 2, employee = 3, customer = 4;
-  if (requestType === signup) { SignUpUser(res, req.body.userDetails); }
+  if (requestType === signup) { SignUpUser(res, req.body.userDetails, 1); }
   else if (requestType === login) { LoginUser(res, req.body.userDetails); }
   else if (requestType === employee) { ProcessEmployeeRequest(res, req.body.userDetails, req.body.requestDetails); }
   else if (requestType === customer) { ProcessCustomerRequest(res, req.body.userDetails, req.body.requestDetails); }

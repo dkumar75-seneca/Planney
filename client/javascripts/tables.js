@@ -87,6 +87,8 @@ async function removeRecord(recordNum) {
   let elem = document.getElementById("NotificationLabel");
   elem.innerHTML = "Request Sent. Kindly wait for server response."; elem.style.color = "green";
   const serverResponse = await SendPostRequest(serverUri, input);
+  if (serverResponse.data) { console.log(serverResponse.data); } // SignIntoApplication(serverResponse.data); }
+  else if (serverResponse.error) { elem.innerHTML = "Request Denied. Recheck Data."; elem.style.color = "red"; }
 }
 
 /*
@@ -111,11 +113,11 @@ async function submitRecord(operationNum) {
     let rData = { a: 1 };
     if (selectedCollectionNum === 0 && operationNum === 1 && temp.length === 7) {
       rData = {
-        username: temp[0], accessLevel: temp[1], firstName: temp[2],
-        lastName: temp[3], phone: temp[4], email: temp[5], password: temp[6]
+        username: temp[0], accessLevel: temp[1], first: temp[2],
+        last: temp[3], phone: temp[4], email: temp[5], password: temp[6]
       };
     } else if (selectedCollectionNum === 0 && operationNum === 3 && temp.length === 6) {
-      rData = { accessLevel: temp[1], firstName: temp[2], lastName: temp[3], phone: temp[4], email: temp[5] };
+      rData = { accessLevel: temp[1], first: temp[2], last: temp[3], phone: temp[4], email: temp[5] };
     } else if (selectedCollectionNum === 1 && temp.length === 7) {
       rData = {
         location: temp[0], meetingTime: temp[1], therapistName: temp[2],
@@ -126,6 +128,8 @@ async function submitRecord(operationNum) {
     const input = { requestType: 3, userDetails: credentials, requestDetails: requestJSON };
     elem.innerHTML = "Request Sent. Kindly wait for server response."; elem.style.color = "green";
     const serverResponse = await SendPostRequest(serverUri, input); console.log(serverResponse);
+    if (serverResponse.data) { console.log(serverResponse.data); } // SignIntoApplication(serverResponse.data); }
+    else if (serverResponse.error) { elem.innerHTML = "Request Denied. Recheck Data."; elem.style.color = "red"; }
   } else { elem.innerHTML = "Kindly fill all input fields before sending request."; elem.style.color = "red"; }
 }
 

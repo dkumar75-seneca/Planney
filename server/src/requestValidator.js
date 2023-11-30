@@ -14,9 +14,9 @@ function ExtractEmployeeRequest(rDetails) {
   if (!rDetails || !rDetails.requestData) { return null; }
   if (rDetails.categoryNum === accountsNum) {
     if (rDetails.operationNum === insert) {
-      rData = { username: null, accessLevel: null, firstName: null, lastName: null, phone: null, email: null, password: null };
+      rData = { username: null, accessLevel: null, first: null, last: null, phone: null, email: null, password: null };
     } else if (rDetails.operationNum === update) {
-      rData = { accessLevel: null, firstName: null, lastName: null, phone: null, email: null };
+      rData = { accessLevel: null, first: null, last: null, phone: null, email: null };
     } else if (rDetails.operationNum === remove) { rData = { username: null }; } else { return null; }
   } else if (rDetails.categoryNum === schedulesNum) {
     if (rDetails.operationNum === insert || rDetails.operationNum === update) {
