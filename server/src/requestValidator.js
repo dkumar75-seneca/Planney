@@ -24,10 +24,16 @@ function ExtractEmployeeRequest(rDetails) {
     } else if (rDetails.operationNum === remove) { rData = { reference: null }; } else { return null; }
   } else { return null; }
 
-  console.log(rDetails);
   Object.keys(rData).forEach(function(key) {
-    console.log(key);
-    if (!(rDetails.requestData[key] && ValidateString(rDetails.requestData[key]))) { returnFlag = false; }
+    if (key === "accessLevel") {
+      if (rDetails.requestData[key] === "1" || rDetails.requestData[key] === 1) { rData[key] = 1; }
+      else if (rDetails.requestData[key] === "2" || rDetails.requestData[key] === 2) { rData[key] = 2; }
+      else { returnFlag = false; }
+    } else if (key === "status") {
+      if (rDetails.requestData[key] === "Booked" || rDetails.requestData[key] === "Vacant") {
+        rData[key] = rDetails.requestData[key];
+      } else { returnFlag = false; }
+    } else if (!(rDetails.requestData[key] && ValidateString(rDetails.requestData[key]))) { returnFlag = false; }
     else { rData[key] = rDetails.requestData[key]; }
   }); 
   

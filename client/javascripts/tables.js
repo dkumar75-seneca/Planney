@@ -32,6 +32,7 @@ function updateRecordNum(recordNum) {
   const recordsPerRow = 2, temp = selectedCollectionNum; selectedRecordNum = recordNum;
   let headingsCopy = copyObject(tableHeadings[temp]), rowsCopy = copyObject(tableRows[temp]);
   if (tableChoices[temp] === "Accounts" && recordNum === -1) { headingsCopy.push("Password"); rowsCopy.push(""); }
+  if (tableChoices[temp] === "Schedules") { headingsCopy = headingsCopy.slice(0, -3); rowsCopy.slice(0, -3); }
   for (let i = 0; i < headingsCopy.length; i += recordsPerRow) {
     for (let j = i; j < Math.min(i + recordsPerRow, headingsCopy.length); j++) {
       const category = headingsCopy[j].replace(/\s+/g, '-').toLowerCase();
@@ -43,7 +44,17 @@ function updateRecordNum(recordNum) {
       bodyText += '<input type="text" class="w-25" id="' + category + '" name="';
       inputFields.push(category);
       if (recordNum >= 0 && recordNum < rowsCopy.length) {
-        const tempList = Object.values(rowsCopy[recordNum]);
+        let tempList = [];
+        if (tableChoices[temp] === "Accounts") {
+          tempList.push(rowsCopy[recordNum].username); tempList.push(rowsCopy[recordNum].accessLevel);
+          tempList.push(rowsCopy[recordNum].fname); tempList.push(rowsCopy[recordNum].lname);
+          tempList.push(rowsCopy[recordNum].phone); tempList.push(rowsCopy[recordNum].email);
+        } else {
+          tempList.push(rowsCopy[recordNum].location); tempList.push(rowsCopy[recordNum].meetingTime);
+          tempList.push(rowsCopy[recordNum].therapistName); tempList.push(rowsCopy[recordNum].offeredMassages);
+          tempList.push(rowsCopy[recordNum].reference); tempList.push(rowsCopy[recordNum].status);
+          tempList.push(rowsCopy[recordNum].client);
+        }
         bodyText += category + '" value="' + tempList[j] + '">';
       } else { bodyText += category + '">'; }; bodyText += '&nbsp &nbsp';
     }; bodyText += '<br>';
@@ -91,21 +102,6 @@ async function removeRecord(recordNum) {
   else if (serverResponse.error) { elem.innerHTML = "Request Denied. Recheck Data."; elem.style.color = "red"; }
 }
 
-/*
-
-  if (rDetails.categoryNum === accountsNum) {
-    if (rDetails.operationNum === insert) {
-      rData = { username: null, accessLevel: null, firstName: null, lastName: null, phone: null, email: null, password: null };
-    } else if (rDetails.operationNum === update) {
-      rData = { accessLevel: null, firstName: null, lastName: null, phone: null, email: null };
-    } else if (rDetails.operationNum === remove) { rData = { username: null }; } else { return null; }
-  } else if (rDetails.categoryNum === schedulesNum) {
-    if (rDetails.operationNum === insert || rDetails.operationNum === update) {
-      rData = { location: null, meetingTime: null, therapistName: null, offeredMassages: null, reference: null, status: null, client: null };
-    } else if (rDetails.operationNum === remove) { rData = { reference: null }; } else { return null; }
-
-*/
-
 async function submitRecord(operationNum) {
   let elem = document.getElementById("NotificationLabel");
   const temp = checkForCompleteness(); inputFields = [];
@@ -145,9 +141,19 @@ function renderTable() {
     }; tableContent += "<th></th></tr>";
 
     for (let i = 0; i < tableRows[temp].length; i++) {
-      const tempList = Object.values(tableRows[temp][i]);
+      //const tempList = Object.values(tableRows[temp][i]);
+      let tempList = [];
+      if (tableChoices[temp] === "Accounts") {
+        tempList.push(tableRows[temp][i].username); tempList.push(tableRows[temp][i].accessLevel);
+        tempList.push(tableRows[temp][i].fname); tempList.push(tableRows[temp][i].lname);
+        tempList.push(tableRows[temp][i].phone); tempList.push(tableRows[temp][i].email);
+      } else {
+        tempList.push(tableRows[temp][i].location); tempList.push(tableRows[temp][i].meetingTime);
+        tempList.push(tableRows[temp][i].therapistName); tempList.push(tableRows[temp][i].offeredMassages);
+        tempList.push(tableRows[temp][i].reference); tempList.push(tableRows[temp][i].status);
+        tempList.push(tableRows[temp][i].client);
+      }
       const tempNew = Math.min(tempList.length, tableHeadings[temp].length);
-
       tableContent += '<tr>';
       for (let j = 0; j < tempNew; j++) { tableContent += "<td>" + tempList[j] + "</td>"; }
       for (let j = tempNew; j < tableHeadings[temp].length; j++) { tableContent += "<td></td>"; }
