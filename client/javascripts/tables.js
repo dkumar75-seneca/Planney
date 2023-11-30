@@ -28,9 +28,10 @@ function updateRecordNum(recordNum) {
   let modalTitle = document.getElementById("MyModalTitle");
   let modalButton = document.getElementById("MyModalButton");
 
+  inputFields = [];
   const recordsPerRow = 2, temp = selectedCollectionNum; selectedRecordNum = recordNum;
   let headingsCopy = copyObject(tableHeadings[temp]), rowsCopy = copyObject(tableRows[temp]);
-  if (tableChoices[temp] === "Accounts") { headingsCopy.push("Password"); rowsCopy.push(""); }
+  if (tableChoices[temp] === "Accounts" && recordNum === -1) { headingsCopy.push("Password"); rowsCopy.push(""); }
   for (let i = 0; i < headingsCopy.length; i += recordsPerRow) {
     for (let j = i; j < Math.min(i + recordsPerRow, headingsCopy.length); j++) {
       const category = headingsCopy[j].replace(/\s+/g, '-').toLowerCase();
@@ -62,46 +63,69 @@ function updateTable(optionNum) {
   selectedCollectionNum = optionNum; renderTable();
 }
 
-/*
-const input = {
-  requestType: 1, userDetails: {
-    username: user, password: pass, "first": fname, "last": lname, "phone": phone, "email": email
-  }
-};
-*/
-
 function checkForCompleteness() {
   let result = [];
   for (let i = 0; i < inputFields.length; i++) {
     const elem = document.getElementById(inputFields[i]);
     const temp = elem.value.toString();
-    if (temp === "") { return false; } else { console.log(1); result.push(temp); }
+    if (temp === "") { return false; } else { result.push(temp); }
   }; return result;
 }
 
-// await SendPostRequest(serverUri, exampleJSON);
 function sortTable(colNum) { console.log("Table was sorted based on " + tableHeadings[colNum] + "."); }
-async function removeRecord(recordNum) { console.log("Delete Button has been pressed. Record Number: " + recordNum); }
 
-async function addRecord(recordNum) {
-  console.log("Add Button has been pressed. Record Number: " + recordNum);
+// await SendPostRequest(serverUri, exampleJSON);
+async function addRecord(recordNum) { const insert = 1; await submitRecord(insert); }
+async function updateRecord(recordNum) { const edit = 3; await submitRecord(edit); }
+
+async function removeRecord(recordNum) {
+  let rData = null; const remove = 4;
+  if (selectedCollectionNum === 0) { rData = { username: tableRows[0][recordNum].username } }
+  else if (selectedCollectionNum === 1) { rData = { reference: tableRows[1][recordNum].reference } }
+  const requestJSON = { categoryNum: selectedCollectionNum, operationNum: remove, requestData: rData };
+  const input = { requestType: 3, userDetails: credentials, requestDetails: requestJSON };
   let elem = document.getElementById("NotificationLabel");
-  const temp = checkForCompleteness(); inputFields = [];
-  if (temp) {
-    const requestJSON = { credentials: null, requestType: 5, userData: temp };
-    elem.innerHTML = "Request Sent. Kindly wait for server response."; elem.style.color = "green";
-    const serverResponse = await SendPostRequest(serverUri, requestJSON); console.log(serverResponse);
-  } else { elem.innerHTML = "Kindly fill all input fields before sending request."; elem.style.color = "red"; }
+  elem.innerHTML = "Request Sent. Kindly wait for server response."; elem.style.color = "green";
+  const serverResponse = await SendPostRequest(serverUri, input);
 }
 
-async function updateRecord(recordNum) {
-  console.log("Update Button has been pressed. Record Number: " + recordNum);
+/*
+
+  if (rDetails.categoryNum === accountsNum) {
+    if (rDetails.operationNum === insert) {
+      rData = { username: null, accessLevel: null, firstName: null, lastName: null, phone: null, email: null, password: null };
+    } else if (rDetails.operationNum === update) {
+      rData = { accessLevel: null, firstName: null, lastName: null, phone: null, email: null };
+    } else if (rDetails.operationNum === remove) { rData = { username: null }; } else { return null; }
+  } else if (rDetails.categoryNum === schedulesNum) {
+    if (rDetails.operationNum === insert || rDetails.operationNum === update) {
+      rData = { location: null, meetingTime: null, therapistName: null, offeredMassages: null, reference: null, status: null, client: null };
+    } else if (rDetails.operationNum === remove) { rData = { reference: null }; } else { return null; }
+
+*/
+
+async function submitRecord(operationNum) {
   let elem = document.getElementById("NotificationLabel");
   const temp = checkForCompleteness(); inputFields = [];
   if (temp) {
-    const requestJSON = { credentials: null, requestType: 6, userData: temp };
+    let rData = { a: 1 };
+    if (selectedCollectionNum === 0 && operationNum === 1 && temp.length === 7) {
+      rData = {
+        username: temp[0], accessLevel: temp[1], firstName: temp[2],
+        lastName: temp[3], phone: temp[4], email: temp[5], password: temp[6]
+      };
+    } else if (selectedCollectionNum === 0 && operationNum === 3 && temp.length === 6) {
+      rData = { accessLevel: temp[1], firstName: temp[2], lastName: temp[3], phone: temp[4], email: temp[5] };
+    } else if (selectedCollectionNum === 1 && temp.length === 7) {
+      rData = {
+        location: temp[0], meetingTime: temp[1], therapistName: temp[2],
+        offeredMassages: temp[3], status: temp[4], client: temp[5], reference: temp[6] };
+    } else { console.log("Something unexpected happened with user interface."); return; }
+
+    const requestJSON = { categoryNum: selectedCollectionNum, operationNum: operationNum, requestData: rData };
+    const input = { requestType: 3, userDetails: credentials, requestDetails: requestJSON };
     elem.innerHTML = "Request Sent. Kindly wait for server response."; elem.style.color = "green";
-    const serverResponse = await SendPostRequest(serverUri, requestJSON); console.log(serverResponse);
+    const serverResponse = await SendPostRequest(serverUri, input); console.log(serverResponse);
   } else { elem.innerHTML = "Kindly fill all input fields before sending request."; elem.style.color = "red"; }
 }
 

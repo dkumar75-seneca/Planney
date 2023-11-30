@@ -1,3 +1,6 @@
+var credentials = { username: null, password: null };
+var loginPressed = false, signupPressed = false, userLoggedIn = false;
+
 async function SendGetRequest(uri) {
   try {
     const response = await fetch(uri, {

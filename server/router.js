@@ -12,6 +12,14 @@ async function GetAccessLevel(userDetails) {
   return await planneyModules.accountValidator.ValidateCredentials(userCredentials);
 }
 
+/*
+
+Accounts: username, accessLevel, firstName, lastName, email, phone, password
+
+Schedules: location, meetingTime, therapistName, offeredMassages, reference, status
+
+*/
+
 async function SendUserData(res, accessLevel) {
   const aIndex = 0, sIndex = 1, operationNum = 5;
   let serverResponse = {}, queryDetails = { cNum: null, exclusions: null };
@@ -22,17 +30,17 @@ async function SendUserData(res, accessLevel) {
     serverResponse["headings"] = [["Entry Number", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status"]];
     serverResponse["listings"] = [filteredData];
   } else if (accessLevel === 2) {
-    queryDetails.cNum = sIndex; queryDetails.exclusions = ["waitlist"];
+    queryDetails.cNum = sIndex; queryDetails.exclusions = ["_id", "waitlist"];
     const schedules = await planneyModules.databaseConnector.CallDatabase(operationNum, queryDetails);
-    queryDetails.cNum = aIndex; queryDetails.exclusions = ["password"];
+    queryDetails.cNum = aIndex; queryDetails.exclusions = ["_id", "password"];
     const accounts = await planneyModules.databaseConnector.CallDatabase(operationNum, queryDetails);
     serverResponse["readOnly"] = false;
     serverResponse["listings"] = [accounts, schedules];
     serverResponse["categories"] = ["Accounts", "Schedules"];
     serverResponse["headings"] = [
-      ["Account Number", "Access Level", "First Name", "Last Name", "Username", "Email", "Phone"],
-      ["Entry Number", "Address", "Meeting Time", "Therapist", "Offered Massages", "Status", "Client"]
-    ]; //console.log(serverResponse);
+      ["Username", "Access Level", "First Name", "Last Name", "Phone", "Email"],
+      ["Location", "Meeting Time", "Therapist", "Offered Massages", "Status", "Client", "Reference"]
+    ];
   }; res.send(JSON.stringify({ "data": serverResponse }));
 }
 
@@ -50,7 +58,6 @@ async function SignUpUser(res, userDetails) {
     const newRecord = 1, reqQuery = { cNum: collectionNum, newData: userInformation };
     const accountCheck = await planneyModules.accountManagement.GetAccountDetails(userInformation.username);
     if (!accountCheck) {
-      // const postResponse = JSON.stringify({ "data": 1 }); res.send(postResponse);
       await planneyModules.databaseConnector.CallDatabase(newRecord, reqQuery); await SendUserData(res, 1);
     } else { res.send(JSON.stringify({ "error": "Failed Registration. Account Already Exists." })); }
   } else { RaiseDataError(res); }
@@ -60,7 +67,8 @@ async function ProcessCustomerRequest(res, userDetails, requestDetails) {
   const accessLevel = await GetAccessLevel(userDetails);
   if (accessLevel === 1) {
     const validUserRequest = planneyModules.requestValidator.ExtractRequest(requestDetails, false);
-    if (validUserRequest) { console.log(validUserRequest); }; RaiseDataError(res); // else { RaiseDataError(res); }
+    console.log(validUserRequest);
+    if (validUserRequest) { console.log(validUserRequest); RaiseDataError(res); } else { RaiseDataError(res); }
   } else { res.send(JSON.stringify({ "error": "Login Failed. Recheck Credentials." })); }
 }
 
@@ -68,7 +76,8 @@ async function ProcessEmployeeRequest(res, userDetails, requestDetails) {
   const accessLevel = await GetAccessLevel(userDetails);
   if (accessLevel === 2) {
     const validUserRequest = planneyModules.requestValidator.ExtractRequest(requestDetails, true);
-    if (validUserRequest) { console.log(validUserRequest); }; RaiseDataError(res); // else { RaiseDataError(res); }
+    console.log(validUserRequest);
+    if (validUserRequest) { console.log(validUserRequest); RaiseDataError(res); } else { RaiseDataError(res); }
   } else { res.send(JSON.stringify({ "error": "Login Failed. Recheck Credentials." })); }
 }
 

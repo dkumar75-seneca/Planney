@@ -1,11 +1,6 @@
 const serverUri = "http://localhost:3000/api";
-const exampleJSON = { "name": "John", "age": 25 }
-
-var credentials = { u: null, p: null };
-var loginPressed = false, signupPressed = false, userLoggedIn = false;
 
 SignOutFromApplication(); ShowLoginContent();
-// SignIntoApplication(0); // RenderDashboard(); renderTable();
 
 async function MakeLoginAttempt() {
   const elem = document.getElementById("login-guide");
@@ -15,9 +10,9 @@ async function MakeLoginAttempt() {
     const input = { requestType: 2, userDetails: { username: user, password: pass } };
     elem.innerHTML = "Request Sent. Kindly wait for server response."; elem.style.color = "green";
     const serverResponse = await SendPostRequest(serverUri, input);
-    if (serverResponse.data) { SignIntoApplication(serverResponse.data); }
-    // { userLoggedIn = true; credentials.u = user; credentials.p = password }
+    if (serverResponse.data) { credentials.username = user; credentials.password = pass; SignIntoApplication(serverResponse.data); }
     else if (serverResponse.error) { elem.innerHTML = "Login Failed. Recheck credentials."; elem.style.color = "red"; }
+    else { elem.innerHTML = "Server Not Responding. Try Again Later."; elem.style.color = "red"; }
   } else { elem.innerHTML = "Kindly fill all fields before sending request."; elem.style.color = "red"; }
 }
 
@@ -37,8 +32,9 @@ async function MakeSignupAttempt() {
     };
     
     elem.innerHTML = "Request Sent. Kindly wait for server response."; elem.style.color = "green";
-    if (serverResponse.data) { SignIntoApplication(serverResponse.data); }
-    // { userLoggedIn = true; credentials.u = user; credentials.p = password }
+    const serverResponse = await SendPostRequest(serverUri, input);
+    if (serverResponse.data) { credentials.username = user; credentials.password = pass; SignIntoApplication(serverResponse.data); }
     else if (serverResponse.error) { elem.innerHTML = "Sign Up Failed. Recheck user details."; elem.style.color = "red"; }
+    else { elem.innerHTML = "Server Not Responding. Try Again Later."; elem.style.color = "red"; }
   } else { elem.innerHTML = "Kindly fill all fields before sending request."; elem.style.color = "red"; }
 }
