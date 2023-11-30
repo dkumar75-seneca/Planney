@@ -1,10 +1,10 @@
 This file lists the server modules that are planned to implement the scheduling functionality together:
 
-helpers.js: Has all the functions commonly used by more one of the other modules.
+CRUD.js: Handles all of the database connecting logic (e.g. inserting, reading, updating and removing records).
 
 accountValidator.js: Handles all of the user identity validation procedures (including getting user access level).
 
-accountManagement.js: Handles all of user account management procedures (signup, access rights and password reset).
+accountManagement.js: Handles all of user account management procedures (like signup and login).
 
 requestValidator.js: Handles all of the user input data validation procedures.
 

@@ -10,8 +10,6 @@ function ValidateString(input) {
   if (input.length > maxLength) { return false; }; return true;
 }
 
-exports.ValidateString = ValidateString;
-
 exports.ExtractCredentials = function(userRequest) {
   let credentials = { "username": null, "password": null };
   if (!userRequest) { return credentials; }
@@ -28,21 +26,5 @@ exports.ValidateCredentials = async function(userCredentials) {
 	if (!accountData || !accountData.password.length > 0) { return -1; } else {
     const passwordMatch = await bcrypt.compare(userCredentials.password, accountData.password);
     if (passwordMatch) { return accountData.accessLevel || -1; } else { return -1; }
-	}
-}
-
-exports.ValidateOTP = async function(userCredentials) {
-	const accountData = await GetAccountDetails(userCredentials.username);
-	if (!accountData) { return false; } else {
-    let otpChecks = userCredentials.otp === accountData.otp;
-    otpChecks = otpChecks && Date.now() < Date.parse(accountData.otpExpiry);
-    otpChecks = otpChecks && accountData.remainingAttempts > 0;
-    if (accountData.remainingAttempts > 0) {
-      const operation = 3, accountsIndex = 8;
-      let newAccountData = copyObject(accountData); newAccountData.remainingAttempts -= 1;
-      const reqData = { cNum: accountsIndex, newData: newAccountData, recordID: username };
-      const otpSetup = await planneyModules.databaseConnector.CallDatabase(operation, reqData);
-      if (otpSetup) { return messageOne; } else { return messageTwo; }
-    }; return otpChecks;
 	}
 }

@@ -7,6 +7,11 @@ function copyObject(input) { return JSON.parse(JSON.stringify(input)); };
 
 function RaiseDataError(res) { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
 
+async function GetAccessLevel(userDetails) {
+  const userCredentials = planneyModules.accountValidator.ExtractCredentials(userDetails);
+  return await planneyModules.accountValidator.ValidateCredentials(userCredentials);
+}
+
 async function SendUserData(res, accessLevel) {
   const aIndex = 0, sIndex = 1, operationNum = 5;
   let serverResponse = {}, queryDetails = { cNum: null, exclusions: null };
@@ -34,7 +39,7 @@ async function SendUserData(res, accessLevel) {
 async function LoginUser(res, userDetails) {
   const userCredentials = planneyModules.accountValidator.ExtractCredentials(userDetails);
   const accessLevel = await planneyModules.accountValidator.ValidateCredentials(userCredentials);
-  if (accessLevel >= 0) { await SendUserData(res, accessLevel); }
+  if (accessLevel > 0) { await SendUserData(res, accessLevel); }
   else { res.send(JSON.stringify({ "error": "Login Failed. Recheck Credentials." })); }
 }
 
@@ -51,9 +56,21 @@ async function SignUpUser(res, userDetails) {
   } else { RaiseDataError(res); }
 }
 
-async function ProcessViewerRequest(res, userDetails) { RaiseDataError(res); }
-async function ProcessCustomerRequest(res, userDetails) { RaiseDataError(res); }
-async function ProcessEmployeeRequest(res, userDetails) { RaiseDataError(res); }
+async function ProcessCustomerRequest(res, userDetails, requestDetails) {
+  const accessLevel = await GetAccessLevel(userDetails);
+  if (accessLevel === 1) {
+    const validUserRequest = planneyModules.requestValidator.ExtractRequest(requestDetails, false);
+    if (validUserRequest) { console.log(validUserRequest); }; RaiseDataError(res); // else { RaiseDataError(res); }
+  } else { res.send(JSON.stringify({ "error": "Login Failed. Recheck Credentials." })); }
+}
+
+async function ProcessEmployeeRequest(res, userDetails, requestDetails) {
+  const accessLevel = await GetAccessLevel(userDetails);
+  if (accessLevel === 2) {
+    const validUserRequest = planneyModules.requestValidator.ExtractRequest(requestDetails, true);
+    if (validUserRequest) { console.log(validUserRequest); }; RaiseDataError(res); // else { RaiseDataError(res); }
+  } else { res.send(JSON.stringify({ "error": "Login Failed. Recheck Credentials." })); }
+}
 
 router.post("/api", function(req, res) {
   const postResponse = JSON.stringify({ "data": req.body , "message": "POST Request Received" });
@@ -61,8 +78,8 @@ router.post("/api", function(req, res) {
   const requestType = req.body.requestType, signup = 1, login = 2, employee = 3, customer = 4;
   if (requestType === signup) { SignUpUser(res, req.body.userDetails); }
   else if (requestType === login) { LoginUser(res, req.body.userDetails); }
-  else if (requestType === employee) { ProcessEmployeeRequest(res, req.body.userDetails); }
-  else if (requestType === customer) { ProcessCustomerRequest(res, req.body.userDetails); }
+  else if (requestType === employee) { ProcessEmployeeRequest(res, req.body.userDetails, req.body.requestDetails); }
+  else if (requestType === customer) { ProcessCustomerRequest(res, req.body.userDetails, req.body.requestDetails); }
   else { res.send(postResponse); console.log(req.body); } // RaiseDataError(res);
 });
 
