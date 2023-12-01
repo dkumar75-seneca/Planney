@@ -50,7 +50,19 @@ Folders specifically developed for this project:
 
     src: where all the server side source code / modules have been kept.
 
+      CRUD.js: Handles all of the database connecting logic (e.g. inserting, reading, updating and removing records).
+
+      accountValidator.js: Handles all of the user identity validation procedures (including getting user access level).
+      
+      accountManagement.js: Handles all of user account management procedures (like signup and login).
+      
+      requestValidator.js: Handles all of the user input data validation procedures.
+      
+      requestManagement.js: Formats the user request into a database connector compatible query.
+
     tests: where all the code written to test the server side modules have been kept.
+
+      
 
     extras.js: all of the code that was written but could not be implemented into the main project due to time constraints.
 
