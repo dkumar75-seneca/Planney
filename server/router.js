@@ -5,6 +5,8 @@ const planneyModules = require('./index.js');
 
 function copyObject(input) { return JSON.parse(JSON.stringify(input)); };
 
+function RaiseQuotaError(res) { res.send(JSON.stringify({ "quota": "Failed Input. Maximum Bookings Made." })); }
+
 function RaiseDataError(res) { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
 
 async function GetAccessLevel(userDetails) {
@@ -72,13 +74,18 @@ async function ProcessCustomerRequest(res, userDetails, requestDetails) {
       if (!bookingDetails) { RaiseDataError(res); } else {
         const checkOne = bookingDetails.status === "Booked";
         const checkTwo = bookingDetails.client === userDetails.username;
-        const checkThree = validUserRequest.bookingAction === cancelBooking
-        if (bookingDetails.status === "Vacant" && validUserRequest.bookingAction === submitBooking) {
-          bookingDetails["status"] = "Booked"; bookingDetails["client"] = userDetails.username;
-          const update = 3, reqQuery = {
-            cNum: 1, newData: bookingDetails, recordID: validUserRequest.scheduleReference, recordField: "reference" 
-          }; await planneyModules.databaseConnector.CallDatabase(update, reqQuery);
-          await SendUserData(res, 1);
+        const checkThree = validUserRequest.bookingAction === cancelBooking;
+        const checkFour = validUserRequest.bookingAction === submitBooking;
+        const bookingsCount = await planneyModules.databaseConnector.GetBookingsCount(userDetails.username);
+        if (bookingDetails.status === "Vacant" && checkFour) {
+          const bookingsLimit = 3;
+          if (bookingsCount < bookingsLimit) {
+            bookingDetails["status"] = "Booked"; bookingDetails["client"] = userDetails.username;
+            const update = 3, reqQuery = {
+              cNum: 1, newData: bookingDetails, recordID: validUserRequest.scheduleReference, recordField: "reference" 
+            }; await planneyModules.databaseConnector.CallDatabase(update, reqQuery);
+            await SendUserData(res, 1);
+          } else { RaiseQuotaError(res); }
         } else if (checkOne && checkTwo && checkThree) {
             bookingDetails["status"] = "Vacant"; bookingDetails["client"] = "";
             const update = 3, reqQuery = {

@@ -13,6 +13,17 @@ async function CreateRecord(collection, newData) {
   return "Insert request successfully processed.";
 }
 
+async function count() {
+  const count1 = await database.collection("blogCollection").find({"author":id}).count();
+  console.log(count1);
+}
+
+async function GetBookingsCount(username) {
+  const collection = client.db().collection("Schedules");
+  const count = await collection.countDocuments({"client":username});
+  return count;
+}
+
 async function ReadAllRecords(collection, exclusions) {
   try {
     let testArray = [], temp = {};
@@ -107,4 +118,4 @@ async function ExitProgram() { await StopDatabase(); console.log("Server Exiting
 
 process.on('SIGINT', function() { ExitProgram(); });
 
-module.exports = { CallDatabase };
+module.exports = { CallDatabase, GetBookingsCount };

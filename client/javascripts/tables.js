@@ -142,6 +142,7 @@ async function bookAppointment(recordNum) {
         const serverResponse = await SendPostRequest(serverUri, input);
         if (serverResponse.data) { SignIntoApplication(serverResponse.data); }
         else if (serverResponse.error) { elem.innerHTML = "Request Denied. Recheck Request."; elem.style.color = "red"; }
+        else if (serverResponse.quota) { elem.innerHTML = "Maximum bookings made. Try cancelling some."; elem.style.color = "red"; }
       } else { console.log("Something unexpected happened with booking."); }
     } else { elem.innerHTML = "This slot is already booked. Kindly choose a vacant one."; elem.style.color = "red"; return; }
   }
