@@ -30,9 +30,17 @@ Folders specifically developed for this project:
 
     icons: same functionality as the favicon.ico file.
 
-    stylesheets: where all the styling customisations for this application's user inteface is kept.
+    stylesheets and style.css: where most of the styling customisations for this application's user inteface is kept.
 
-    javascripts: all the client side application logic (like submitting user input to the web server) is kept. 
+    javascripts: all the client side application logic (like submitting user input to the web server) is kept.
+
+      helpers.js: contains code for commonly used client side use cases (like exchanging data with a web server).
+
+      index.js: ties together all of the client side code functionality to make user interface work.
+
+      renders.js: has all of the boilerplate html code for rendering specific web pages like customer side of the user interface.
+
+      tables.js: has all of the main front end code responsible for ensuring that the data seen by user is up to date and accurate.
   
   server: where all the backend code (hosted on a web server) is kept. It consists of the following files with the following use cases:
 
