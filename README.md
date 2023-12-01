@@ -12,16 +12,28 @@ Once modules have been confirmed to be installed, run the application with "npm 
 
 Standard Express.js Framework Files:
 
-app.js is where all the high-level logic of the application is situated.
+app.js: where all the high-level logic of the application is situated.
 
-bin is where the application binary (www) is located.
+bin: where the application binary (www) is located.
 
-node_modules is where all the libraries used by the application is kept.
+node_modules: where all the libraries used by the application is kept.
 
-package.json and package-lock.json have all the build based instructions for automated deployment and sharing later on.
+package.json and package-lock.json: have all the build based instructions for automated deployment and sharing later on.
 
 Folders specifically developed for this project:
 
-client is where all the browser side side of the application code is kept. It consists of the following files with the following use cases:
+  client: where all the browser side side of the application code is kept. It consists of the following files with the following use cases:
 
-server is where all the backend code (hosted on a web server) is kept. It consists of the following files with the following use cases:
+    index.html: main application file that the browser will run and render on the screen.
+
+    favicon.ico: icon file for the webpage tab.
+
+    icons: same functionality as the favicon.ico file.
+
+    stylesheets: where all the styling customisations for this application's user inteface is kept.
+
+    javascripts: all the client side application logic (like submitting user input to the web server) is kept. 
+  
+  server: where all the backend code (hosted on a web server) is kept. It consists of the following files with the following use cases:
+
+    
