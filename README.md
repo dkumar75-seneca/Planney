@@ -18,7 +18,7 @@ bin is where the application binary (www) is located.
 
 node_modules is where all the libraries used by the application is kept.
 
-package.json has all the build based instructions for automated deployment and sharing later on.
+package.json and package-lock.json have all the build based instructions for automated deployment and sharing later on.
 
 Folders specifically developed for this project:
 
