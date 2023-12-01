@@ -132,7 +132,7 @@ async function ProcessEmployeeRequest(res, userDetails, requestDetails) {
 router.post("/api", function(req, res) {
   if (!(req || req === 0) || !(req.body || req.body === 0)) { RaiseDataError(res); }
   const requestType = req.body.requestType, signup = 1, login = 2, employee = 3, customer = 4;
-  if (requestType === signup) { SignUpUser(res, req.body.userDetails, 1); }
+  if (requestType === signup) { SignUpUser(res, req.body.userDetails, 1, 1); }
   else if (requestType === login) { LoginUser(res, req.body.userDetails); }
   else if (requestType === employee) { ProcessEmployeeRequest(res, req.body.userDetails, req.body.requestDetails); }
   else if (requestType === customer) { ProcessCustomerRequest(res, req.body.userDetails, req.body.requestDetails); }
