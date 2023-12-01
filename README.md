@@ -10,16 +10,18 @@ Once modules have been confirmed to be installed, run the application with "npm 
 
 # File Structure:
 
-It is based off standard Express.js project structures as described below:
+Standard Express.js Framework Files:
 
-app.js: where all the high-level logic of the application is situated.
+app.js is where all the high-level logic of the application is situated.
 
-bin: where the application binary (www) is located.
+bin is where the application binary (www) is located.
 
-client: where all the front-end code is located (UNDER DEVELOPMENT).
+node_modules is where all the libraries used by the application is kept.
 
-node_modules: forgot to exclude it off the project as with most projects, but I'll let it stay due to its small scale.
+package.json has all the build based instructions for automated deployment and sharing later on.
 
-package.json: has all the build based instructions for automated deployment and sharing later on.
+Folders specifically developed for this project:
 
-server: where all the back-end code is located (UNDER DEVELOPMENT).
+client is where all the browser side side of the application code is kept. It consists of the following files with the following use cases:
+
+server is where all the backend code (hosted on a web server) is kept. It consists of the following files with the following use cases:
