@@ -44,4 +44,14 @@ Folders specifically developed for this project:
   
   server: where all the backend code (hosted on a web server) is kept. It consists of the following files with the following use cases:
 
+    index.js: allow the server to import all the modules written by the development team for this project.
+
+    router.js: handles the incoming user request and uses the modules functions written to return an appropriate response to the user.
+
+    src: where all the server side source code / modules have been kept.
+
+    tests: where all the code written to test the server side modules have been kept.
+
+    extras.js: all of the code that was written but could not be implemented into the main project due to time constraints.
+
     
