@@ -60,10 +60,9 @@ Folders specifically developed for this project:
       
       requestManagement.js: Formats the user request into a database connector compatible query.
 
-    tests: where all the code written to test the server side modules have been kept.
+    tests: where all the code written to test the server side modules have been kept. Script names correspond to the script that it is testing (e.g. CRUDTest tests functionality of CRUD.js functions). 
 
-      
+      CRUDTest.js, accountManagementTest.js, accountValidatorTest.js, requestManagementTest.js, requestValidatorTest.js
 
     extras.js: all of the code that was written but could not be implemented into the main project due to time constraints.
-
     
