@@ -1,6 +1,5 @@
-const { ObjectId } = require("mongodb");
-const { copyObject } = require("../src/helpers.js");
-const { UpdateDatabase } = require("./CRUD.js");
+
+const { CallDatabase } = require("../src/CRUD.js");
 
 const newRecord = 1, getRecord = 2, changeRecord = 3, deleteRecord = 4;
 const massageExample = { price: 150, duration: 4, massageName: "Great Massage", reference: "gMassage1" }
@@ -18,51 +17,51 @@ const newEmployeeExample = {
   offeredMassages: [ "greatMassage", "averageMassage" ]
 }
 
-async function UpdateDatabaseTestOne() {
+async function CallDatabaseTestOne() {
   console.log("Running First Database Test (0/2)");
-  const testA = { cNum: 1, newData: copyObject(massageExample) }
-  await UpdateDatabase(newRecord, testA);
+  const testA = { cNum: 2, newData: copyObject(massageExample) }
+  await CallDatabase(newRecord, testA);
   console.log("Running First Database Test (1/2)");
   const testB = { cNum: 2, newData: copyObject(employeeExample) }
-  await UpdateDatabase(newRecord, testB);
+  await CallDatabase(newRecord, testB);
   console.log("Completed First Database Test (2/2)");
 }
 
-async function UpdateDatabaseTestTwo() {
+async function CallDatabaseTestTwo() {
   console.log("Running Second Database Test (0/2)");
-  const testA = { cNum: 1, recordID: massageExample.reference }
-  await UpdateDatabase(getRecord, testA);
+  const testA = { cNum: 2, recordID: massageExample.reference, recordField: "reference" }
+  await CallDatabase(getRecord, testA);
   console.log("Running Second Database Test (1/2)");
-  const testB = { cNum: 2, recordID: employeeExample.reference }
-  await UpdateDatabase(getRecord, testB);
+  const testB = { cNum: 2, recordID: employeeExample.reference, recordField: "reference" }
+  await CallDatabase(getRecord, testB);
   console.log("Completed Second Database Test (2/2)");
 }
 
-async function UpdateDatabaseTestThree() {
+async function CallDatabaseTestThree() {
   console.log("Running Third Database Test (0/2)");
-  const testA = { cNum: 1, recordNum: massageExample.reference, newData: copyObject(newMassageExample) }
-  await UpdateDatabase(changeRecord, testA);
+  const testA = { cNum: 2, recordID: massageExample.reference, recordField: "reference", newData: copyObject(newMassageExample) }
+  await CallDatabase(changeRecord, testA);
   console.log("Running Third Database Test (1/2)");
-  const testB = { cNum: 2, recordNum: employeeExample.reference, newData: copyObject(newEmployeeExample) }
-  await UpdateDatabase(changeRecord, testB);
+  const testB = { cNum: 2, recordID: employeeExample.reference, recordField: "reference", newData: copyObject(newEmployeeExample) }
+  await CallDatabase(changeRecord, testB);
   console.log("Completed Third Database Test (2/2)");
 }
 
-async function UpdateDatabaseTestFour() {
+async function CallDatabaseTestFour() {
   console.log("Running Fourth Database Test (0/2)");
-  const testA = { cNum: 1, recordID: newMassageExample.reference }
-  await UpdateDatabase(deleteRecord, testA);
+  const testA = { cNum: 2, recordID: newMassageExample.reference, recordField: "reference" }
+  await CallDatabase(deleteRecord, testA);
   console.log("Running Fourth Database Test (1/2)");
-  const testB = { cNum: 2, recordID: newEmployeeExample.reference }
-  await UpdateDatabase(deleteRecord, testB);
+  const testB = { cNum: 2, recordID: newEmployeeExample.reference, recordField: "reference" }
+  await CallDatabase(deleteRecord, testB);
   console.log("Completed Fourth Database Test (2/2)");
 }
 
 async function RunAllDBTests() {
-  await UpdateDatabaseTestOne();
-  await UpdateDatabaseTestTwo();
-  await UpdateDatabaseTestThree();
-  await UpdateDatabaseTestFour();
+  await CallDatabaseTestOne();
+  await CallDatabaseTestTwo();
+  await CallDatabaseTestThree();
+  await CallDatabaseTestFour();
 }
 
 console.log("Database testing module Imported");

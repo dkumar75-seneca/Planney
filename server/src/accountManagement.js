@@ -34,6 +34,7 @@ exports.FormatUserInfo = async function(userDetails, accessLevel) {
 
   Object.keys(signUpTemplate).forEach(function(key) {
     if (!(userDetails[key] && ValidateString(userDetails[key]))) { return null; }
+    else if (key === "username") { signUpTemplate[key] = userDetails[key].toLowerCase(); }
     else { signUpTemplate[key] = userDetails[key]; }
   });
 

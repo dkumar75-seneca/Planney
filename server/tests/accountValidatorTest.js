@@ -1,19 +1,19 @@
-const { UpdateDatabase } = require("../database/CRUD.js");
+const { CallDatabase } = require("../src/CRUD.js");
 const { ValidateCredentials } = require("../src/accountValidator.js");
 
 const dummyAccountOne = {
-  accessLevel: 1, userID: "abc", password: "password123",
+  accessLevel: 1, first: "abc", last: "abc", password: "password123",
   username: "bob", phone: "abc", email: "a@b.com"
 };
 
 const dummyAccountTwo = {
-  accessLevel: 3, userID: "abcd", password: "password1234",
+  accessLevel: 2, first: "abc", last: "abc", password: "password1234",
   username: "james", phone: "abcd", email: "c@b.com"
 };
 
 async function SetupTestAccount(dummyAccount) {
-  const insertRecord = 1, collectionNum = 8;
-  const temp = await UpdateDatabase(insertRecord, { cNum: collectionNum, newData: dummyAccount});
+  const insertRecord = 1, collectionNum = 0;
+  const temp = await CallDatabase(insertRecord, { cNum: collectionNum, newData: dummyAccount});
   if (temp) { console.log("Test account successfully inserted."); }
   else { console.log("Test account not inserted."); }
 }

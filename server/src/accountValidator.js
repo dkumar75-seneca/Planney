@@ -18,7 +18,7 @@ exports.ExtractCredentials = function(userRequest) {
   if (!(typeof userRequest.password === "string")) { return credentials; }
   if (!ValidateString(userRequest.username)) { return credentials; }
   if (!ValidateString(userRequest.password)) { return credentials; }
-  return { "username": userRequest.username, "password": userRequest.password }
+  return { "username": userRequest.username.toLowerCase(), "password": userRequest.password }
 }
 
 exports.ValidateCredentials = async function(userCredentials) {

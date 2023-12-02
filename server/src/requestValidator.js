@@ -40,6 +40,7 @@ function ExtractEmployeeRequest(rDetails) {
       else if (rDetails.requestData[key] === "2" || rDetails.requestData[key] === 2) { rData[key] = 2; }
       else { returnFlag = false; }
     } else if (!(rDetails.requestData[key] && ValidateString(rDetails.requestData[key]))) { returnFlag = false; }
+    else if (key === "username") { rData[key] = rDetails.requestData[key].toLowerCase(); }
     else { rData[key] = rDetails.requestData[key]; }
   }); 
 

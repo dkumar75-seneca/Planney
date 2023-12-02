@@ -87,7 +87,6 @@ function checkForCompleteness() {
 
 function sortTable(colNum) { console.log("Table was sorted based on " + tableHeadings[colNum] + "."); }
 
-// await SendPostRequest(serverUri, exampleJSON);
 async function addRecord(recordNum) { const insert = 1; await submitRecord(insert, recordNum); }
 async function updateRecord(recordNum) { const edit = 3; await submitRecord(edit, recordNum); }
 
@@ -111,12 +110,12 @@ async function submitRecord(operationNum, recordNum) {
     let rData = { a: 1 };
     if (selectedCollectionNum === 0 && operationNum === 1 && temp.length === 7) {
       rData = {
-        username: temp[0], accessLevel: temp[1], first: temp[2],
+        username: temp[0].toLowerCase(), accessLevel: temp[1], first: temp[2],
         last: temp[3], phone: temp[4], email: temp[5], password: temp[6]
       };
     } else if (selectedCollectionNum === 0 && operationNum === 3 && temp.length === 6) {
       rData = { accessLevel: temp[1], first: temp[2], last: temp[3], phone: temp[4], email: temp[5] };
-      if (!(recordNum === -1)) { rData["username"] = tableRows[0][recordNum].username; }
+      if (!(recordNum === -1)) { rData["username"] = tableRows[0][recordNum].username.toLowerCase(); }
     } else if (selectedCollectionNum === 1 && temp.length === 4) {
       rData = { location: temp[0], meetingTime: temp[1], therapistName: temp[2], offeredMassages: temp[3] };
       if (!(recordNum === -1)) { rData["reference"] = tableRows[1][recordNum].reference; }

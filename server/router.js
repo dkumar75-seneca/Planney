@@ -5,14 +5,14 @@ const planneyModules = require('./index.js');
 
 function copyObject(input) { return JSON.parse(JSON.stringify(input)); };
 
-function RaiseQuotaError(res) { res.send(JSON.stringify({ "quota": "Failed Input. Maximum Bookings Made." })); }
-
-function RaiseDataError(res) { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
-
 async function GetAccessLevel(userDetails) {
   const userCredentials = planneyModules.accountValidator.ExtractCredentials(userDetails);
   return await planneyModules.accountValidator.ValidateCredentials(userCredentials);
 }
+
+function RaiseQuotaError(res) { res.send(JSON.stringify({ "quota": "Failed Input. Maximum Bookings Made." })); }
+
+function RaiseDataError(res) { res.send(JSON.stringify({ "error": "Failed Input. Recheck Input Data Validity." })); }
 
 async function SendUserData(res, accessLevel) {
   const aIndex = 0, sIndex = 1, operationNum = 5;
@@ -57,30 +57,24 @@ async function SignUpUser(res, userDetails, aL1, aL2) {
   } else { RaiseDataError(res); }
 }
 
-async function GetBookingDetails(reference) {
-	const readRecord = 2, collectionNum = 1;
-  const temp = {cNum: collectionNum, recordID: reference, recordField: "reference" };
-  const returnData = await planneyModules.databaseConnector.CallDatabase(readRecord, temp);
-  return returnData;
-}
-
-async function ProcessCustomerRequest(res, userDetails, requestDetails) {
+ProcessCustomerRequest = async function(res, userDetails, requestDetails) {
   const submitBooking = 1, cancelBooking = -1;
   const accessLevel = await GetAccessLevel(userDetails);
   if (accessLevel === 1) {
+    const copiedUsername = userDetails.username.toLowerCase();
     const validUserRequest = planneyModules.requestValidator.ExtractRequest(requestDetails, false);
     if (!validUserRequest) { RaiseDataError(res); } else {
-      let bookingDetails = await GetBookingDetails(validUserRequest.scheduleReference);
+      let bookingDetails = await planneyModules.requestManagement.GetBookingDetails(validUserRequest.scheduleReference);
       if (!bookingDetails) { RaiseDataError(res); } else {
         const checkOne = bookingDetails.status === "Booked";
-        const checkTwo = bookingDetails.client === userDetails.username;
+        const checkTwo = bookingDetails.client === copiedUsername;
         const checkThree = validUserRequest.bookingAction === cancelBooking;
         const checkFour = validUserRequest.bookingAction === submitBooking;
-        const bookingsCount = await planneyModules.databaseConnector.GetBookingsCount(userDetails.username);
+        const bookingsCount = await planneyModules.databaseConnector.GetBookingsCount(copiedUsername);
         if (bookingDetails.status === "Vacant" && checkFour) {
           const bookingsLimit = 3;
           if (bookingsCount < bookingsLimit) {
-            bookingDetails["status"] = "Booked"; bookingDetails["client"] = userDetails.username;
+            bookingDetails["status"] = "Booked"; bookingDetails["client"] = copiedUsername;
             const update = 3, reqQuery = {
               cNum: 1, newData: bookingDetails, recordID: validUserRequest.scheduleReference, recordField: "reference" 
             }; await planneyModules.databaseConnector.CallDatabase(update, reqQuery);
@@ -98,7 +92,7 @@ async function ProcessCustomerRequest(res, userDetails, requestDetails) {
   } else { res.send(JSON.stringify({ "error": "Login Failed. Recheck Credentials." })); }
 }
 
-async function ProcessEmployeeRequest(res, userDetails, requestDetails) {
+ProcessEmployeeRequest = async function(res, userDetails, requestDetails) {
   const accessLevel = await GetAccessLevel(userDetails);
   if (accessLevel === 2) {
     const validUserRequest = planneyModules.requestValidator.ExtractRequest(requestDetails, true);

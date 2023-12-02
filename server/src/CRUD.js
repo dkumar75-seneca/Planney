@@ -1,19 +1,14 @@
 const { MongoClient } = require('mongodb');
 
-const uri = null; // since this repository is public now, I'll keep the uri separately for testing and demo purposes.
+const uri = null; // since this repository is public now, I'll keep the new uri separately for testing and demo purposes.
 const client = new MongoClient(uri);
 
 function copyObject(input) { return JSON.parse(JSON.stringify(input)); };
 
-const cNames = ["Accounts", "Schedules"];
+const cNames = ["Accounts", "Schedules", "Testing"];
 async function CreateRecord(collection, newData) {
   const result = await collection.insertOne(newData);
   return "Insert request successfully processed.";
-}
-
-async function count() {
-  const count1 = await database.collection("blogCollection").find({"author":id}).count();
-  console.log(count1);
 }
 
 async function GetBookingsCount(username) {
@@ -57,7 +52,7 @@ async function CallDatabase(operationNum, queryDetails) {
   try {
     if (queryDetails.cNum || queryDetails.cNum === 0) {
       const cNum = queryDetails.cNum;
-      const numChecks = !isNaN(cNum) && cNum >= 0 && cNum <= 1;
+      const numChecks = !isNaN(cNum) && cNum >= 0 && cNum <= cNames.length;
       if (numChecks) {
         const newData = queryDetails.newData;
         const collection = client.db().collection(cNames[cNum]);
