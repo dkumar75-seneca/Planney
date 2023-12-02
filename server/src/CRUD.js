@@ -1,8 +1,6 @@
 const { MongoClient } = require('mongodb');
 
-// normally you should NOT share credentials (or ANY environment variables) within source code
-// but since this is a test database with a restricted user account, its okay for now I guess
-const uri = 'mongodb+srv://new-user:Up43nVs3VpvO0Lnk@cluster-dhiraj.xg6us6r.mongodb.net/PlanneyDB';
+const uri = null; // since this repository is public now, I'll keep the uri separately for testing and demo purposes.
 const client = new MongoClient(uri);
 
 function copyObject(input) { return JSON.parse(JSON.stringify(input)); };
