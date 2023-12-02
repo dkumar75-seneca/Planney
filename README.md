@@ -4,9 +4,9 @@ This is the main repository of our scheduling application.
 
 # Application Usage: 
 
-If node_modules folder is no longer in this repository, enter "npm install" followed by "npm audit fix --force" to fix vulnerabilities.
+Steps: Install node.js on your machine -> open bash / powershell terminal and enter "git clone (this repository link)" -> delete node_modules folder in downloaded files -> run "npm install" followed by "npm audit fix --force" and "npm start" on terminal.
 
-Once modules have been confirmed to be installed, run the application with "npm start" on the operating system terminal (Bash or PowerShell).
+Note: Since this repository has been made public, I had to remove and replace the mongodb connection uri string from the code for cybersecurity reasons. If you want to run this software on your machine, feel free to message me for the database uri and paste it on line 4 of CRUD.js.
 
 # File Structure:
 
