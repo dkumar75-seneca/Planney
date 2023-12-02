@@ -5,7 +5,7 @@ const { GetAccountDetails } = require("./accountManagement.js");
 var bcrypt = require('bcrypt');
 
 function ValidateString(input) {
-  const maxLength = 50, allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789|@+-. ";
+  const maxLength = 50, allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789|@+-., ";
   for (let i = 0; i < input.length; i++) { if (!allowedCharacters.includes(input[i])) { return false; } }
   if (input.length > maxLength) { return false; }; return true;
 }
