@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb');
 
-const uri = process.env.MONGODB_URI;
+const uri = null; // console.log(process.env.MONGODB_URI);
 const client = new MongoClient(uri);
 
 const cNames = ["Accounts", "Schedules", "Testing"];
@@ -86,7 +86,7 @@ async function CallDatabase(operationNum, queryDetails) {
 //   }
 // }
 
-try { StartDatabase(); console.log("Database module Imported"); } catch (e) { process.exit(); }
+// try { StartDatabase(); console.log("Database module Imported"); } catch (e) { process.exit(); }
 async function StartDatabase() { await client.connect(); console.log('Connected to MongoDB'); }
 async function StopDatabase() { await client.close(); console.log('Disconnected from MongoDB'); }
 async function ExitProgram() { await StopDatabase(); console.log("Server Exiting."); process.exit(); }
