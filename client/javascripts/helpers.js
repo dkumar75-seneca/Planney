@@ -18,11 +18,10 @@ async function SendPostRequest(uri, input) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });
-    const output = await response.json(); return output;
+    const output = await response.json(); console.log(output); return output;
   } catch (e) { return "Server Not Responding As Expected"; }
 }
 
-const test = await SendPostRequest("https://planneynew.azurewebsites.net/", {requestType: 5});
-console.log(test);
+SendPostRequest("https://planneynew.azurewebsites.net/", {requestType: 5});
 
 function copyObject(input) { return JSON.parse(JSON.stringify(input)); };
