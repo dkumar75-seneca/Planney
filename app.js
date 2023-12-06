@@ -7,6 +7,9 @@ var indexRouter = require('./server/router');
 
 var app = express();
 
+// const cors = require('cors');
+// app.use(cors({ origin: ['http://localhost:3000'] }));
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(cookieParser());

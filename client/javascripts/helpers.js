@@ -1,28 +1,25 @@
-const serverUri = "http://localhost:3000/api";
-const exampleJSON = { "name": "John", "age": 25 }
+var credentials = { username: null, password: null };
+var loginPressed = false, signupPressed = false, userLoggedIn = false;
 
 async function SendGetRequest(uri) {
-  const response = await fetch(uri, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' }
-  });
-  const output = await response.json(); //extract JSON from the http response
-  console.log(output); return output;
-  
+  try {
+    const response = await fetch(uri, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const output = await response.json(); return output;
+  } catch (e) { return "Server Not Responding As Expected"; }
 }
 
 async function SendPostRequest(uri, input) {
-  const response = await fetch(uri, {
-    body: JSON.stringify(input),
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' }
-  });
-  const output = await response.json(); //extract JSON from the http response
-  console.log(output); return output;
+  try {
+    const response = await fetch(uri, {
+      body: JSON.stringify(input),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const output = await response.json(); return output;
+  } catch (e) { return "Server Not Responding As Expected"; }
 }
 
-function copyJSON(input) {
-  return JSON.parse(JSON.stringify(input));
-};
-
-console.log("Client side helper script is integrated and running.");
+function copyObject(input) { return JSON.parse(JSON.stringify(input)); };

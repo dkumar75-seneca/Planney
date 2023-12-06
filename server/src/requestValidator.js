@@ -1,43 +1,62 @@
 console.log("Request validator functions module imported");
 
-const { collectionNames, collectionFields } = require('../database/collectionNames.js');
+const { randomInt } = require('crypto');
 
-// function ValidateString(input, collectionName, collectionField) { return true; }
-// function ValidateNumber(input, collectionName, collectionField) { return true; }
+function GenerateRandomOTP(length) {
+  let randomPassword = '';
+  for (let i = 0; i < length; i++) { const number = randomInt(0, 9); randomPassword += number }
+  return randomPassword;
+}
 
-exports.ValidateRequest = function(collectionNum, inputData, ignoreID, ignoreFields) {
-  if (collectionNum < 0 || collectionNum >= collectionNames.length) { return false; }
-  const keyFields = collectionFields[collectionNum];
+function ValidateString(input) {
+  const maxLength = 50, allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789|@+-.,: ";
+  for (let i = 0; i < input.length; i++) { if (!allowedCharacters.includes(input[i])) { return false; } }
+  if (input.length > maxLength) { return false; }; return true;
+}
 
-  // which columns are validated depends on type of data operation 
-  let startNum = 0; if (ignoreID === true) { startNum = 1; }
-  let endNum = keyFields.length; if (ignoreFields === true) { endNum = 1; }
+function ExtractEmployeeRequest(rDetails) {
+  let returnFlag = true, rData = {};
+  const accountsNum = 0, schedulesNum = 1, insert = 1, update = 3, remove = 4;
+  if (!rDetails || !rDetails.requestData) { return null; }
+  if (rDetails.categoryNum === accountsNum) {
+    if (rDetails.operationNum === insert) {
+      rData = { username: null, accessLevel: null, first: null, last: null, phone: null, email: null, password: null };
+    } else if (rDetails.operationNum === update) {
+      rData = { accessLevel: null, first: null, last: null, phone: null, email: null, username: null };
+    } else if (rDetails.operationNum === remove) { rData = { username: null }; } else { return null; }
+  } else if (rDetails.categoryNum === schedulesNum) {
+    if (rDetails.operationNum === insert) {
+      rData = { location: null, meetingTime: null, therapistName: null, offeredMassages: null };
+    } else if (rDetails.operationNum === update) {
+      rData = { location: null, meetingTime: null, therapistName: null, offeredMassages: null, reference: null };
+    } else if (rDetails.operationNum === remove) { rData = { reference: null }; } else { return null; }
+  } else { return null; }
 
-  for (let i = startNum; i < endNum; i++) {
-    const fieldName = keyFields[i][0], fieldType = keyFields[i][1];
-    if (!inputData[fieldName]) { return false; }
-    if (fieldType === "string" || fieldType === "number") {
-      let check = true;
-      if (!(typeof inputData[fieldName] === fieldType)) { return false; }
-      // if (fieldType === "string") { check = ValidateString(inputData[fieldName], null, null); }
-      // else if (fieldType === "number") { check = ValidateNumber(inputData[fieldName], null, null); }
-      if (!check) { return false; }
-    } else {
-      if (Array.isArray(inputData[fieldName])) {
-        if (fieldType === "datetime") {
-          for (let i = 0; i < inputData[fieldName].length; i++) {
-            if (!(typeof inputData[fieldName][i] === "number")) { return false; }
-            // if (!ValidateNumber(inputData[fieldName][i], null, null)) { return false; }
-          }
-        } else {
-          for (let i = 0; i < inputData[fieldName].length; i++) {
-            if (!(typeof inputData[fieldName][i] === "string")) { return false; }
-            // if (!ValidateString(inputData[fieldName][i], null, null)) { return false; }
-          }
-        }
-      } else { return false; }
-    }
-  }
+  Object.keys(rData).forEach(function(key) {
+    if (key === "accessLevel") {
+      if (rDetails.requestData[key] === "1" || rDetails.requestData[key] === 1) { rData[key] = 1; }
+      else if (rDetails.requestData[key] === "2" || rDetails.requestData[key] === 2) { rData[key] = 2; }
+      else { returnFlag = false; }
+    } else if (!(rDetails.requestData[key] && ValidateString(rDetails.requestData[key]))) { returnFlag = false; }
+    else if (key === "username") { rData[key] = rDetails.requestData[key].toLowerCase(); }
+    else { rData[key] = rDetails.requestData[key]; }
+  }); 
 
-  return true; // console.log(chosenCollection); console.log(keyFields); console.log(collectionNum, request);
+  if (returnFlag) { 
+    if (rDetails.categoryNum === schedulesNum && rDetails.operationNum === insert) {
+      rData["reference"] = GenerateRandomOTP(6); rData["status"] = "Vacant"; rData["client"] = "";
+    }; return { categoryNum: rDetails.categoryNum, operationNum: rDetails.operationNum, requestData: rData };
+  }; return null;
+}
+
+function ExtractCustomerRequest(rDetails) {
+  const cancelBooking = -1, initiateBooking = 1;
+  if (!rDetails) { return null; }; if (!(typeof rDetails.scheduleReference === "string")) { return null; }
+  if (!(rDetails.bookingAction === initiateBooking || rDetails.bookingAction === cancelBooking)) { return null; }
+  return { scheduleReference: rDetails.scheduleReference, bookingAction: rDetails.bookingAction };
+}
+
+exports.ExtractRequest = function (reqDetails, employee) {
+  if (employee) { return ExtractEmployeeRequest(reqDetails); }
+  else { return ExtractCustomerRequest(reqDetails); }
 }
