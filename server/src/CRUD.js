@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb');
 
-const uri = null; // console.log(process.env.MONGODB_URI);
+const uri = null; console.log(process.env.MONGODB_URI);
 const client = null; // new MongoClient(uri);
 
 const cNames = ["Accounts", "Schedules", "Testing"];
