@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 
 const uri = null; // console.log(process.env.MONGODB_URI);
-const client = new MongoClient(uri);
+const client = null; // new MongoClient(uri);
 
 const cNames = ["Accounts", "Schedules", "Testing"];
 async function CreateRecord(collection, newData) {
