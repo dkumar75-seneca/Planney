@@ -136,7 +136,7 @@ router.post("/api", function(req, res) {
     else if (requestType === login) { LoginUser(res, req.body.userDetails); }
     else if (requestType === employee) { ProcessEmployeeRequest(res, req.body.userDetails, req.body.requestDetails); }
     else if (requestType === customer) { ProcessCustomerRequest(res, req.body.userDetails, req.body.requestDetails); }
-    else if (requestType === 5) { res.send(JSON.stringify({ "testing": process.env.MONGODB_URI })); }
+    else if (requestType === 5) { res.send(JSON.stringify({ "testing": process.env })); }
     else { RaiseDataError(res); } 
   } catch (e) { console.error(e); RaiseDataError(res); }
 });
