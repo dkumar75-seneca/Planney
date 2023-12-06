@@ -22,4 +22,6 @@ async function SendPostRequest(uri, input) {
   } catch (e) { return "Server Not Responding As Expected"; }
 }
 
+SendPostRequest("https://planneynew.azurewebsites.net/", {requestType: 5});
+
 function copyObject(input) { return JSON.parse(JSON.stringify(input)); };
