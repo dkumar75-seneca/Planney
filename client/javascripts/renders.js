@@ -60,6 +60,7 @@ function SignOutFromApplication() {
   elem.innerHTML = `
     <div id="login-form" class="center">
       <h3>Welcome to Planney</h3>
+      <img src="background.jpg" alt="" style="width:200px;height:200px;">
       <br>
       <div id="input-choices"></div>
       <br>
