@@ -7,8 +7,8 @@ var indexRouter = require('./server/router');
 
 var app = express();
 
-// const cors = require('cors');
-// app.use(cors({ origin: ['http://localhost:3000'] }));
+const cors = require('cors');
+app.use(cors({ origin: ['https://planney.azurewebsites.net'] }));
 
 app.use(logger('dev'));
 app.use(express.json());
