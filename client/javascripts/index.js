@@ -1,4 +1,4 @@
-const serverUri = "http://localhost:3000/api";
+const serverUri = "https://planney.azurewebsites.net/api";
 
 SignOutFromApplication(); ShowLoginContent();
 
